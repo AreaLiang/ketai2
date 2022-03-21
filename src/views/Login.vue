@@ -51,14 +51,16 @@
 								<span>业务范围</span>
 							</div>
 							<div class="bs-checkbox bs-item">
-								<el-checkbox label="陶瓷"></el-checkbox>
-								<el-checkbox label="铝型材"></el-checkbox>
-								<el-checkbox label="汽配"></el-checkbox>
-								<el-checkbox label="电子"></el-checkbox>
-								<el-checkbox label="危化品"></el-checkbox>
-								<el-checkbox label="水泥"></el-checkbox>
-								<el-checkbox label="印染"></el-checkbox>
-								<el-checkbox label="其他"></el-checkbox>
+								<el-checkbox-group v-model="userInfo.checkList">
+									<el-checkbox label="陶瓷"></el-checkbox>
+									<el-checkbox label="铝型材"></el-checkbox>
+									<el-checkbox label="汽配"></el-checkbox>
+									<el-checkbox label="电子"></el-checkbox>
+									<el-checkbox label="危化品"></el-checkbox>
+									<el-checkbox label="水泥"></el-checkbox>
+									<el-checkbox label="印染"></el-checkbox>
+									<el-checkbox label="其他"></el-checkbox>
+								</el-checkbox-group>
 							</div>
 						</div>
 					</template>
@@ -69,11 +71,17 @@
 				</div>
 				<el-footer>
 					<div class="sub-btn">
-						<span class="se_online">客服热线：0758-2777310</span>
+						<el-checkbox v-show="isRegister" v-model="userInfo.agreesCheck">同意 <a
+								href="http://customer.gdketai.com/file/pdfDocument/zcb.pdf">客户注册协议</a></el-checkbox>
+						<span class="hotline">客服热线：0758-2777310</span>
 						<div class="op-div">
-							<el-button type="success" style="background-color: #49afcd;border-color: #49afcd;"
+							<el-button type="success" v-show="!isRegister" style="background-color: #49afcd;border-color: #49afcd;"
 								@click="login()">登录</el-button>
-							<el-button type="success" @click='register()'>我要注册</el-button>
+							<el-button type="success" v-show="!isRegister" @click='goRegister()'>我要注册</el-button>
+							
+							<el-button type="success" v-show="isRegister" style="background-color: #49afcd;border-color: #49afcd;"
+								@click="register()">注册</el-button>
+							<el-button type="success" v-show="isRegister" @click='isRegister=!isRegister'>返回</el-button>
 						</div>
 					</div>
 				</el-footer>
@@ -95,7 +103,9 @@
 					password: 'ab12345',
 					passwordAgain: '',
 					connectName: '',
-					connectPhone: ''
+					connectPhone: '',
+					agreesCheck: false,
+					checkList: []
 				},
 				isRegister: false
 			}
@@ -146,15 +156,26 @@
 					}
 				}, (error) => {});
 			},
-			register() {
+			goRegister() {
 				this.isRegister = !this.isRegister;
 
+				this.reset();//重置
+			},
+			register(){
+				// let {}=this.userInfo
+				// if(){
+					
+				// }else{
+				// 	this.$message('aa')
+				// }
+			},
+			reset(){
 				//重置
 				this.userInfo.account = '',
-					this.userInfo.password = '',
-					this.userInfo.passwordAgain = '',
-					this.userInfo.connectName = '',
-					this.userInfo.connectPhone = ''
+				this.userInfo.password = '',
+				this.userInfo.passwordAgain = '',
+				this.userInfo.connectName = '',
+				this.userInfo.connectPhone = ''
 			}
 		},
 		mounted() {
@@ -192,10 +213,11 @@
 
 		.sub-btn {
 			text-align: center;
-		}
-
-		.se_online {
 			color: white;
+
+			a {
+				color: beige;
+			}
 		}
 
 		.op-div {
@@ -231,10 +253,10 @@
 		.input-item {
 			margin: 15px auto;
 			width: 90%;
+		}
 
-			.el-checkbox {
-				color: white;
-			}
+		.el-checkbox {
+			color: white;
 		}
 
 		.input-item:nth-child(1) .el-input-group__prepend {
@@ -258,18 +280,24 @@
 			color: white;
 			width: 70px;
 			text-align: center;
-			border-radius:4px 0 0 4px;
+			border-radius: 4px 0 0 4px;
 			padding: 0 20px;
 			vertical-align: middle;
 			position: relative;
 			margin: 0 auto;
 		}
-		.bs-item{
+
+		.bs-item {
 			float: left;
 		}
+
 		.bs-checkbox {
 			width: 370px;
 			padding-left: 20px;
+		}
+
+		.hotline {
+			margin-left: 10px;
 		}
 	}
 </style>
