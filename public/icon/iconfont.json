@@ -1,0 +1,16 @@
+{
+  "id": "3262902",
+  "name": "业务大厅",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "249349",
+      "name": "LOCK",
+      "font_class": "lock",
+      "unicode": "e69e",
+      "unicode_decimal": 59038
+    }
+  ]
+}
