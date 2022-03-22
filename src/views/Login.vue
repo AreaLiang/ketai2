@@ -9,7 +9,7 @@
 				</el-header>
 				<el-main>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入公司全称" v-model="userInfo.account">
+						<el-input placeholder="请输入公司全称" v-model.trim="userInfo.account">
 							<template slot="prepend">
 								<i class="el-icon-user-solid" v-show="!isRegister"></i>
 								<span>客户名称</span>
@@ -17,7 +17,7 @@
 						</el-input>
 					</div>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入登录密码" v-model="userInfo.password" type="password">
+						<el-input placeholder="请输入登录密码" v-model.trim="userInfo.password" type="password">
 							<template slot="prepend">
 								<i class="iconfont icon-lock" v-show="!isRegister"></i>
 								<span>登录密码</span>
@@ -26,21 +26,21 @@
 					</div>
 					<template v-if="isRegister">
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请再次输入登录密码" v-model="userInfo.passwordAgain" type="password">
+							<el-input placeholder="请再次输入登录密码" v-model.trim="userInfo.passwordAgain" type="password">
 								<template slot="prepend">
 									<span>确认密码</span>
 								</template>
 							</el-input>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入联系人姓名" v-model="userInfo.connectName" type="password">
+							<el-input placeholder="请输入联系人姓名" v-model.trim="userInfo.connectName" >
 								<template slot="prepend">
 									<span>联系人</span>
 								</template>
 							</el-input>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入联系手机号" v-model="userInfo.connectPhone" type="password">
+							<el-input placeholder="请输入联系手机号" v-model.trim="userInfo.connectPhone">
 								<template slot="prepend">
 									<span>联系手机号</span>
 								</template>
@@ -75,12 +75,13 @@
 								href="http://customer.gdketai.com/file/pdfDocument/zcb.pdf">客户注册协议</a></el-checkbox>
 						<span class="hotline">客服热线：0758-2777310</span>
 						<div class="op-div">
-							<el-button type="success" v-show="!isRegister" style="background-color: #49afcd;border-color: #49afcd;"
-								@click="login()">登录</el-button>
+							<el-button type="success" v-show="!isRegister"
+								style="background-color: #49afcd;border-color: #49afcd;" @click="login()">登录</el-button>
 							<el-button type="success" v-show="!isRegister" @click='goRegister()'>我要注册</el-button>
-							
-							<el-button type="success" v-show="isRegister" style="background-color: #49afcd;border-color: #49afcd;"
-								@click="register()">注册</el-button>
+
+							<el-button type="success" v-show="isRegister"
+								style="background-color: #49afcd;border-color: #49afcd;" @click="register()">注册
+							</el-button>
 							<el-button type="success" v-show="isRegister" @click='isRegister=!isRegister'>返回</el-button>
 						</div>
 					</div>
@@ -94,6 +95,15 @@
 	import {
 		getUserInfo
 	} from '@/api'
+	import {
+		ckUserId,
+		ckPassword,
+		ckAgainPd,
+		ckUserName,
+		ckPhone,
+		ckServeRange
+	} from '@/utils/checkInfo'
+
 	export default {
 		name: 'Login',
 		data() {
@@ -159,23 +169,64 @@
 			goRegister() {
 				this.isRegister = !this.isRegister;
 
-				this.reset();//重置
+				this.reset(); //重置
 			},
-			register(){
-				// let {}=this.userInfo
-				// if(){
-					
-				// }else{
-				// 	this.$message('aa')
-				// }
+			register() {
+				let {
+					account,
+					password,
+					passwordAgain,
+					connectName,
+					connectPhone,
+					agreesCheck,
+					checkList
+				} = this.userInfo;
+			
+				let isUserId=ckUserId(account);
+				let isPassword=ckPassword(password);
+				let isAgainPd=ckAgainPd(password,passwordAgain);
+				let isUserName=ckUserName(connectName);
+				let isPhone=ckPhone(connectPhone);
+				let isServeRange=ckServeRange(checkList);
+				
+				if (isUserId.status) {
+					if (isPassword.status) {
+						if (isAgainPd.status) {
+							if (isUserName.status) {
+								if (isPhone.status) {
+									if (isServeRange.status) {
+										if(agreesCheck){
+											//检验成功
+											console.log("666")
+										}else{
+											this.$message("请勾选同意协议")
+										}
+									}else{
+										this.$message(isServeRange.mes)
+									}
+								}else{
+									this.$message(isPhone.mes)
+								}
+							}else{
+								this.$message(isUserName.mes)
+							}
+						}else{
+							this.$message(isAgainPd.mes)
+						}
+					}else{
+						this.$message(isPassword.mes)
+					}
+				}else{
+					this.$message(isUserId.mes)
+				}
 			},
-			reset(){
+			reset() {
 				//重置
 				this.userInfo.account = '',
-				this.userInfo.password = '',
-				this.userInfo.passwordAgain = '',
-				this.userInfo.connectName = '',
-				this.userInfo.connectPhone = ''
+					this.userInfo.password = '',
+					this.userInfo.passwordAgain = '',
+					this.userInfo.connectName = '',
+					this.userInfo.connectPhone = ''
 			}
 		},
 		mounted() {
