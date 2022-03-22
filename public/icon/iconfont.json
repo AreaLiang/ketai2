@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1770148",
+      "name": "exit",
+      "font_class": "exit",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
       "icon_id": "249349",
       "name": "LOCK",
       "font_class": "lock",

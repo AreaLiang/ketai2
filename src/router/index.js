@@ -12,13 +12,20 @@ const router = new VueRouter({
 	base: process.env.BASE_URL,
 	routes: [{
 			path: '/',
-			redirect: '/Login'
+			redirect: '/Home'
 		},
 		{
 			name: 'Login',
 			path: '/Login',
-			meta:{title:'业务大厅'},
+			meta:{title:'业务大厅登录'},
 			component: () => import('@/views/Login')
+		},
+		,
+		{
+			name: 'Home',
+			path: '/Home',
+			meta:{title:'业务大厅'},
+			component: () => import('@/views/HomePage')
 		}
 	]
 })

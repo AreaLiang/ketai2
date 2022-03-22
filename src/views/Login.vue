@@ -52,8 +52,8 @@
 							</div>
 							<div class="bs-checkbox bs-item">
 								<el-checkbox-group v-model="userInfo.checkList">
-									<el-checkbox label="陶瓷"></el-checkbox>
 									<el-checkbox label="铝型材"></el-checkbox>
+									<el-checkbox label="陶瓷"></el-checkbox>
 									<el-checkbox label="汽配"></el-checkbox>
 									<el-checkbox label="电子"></el-checkbox>
 									<el-checkbox label="危化品"></el-checkbox>
@@ -87,14 +87,16 @@
 					</div>
 				</el-footer>
 			</el-container>
+			
+			<div class="copyright">
+				<span>版权所有: 广东数智信息科技有限公司</span>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-	import {
-		getUserInfo
-	} from '@/api'
+	import {getUserInfo} from '@/api'
 	import {
 		ckUserId,
 		ckPassword,
@@ -125,6 +127,7 @@
 				let account = this.userInfo.account; //获取用户输入的账号
 				let passWord = this.userInfo.password; //获取用户输入的密码
 
+				//创建一个异步 登录函数
 				const loginfun = new Promise((resolve, reject) => {
 
 					let url = getUserInfo().url; //获取后台接口的api
@@ -164,7 +167,7 @@
 					} else {
 						this.$message('账号或密码不正确');
 					}
-				}, (error) => {});
+				}, (error) => error);
 			},
 			goRegister() {
 				this.isRegister = !this.isRegister;
@@ -199,25 +202,25 @@
 											//检验成功
 											console.log("666")
 										}else{
-											this.$message("请勾选同意协议")
+											this.$message.error("请勾选同意协议")
 										}
 									}else{
-										this.$message(isServeRange.mes)
+										this.$message.error(isServeRange.mes)
 									}
 								}else{
-									this.$message(isPhone.mes)
+									this.$message.error(isPhone.mes)
 								}
 							}else{
-								this.$message(isUserName.mes)
+								this.$message.error(isUserName.mes)
 							}
 						}else{
-							this.$message(isAgainPd.mes)
+							this.$message.error(isAgainPd.mes)
 						}
 					}else{
-						this.$message(isPassword.mes)
+						this.$message.error(isPassword.mes)
 					}
 				}else{
-					this.$message(isUserId.mes)
+					this.$message.error(isUserId.mes)
 				}
 			},
 			reset() {
@@ -237,6 +240,7 @@
 </script>
 
 <style lang="less">
+	@import '@/less/common';
 	//修改输入框中左边标题颜色
 	.modifyEl-input (@color) {
 		background-color: @color;
@@ -258,10 +262,10 @@
 	}
 
 	.login {
-		width: 100%;
-		height: 100%;
-		background-image: url(../assets/login/banner_slide_05.jpg);
-
+		.pu_bgimg;
+		min-width:650px;
+		min-height: 550px;
+		
 		.sub-btn {
 			text-align: center;
 			color: white;
@@ -349,6 +353,14 @@
 
 		.hotline {
 			margin-left: 10px;
+		}
+		
+		.copyright{
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			margin-top: 30px;
+			color: white;
 		}
 	}
 </style>
