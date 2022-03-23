@@ -17,15 +17,32 @@ const router = new VueRouter({
 		{
 			name: 'Login',
 			path: '/Login',
-			meta:{title:'业务大厅登录'},
+			meta: {
+				title: '业务大厅登录'
+			},
 			component: () => import('@/views/Login')
 		},
-		,
 		{
 			name: 'Home',
 			path: '/Home',
-			meta:{title:'业务大厅'},
-			component: () => import('@/views/HomePage')
+			meta: {
+				title: '业务大厅'
+			},
+			component: () => import('@/views/HomePage'),
+			children: [{
+					name: 'UserInfo',
+					path: 'userinfo',
+					component: () => import('@/views/userInfo/UserInfo')
+				},
+				{
+					path: "404",
+					component: () => import('@/components/error-page/error404')
+				},
+				{
+					path: "*",
+					redirect: '404',
+				}
+			]
 		}
 	]
 })
