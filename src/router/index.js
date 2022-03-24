@@ -35,6 +35,19 @@ const router = new VueRouter({
 					component: () => import('@/views/userInfo/UserInfo')
 				},
 				{
+					name: 'PdChange',
+					path: 'password',
+					props: {
+						newsletterPopup: false
+					},
+					component: () => import('@/views/passwordChange/PdChange')
+				},
+				{
+					name: 'pdfView',
+					path: 'pdfView',
+					component: () => import('@/components/pdfView')
+				},
+				{
 					path: "404",
 					component: () => import('@/components/error-page/error404')
 				},
@@ -43,7 +56,8 @@ const router = new VueRouter({
 					redirect: '404',
 				}
 			]
-		}
+		},
+
 	]
 })
 

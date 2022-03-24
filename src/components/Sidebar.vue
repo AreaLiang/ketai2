@@ -2,7 +2,7 @@
 	<div class="navigation">
 		<el-row class="tac">
 			<el-col :span="24" style="height: 100%;">
-				<el-menu default-active="3" class="el-menu-vertical-demo" :router="true"  @open="handleOpen" @close="handleClose"
+				<el-menu default-active="3" class="el-menu-vertical" @select="handleindex" :router="true"
 					background-color="#f3f3f3" text-color="black" active-text-color="#34b160" style="height:100%">
 					<el-menu-item index="/Home">
 						<i class="el-icon-edit-outline"></i>
@@ -16,11 +16,12 @@
 						<i class="el-icon-user-solid"></i>
 						<span slot="title">客户信息</span>
 					</el-menu-item>
-					<el-menu-item index="/Home/2">
+					<el-menu-item index="/Home/password"
+						:route="{ path: '/Home/password', query: { name: '/Home/password' } }">
 						<i class="el-icon-check"></i>
 						<span slot="title">密码更改</span>
 					</el-menu-item>
-					<el-menu-item index="/Home/3">
+					<el-menu-item index="/Home/pdfView">
 						<i class="el-icon-s-unfold"></i>
 						<span slot="title">服务项目列表</span>
 					</el-menu-item>
@@ -56,12 +57,10 @@
 			}
 		},
 		methods: {
-			handleOpen(key, keyPath) {
-				console.log(key, keyPath);
+			//获取用户所点击的导航地址
+			handleindex(key, keyPath) {
+				this.$bus.$emit('isPageHeader', key)
 			},
-			handleClose(key, keyPath) {
-				console.log(key, keyPath);
-			}
 		},
 		conponents: {
 

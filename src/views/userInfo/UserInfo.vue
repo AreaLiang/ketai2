@@ -88,11 +88,7 @@
 						<el-col :span="12">
 							<el-button type="primary" @click="submitForm('ruleForm')">提交认证</el-button>
 						</el-col>
-						<el-col :span="24">
-							<el-button type="warning">
-								<i class="el-icon-edit-outline"></i>认证指引
-							</el-button>
-						</el-col>
+						
 					</div>
 				</div>
 			</el-col>
@@ -102,20 +98,16 @@
 				<div class="grid-content bg-purple-light">
 					<div class="bs-license">
 						<p>请上传营业执照文件</p>
-						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1">
+						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='bsUpload'>
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
 								<span class="el-upload-list__item-actions">
-									<span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+									<span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file,'bs')">
 										<i class="el-icon-zoom-in"></i>
 									</span>
 									<span v-if="!bs_disabled" class="el-upload-list__item-delete"
-										@click="handleDownload(file)">
-										<i class="el-icon-download"></i>
-									</span>
-									<span v-if="!bs_disabled" class="el-upload-list__item-delete"
-										@click="handleRemove(file)">
+										@click="handleRemove(file,'bs')">
 										<i class="el-icon-delete"></i>
 									</span>
 								</span>
@@ -129,32 +121,45 @@
 
 					<div class="sc-license">
 						<p>请上传安全员执照文件</p>
-						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1">
+						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='scUpload'>
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
 								<span class="el-upload-list__item-actions">
-									<span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+									<span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file,'sc')">
 										<i class="el-icon-zoom-in"></i>
 									</span>
 									<span v-if="!sc_disabled" class="el-upload-list__item-delete"
-										@click="handleDownload(file)">
-										<i class="el-icon-download"></i>
-									</span>
-									<span v-if="!sc_disabled" class="el-upload-list__item-delete"
-										@click="handleRemove(file)">
+										@click="handleRemove(file,'sc')">
 										<i class="el-icon-delete"></i>
 									</span>
 								</span>
 							</div>
 						</el-upload>
-						<el-dialog :visible.sync="sc_dialogVisible">
+						<el-dialog :visible.sync="sc_dialogVisible" :modal-append-to-body="false">
 							<img width="100%" :src="sc_dialogImageUrl" alt="">
 						</el-dialog>
 					</div>
 				</div>
 			</el-col>
 		</el-row>
+		<div class="guidelines">
+			<el-col :span="24">
+				<el-button type="warning" @click="guidelinesVisible = true">
+					<i class="el-icon-edit-outline"></i>认证指引
+				</el-button>
+			</el-col>
+			
+			<el-dialog
+			  title="认证指引"
+			  :visible.sync="guidelinesVisible"
+			  width="70%"
+			  :modal-append-to-body='false'>
+			  <div class="guidelines-box">
+				  <img src="../../assets/home/rzzy.jpg" >
+			  </div>
+			</el-dialog>
+		</div>
 	</div>
 </template>
 
@@ -242,12 +247,19 @@
 						trigger: 'blur'
 					}]
 				},
-				dialogImageUrl: '',
-				dialogVisible: false,
-				disabled: false
+				bs_dialogImageUrl: '',//放大照片的链接
+				bs_dialogVisible: false,//放大查看照片的会话框
+				bs_disabled: false, //是否显示上传照片中的放大、删除操作按钮
+				
+				sc_dialogImageUrl: '',//放大照片的链接
+				sc_dialogVisible: false,//放大查看照片的会话框
+				sc_disabled: false,//是否显示上传照片中的放大、删除操作按钮
+				
+				guidelinesVisible:false//打开 认证指引 开关
 			}
 		},
 		methods: {
+			//表单提交
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
@@ -257,15 +269,31 @@
 					} else false
 				});
 			},
-			handleRemove(file) {
-				console.log(file);
+			//文件上传删除功能
+			handleRemove(file,name) {
+				let uploadFiles,index;
+				// bs 是营业执照 标识，sc 是安全员执照 标识
+				if(name=='bs'){
+					uploadFiles=this.$refs['bsUpload'].uploadFiles;
+					index =uploadFiles.indexOf(file);
+					this.bs_dialogImageUrl = '';
+				}else if(name=='sc'){
+					uploadFiles=this.$refs['scUpload'].uploadFiles;
+					this.sc_dialogImageUrl = '';
+				}
+				index =uploadFiles.indexOf(file);
+				uploadFiles.splice(index,1);//删除照片
 			},
-			handlePictureCardPreview(file) {
-				this.dialogImageUrl = file.url;
-				this.dialogVisible = true;
-			},
-			handleDownload(file) {
-				console.log(file);
+			//文件放大查看功能
+			handlePictureCardPreview(file,name) {
+				 // bs 是营业执照 标识，sc 是安全员执照 标识
+				if(name=='bs'){
+					this.bs_dialogImageUrl = file.url;
+					this.bs_dialogVisible = true;
+				}else if(name=='sc'){
+					this.sc_dialogImageUrl = file.url;
+					this.sc_dialogVisible = true;
+				}
 			}
 		},
 		components: {
@@ -288,5 +316,14 @@
 		color: white;
 	}
 
-	.bs-license {}
+	.guidelines{
+		margin-top: 100px;
+		margin-left: 50px;
+		text-align: left;
+		.guidelines-box,
+		.guidelines-box img{
+			width: 100%;
+			height: 100%;
+		}
+	}
 </style>

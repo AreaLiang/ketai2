@@ -18,6 +18,9 @@ Vue.prototype.axios=axios
 //引入store
 import store from './store'
 
+//用户登录权限管理文件
+import './permission.js' 
+
 Vue.config.productionTip = false
 
 new Vue({

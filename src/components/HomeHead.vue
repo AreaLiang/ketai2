@@ -44,6 +44,9 @@
 		},
 		components: {
 
+		},
+		mounted(){
+			
 		}
 	}
 </script>
