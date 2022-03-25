@@ -1,5 +1,7 @@
 <template>
 	<div class="userinfo-box">
+		<!-- 主题内容顶部 -->
+		<PageHeader :breadcrumbItem="breadcrumbItem" />
 		<el-row>
 			<el-col :span="14">
 				<div class="grid-content bg-purple">
@@ -164,11 +166,13 @@
 </template>
 
 <script>
+	import PageHeader from '@/components/PageHeader'
 	export default {
 		name: 'UserInfo',
 		data() {
 			return {
 				certification: '未认证',
+				breadcrumbItem:[],//头部面包屑内容，如 密码更改/密码录入
 				ruleForm: {
 					userName: '',
 					contactName: '',
@@ -255,7 +259,9 @@
 				sc_dialogVisible: false,//放大查看照片的会话框
 				sc_disabled: false,//是否显示上传照片中的放大、删除操作按钮
 				
-				guidelinesVisible:false//打开 认证指引 开关
+				guidelinesVisible:false,//打开 认证指引 开关
+				
+			
 			}
 		},
 		methods: {
@@ -297,7 +303,10 @@
 			}
 		},
 		components: {
-
+			PageHeader
+		},
+		mounted(){
+			this.breadcrumbItem=this.$route.meta.headName;
 		}
 	}
 </script>

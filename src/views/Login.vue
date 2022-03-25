@@ -33,7 +33,7 @@
 							</el-input>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入联系人姓名" v-model.trim="userInfo.connectName" >
+							<el-input placeholder="请输入联系人姓名" v-model.trim="userInfo.connectName">
 								<template slot="prepend">
 									<span>联系人</span>
 								</template>
@@ -63,6 +63,13 @@
 								</el-checkbox-group>
 							</div>
 						</div>
+						<div class="input-item" :class="{register:isRegister}">
+							<el-input placeholder="请输入验证码" v-model.trim="userInfo.connectPhone">
+								<template slot="prepend">
+									<img :src="checkCaptcha" style="height: 34px;width: 70px;" alt="">
+								</template>
+							</el-input>
+						</div>
 					</template>
 				</el-main>
 				<div>
@@ -87,7 +94,7 @@
 					</div>
 				</el-footer>
 			</el-container>
-			
+
 			<div class="copyright">
 				<span>版权所有: 广东数智信息科技有限公司</span>
 			</div>
@@ -96,151 +103,86 @@
 </template>
 
 <script>
-	import {getUserInfo} from '@/api'
-	import {
-		ckUserId,
-		ckPassword,
-		ckAgainPd,
-		ckUserName,
-		ckPhone,
-		ckServeRange
-	} from '@/utils/checkInfo'
-
+	import { loginfun,checkRegister} from "@/utils/login"
+	import {captchaApi} from '@/api'
 	export default {
 		name: 'Login',
 		data() {
 			return {
 				userInfo: {
-					account: 'user002',
-					password: 'ab12345',
+					account: 'XX1公司',
+					password: '123456',
 					passwordAgain: '',
 					connectName: '',
 					connectPhone: '',
 					agreesCheck: false,
-					checkList: []
+					checkList: [],
+					
 				},
+				checkCaptcha:'',
 				isRegister: false
 			}
 		},
 		methods: {
+			//用户登录
 			login() {
 				let account = this.userInfo.account; //获取用户输入的账号
 				let passWord = this.userInfo.password; //获取用户输入的密码
-
-				//创建一个异步 登录函数
-				const loginfun = new Promise((resolve, reject) => {
-
-					let url = getUserInfo().url; //获取后台接口的api
-					let method = getUserInfo().method;
-
-					//请求用户数据
-					this.axios({
-						url: url,
-						method: method
-					}).then((response) => {
-						resolve(response.data)
-					}).catch((error) => reject(error))
-
-				})
-
-				loginfun.then((data) => {
-					console.log(data);
-					let {
-						userId,
-						password,
-						token
-					} = data.userData[1]; //获取后台返回的用户数据
-
-
-					//后台数据和用户输入的信息做比较
-					if (password = passWord && userId == account) {
-						console.log("成功")
-
-						/* 
-						 *** 存储数据
-						 * 存入vuex 
-						 * 把token存入浏览器缓存
-						 */
-						this.$store.commit('UserInfo', data.userData[1]);
-						sessionStorage.setItem('token', token)
-
-					} else {
-						this.$message('账号或密码不正确');
-					}
-				}, (error) => error);
+				
+				if(account !='' &&passWord !='' ){
+					//调用login.js里面的登录方法，成功后返回数据
+					loginfun(account,passWord).then(async (data) => {
+						// console.log("登录成功：",{...data});
+						data = {...data};
+						let code = data.code;
+						let token=data.data.token;
+					
+						//后台数据和用户输入的信息做比较
+						if (code == "20000") {
+							// 存储数据 存入vuex 
+							await this.$store.commit('UserInfo', data);
+							await sessionStorage.setItem('token',token);
+							await this.$router.push('/Home/userinfo');
+						} else {
+							this.$message.error('账号或密码不正确');
+						}
+					}, (error) => error);
+				}else{
+					this.$message.error('账号或密码不能为空');
+				}
 			},
 			goRegister() {
 				this.isRegister = !this.isRegister;
-
 				this.reset(); //重置
 			},
+			//用户注册
 			register() {
-				let {
-					account,
-					password,
-					passwordAgain,
-					connectName,
-					connectPhone,
-					agreesCheck,
-					checkList
-				} = this.userInfo;
-			
-				let isUserId=ckUserId(account);
-				let isPassword=ckPassword(password);
-				let isAgainPd=ckAgainPd(password,passwordAgain);
-				let isUserName=ckUserName(connectName);
-				let isPhone=ckPhone(connectPhone);
-				let isServeRange=ckServeRange(checkList);
-				
-				if (isUserId.status) {
-					if (isPassword.status) {
-						if (isAgainPd.status) {
-							if (isUserName.status) {
-								if (isPhone.status) {
-									if (isServeRange.status) {
-										if(agreesCheck){
-											//检验成功
-											console.log("666")
-										}else{
-											this.$message.error("请勾选同意协议")
-										}
-									}else{
-										this.$message.error(isServeRange.mes)
-									}
-								}else{
-									this.$message.error(isPhone.mes)
-								}
-							}else{
-								this.$message.error(isUserName.mes)
-							}
-						}else{
-							this.$message.error(isAgainPd.mes)
-						}
-					}else{
-						this.$message.error(isPassword.mes)
-					}
-				}else{
-					this.$message.error(isUserId.mes)
-				}
+				let isPassd=checkRegister(this,this.userInfo);
+				// if(isPassd){
+					
+				// }
 			},
 			reset() {
 				//重置
 				this.userInfo.account = '',
-					this.userInfo.password = '',
-					this.userInfo.passwordAgain = '',
-					this.userInfo.connectName = '',
-					this.userInfo.connectPhone = ''
+				this.userInfo.password = '',
+				this.userInfo.passwordAgain = '',
+				this.userInfo.connectName = '',
+				this.userInfo.connectPhone = ''
 			}
 		},
 		mounted() {
 			//修改标题名称
 			document.title = this.$route.meta.title;
+			
+			this.checkCaptcha=captchaApi().url;
 		},
 	}
 </script>
 
 <style lang="less">
 	@import '@/less/common';
+
 	//修改输入框中左边标题颜色
 	.modifyEl-input (@color) {
 		background-color: @color;
@@ -263,9 +205,9 @@
 
 	.login {
 		.pu_bgimg;
-		min-width:650px;
+		min-width: 650px;
 		min-height: 550px;
-		
+
 		.sub-btn {
 			text-align: center;
 			color: white;
@@ -354,8 +296,8 @@
 		.hotline {
 			margin-left: 10px;
 		}
-		
-		.copyright{
+
+		.copyright {
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);

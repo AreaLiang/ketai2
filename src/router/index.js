@@ -32,13 +32,16 @@ const router = new VueRouter({
 			children: [{
 					name: 'UserInfo',
 					path: 'userinfo',
+					meta: {
+						headName: ['客户信息','/','完善认证信息']
+					},
 					component: () => import('@/views/userInfo/UserInfo')
 				},
 				{
 					name: 'PdChange',
 					path: 'password',
-					props: {
-						newsletterPopup: false
+					meta: {
+						headName: ['密码更改','/',' 密码录入']
 					},
 					component: () => import('@/views/passwordChange/PdChange')
 				},

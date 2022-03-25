@@ -7,11 +7,11 @@ const actions = {
 }
 const mutations = {
 	UserInfo(state,value){
-		state.userInfo=value
+		state.userInfo.push(value)
 	}
 }
 const state = {
-	userInfo:{}
+	userInfo:[],
 }
 
 const getters={

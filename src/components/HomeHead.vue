@@ -20,16 +20,6 @@
 					</ul>
 				</slot>
 			</el-popover>
-			<!-- <span>
-				<i class="el-icon-user-solid"></i>
-				<span>{{username}}</span>
-				<i class="el-icon-caret-bottom"></i>
-			</span> -->
-			<!-- <div class="exitbox">
-				<ul>
-					<li>退出</li>
-				</ul>
-			</div> -->
 		</div>
 	</div>
 </template>
