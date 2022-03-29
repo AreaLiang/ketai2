@@ -25,7 +25,7 @@
 						<i class="el-icon-s-unfold"></i>
 						<span slot="title">服务项目列表</span>
 					</el-menu-item>
-					<el-menu-item index="/Home/4">
+					<el-menu-item index="/Home/businessEntrust">
 						<i class="el-icon-download"></i>
 						<span slot="title">业务委托表格下载</span>
 					</el-menu-item>

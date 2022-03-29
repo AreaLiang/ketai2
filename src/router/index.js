@@ -33,7 +33,7 @@ const router = new VueRouter({
 					name: 'UserInfo',
 					path: 'userinfo',
 					meta: {
-						headName: ['客户信息','/','完善认证信息']
+						headName: ['客户信息', '/', '完善认证信息']
 					},
 					component: () => import('@/views/userInfo/UserInfo')
 				},
@@ -41,7 +41,7 @@ const router = new VueRouter({
 					name: 'PdChange',
 					path: 'password',
 					meta: {
-						headName: ['密码更改','/',' 密码录入']
+						headName: ['密码更改', '/', ' 密码录入']
 					},
 					component: () => import('@/views/passwordChange/PdChange')
 				},
@@ -63,5 +63,34 @@ const router = new VueRouter({
 
 	]
 })
+
+//异步挂载的路由
+// 动态需要根据权限加载的路由表
+export const asyncRouter = [{
+	path: '/Home',
+	component: () => import('@/views/HomePage'),
+	children: [{
+		name: 'UserInfo',
+		path: 'businessEntrust',
+		meta: {
+			isAuthority: true
+		},
+		component: () => import('@/views/businessEntrust/bsEntrust')
+	},{
+		name: 'UserInfo',
+		path: 'mgCertificate',
+		meta: {
+			isAuthority: true
+		},
+		component: () => import('@/views/certificateManagement/mgCertificate')
+	},{
+		name: 'entrustTbDownload',
+		path: 'entrustTb',
+		meta: {
+			isAuthority: false
+		},
+		component: () => import('@/views/entrustTbDownload/entrustTbDL')
+	}]
+}]
 
 export default router

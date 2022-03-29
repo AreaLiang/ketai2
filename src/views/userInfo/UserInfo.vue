@@ -1,7 +1,7 @@
 <template>
 	<div class="userinfo-box">
 		<!-- 主题内容顶部 -->
-		<PageHeader :breadcrumbItem="breadcrumbItem" />
+		<PageHeader :breadcrumbItem="$route.meta.headName" />
 		<el-row>
 			<el-col :span="14">
 				<div class="grid-content bg-purple">
@@ -172,7 +172,6 @@
 		data() {
 			return {
 				certification: '未认证',
-				breadcrumbItem:[],//头部面包屑内容，如 密码更改/密码录入
 				ruleForm: {
 					userName: '',
 					contactName: '',
@@ -306,7 +305,7 @@
 			PageHeader
 		},
 		mounted(){
-			this.breadcrumbItem=this.$route.meta.headName;
+			
 		}
 	}
 </script>
