@@ -2,21 +2,29 @@ import Vuex from "vuex"
 import Vue from 'vue'
 import axios from 'axios'
 import {asyncRouter} from '@/router'
-import {navRouter,ckUserInfo} from '@/utils/permissionsTb'
+import {navRouter} from '@/utils/permissionsTb'
+import '@/request/http.js' 
+import { ckUserInfoApi } from "@/request/api"
 
 const actions = {
 	// 用户权限控制
 	authorityNav(context,value){
-		
-		ckUserInfo(value);
-		// context.commit('AuthorityNav',true);
-		
+		return new Promise((resolve,reject)=>{
+			//发送请求查询用户信息
+			ckUserInfoApi(value).then((data)=>{
+				if(data.code=="20000"){
+					context.commit('AuthorityNav',data.data.statusCn);
+				}
+				resolve();
+			})
+		});
 	}
 }
 const mutations = {
 	//保存用户的信息
 	UserInfo(state,value){
-		state.userInfo.push(value)
+		state.userInfo=value;
+		state.token=value.data.token;
 	},
 	// 用户权限控制
 	AuthorityNav(state,useStatus){
@@ -29,6 +37,7 @@ const mutations = {
 }
 const state = {
 	userInfo:[],//用户信息
+	token:'',
 	permissionRoutes:[], //过滤后的权限路由表
 }
 

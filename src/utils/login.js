@@ -1,10 +1,14 @@
 import Qs from 'qs' //增加了一些安全性的查询字符串解析和序列化字符串的库。
 import axios from 'axios'
-import {
-	loginApi,
-	phoneCodeApi,
-	registerApi
-} from '@/api'
+import {loginApi,phoneCodeApi,registerApi} from "@/request/api"
+
+// import {
+// 	phoneCodeApi,
+// 	registerApi
+// } from '@/api'
+
+
+
 import {
 	ckUserId,
 	ckPassword,
@@ -37,7 +41,7 @@ function loginfun(account, passWord) {
 		}).then((response) => {
 			resolve(response.data)
 		}).catch((error) => reject(error))
-
+	
 	})
 }
 
@@ -105,26 +109,12 @@ function checkRegister(obj, objInfo) {
 
 //创建一个异步获取手机验证码的方法
 function getPhoneCode(phone, code) {
-	let {
-		url,
-		method
-	} = phoneCodeApi();
-	
 	return new Promise((resolve, reject) => {
-		axios({
-			method: method,
-			url: url,
-			data: {
-				phone: phone,
-				code: code
-			},
-			transformRequest: [function(data, headers) {
-				// 对 data 进行任意转换处理
-				var res = Qs.stringify(data)
-				return res;
-			}],
+		phoneCodeApi({
+			phone: phone,
+			code: code
 		}).then((response) => {
-			resolve(response.data)
+			resolve(response)
 		}).catch((error) => reject(error))
 	});
 }
@@ -138,7 +128,6 @@ function registerfun(objInfo) {
 	let {
 		account,
 		password,
-		passwordAgain,
 		connectName,
 		connectPhone,
 		phoneCode,
@@ -148,31 +137,22 @@ function registerfun(objInfo) {
 	
 	checkList=checkList.join(',');//数组转换成字符串
 	
-	let {method,url}=phoneCodeApi();
-	
 	return new Promise((resolve, reject) => {
-		axios({
-			method: method,
-			url: url,
-			data: {
-				phoneCode: phoneCode,
-				phone: connectPhone,
-				name:account,
-				contact:connectName,
-				password:password,
-				business:checkList,
-				code:captcha
-			},
-			transformRequest: [function(data, headers) {
-				// 对 data 进行任意转换处理
-				var res = Qs.stringify(data)
-				return res;
-			}],
+		registerApi({
+			phoneCode: phoneCode,
+			phone: connectPhone,
+			name:account,
+			contact:connectName,
+			password:password,
+			business:checkList,
+			code:captcha
 		}).then((response) => {
-			resolve(response.data)
+			resolve(response)
 		}).catch((error) => reject(error))
 	})
 }
+
+
 
 export {
 	loginfun,

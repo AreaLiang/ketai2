@@ -4,11 +4,11 @@
 			<el-col :span="24" style="height: 100%;">
 				<el-menu default-active="3" class="el-menu-vertical" @select="handleindex" :router="true"
 					background-color="#f3f3f3" text-color="black" active-text-color="#34b160" style="height:100%">
-					<el-menu-item index="/Home">
+					<el-menu-item index="/Home/entrustTb">
 						<i class="el-icon-edit-outline"></i>
 						<span slot="title">业务委托</span>
 					</el-menu-item>
-					<el-menu-item index="/Home/1" disabled>
+					<el-menu-item index="/Home/entrustTb" disabled>
 						<i class="el-icon-reading"></i>
 						<span slot="title">证书管理</span>
 					</el-menu-item>

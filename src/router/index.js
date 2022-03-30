@@ -50,14 +50,15 @@ const router = new VueRouter({
 					path: 'pdfView',
 					component: () => import('@/components/pdfView')
 				},
-				{
-					path: "404",
-					component: () => import('@/components/error-page/error404')
-				},
-				{
-					path: "*",
-					redirect: '404',
-				}
+				
+				// {
+				// 	path: "404",
+				// 	component: () => import('@/components/error-page/error404')
+				// },
+				// {
+				// 	path: "*",
+				// 	redirect: '404',
+				// }
 			]
 		},
 
@@ -70,24 +71,24 @@ export const asyncRouter = [{
 	path: '/Home',
 	component: () => import('@/views/HomePage'),
 	children: [{
-		name: 'UserInfo',
+		name: 'businessEntrust',
 		path: 'businessEntrust',
 		meta: {
-			isAuthority: true
+			isAuthority: "正常"
 		},
 		component: () => import('@/views/businessEntrust/bsEntrust')
 	},{
-		name: 'UserInfo',
+		name: 'mgCertificate',
 		path: 'mgCertificate',
 		meta: {
-			isAuthority: true
+			isAuthority: "正常"
 		},
 		component: () => import('@/views/certificateManagement/mgCertificate')
 	},{
 		name: 'entrustTbDownload',
 		path: 'entrustTb',
 		meta: {
-			isAuthority: false
+			isAuthority: "正常"
 		},
 		component: () => import('@/views/entrustTbDownload/entrustTbDL')
 	}]
