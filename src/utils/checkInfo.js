@@ -46,7 +46,6 @@ export function ckAgainPd(first, second) {
 		if (first == second) {
 			return success
 		} else {
-			console.log(first,second)
 			return {
 				"status": false,
 				"mes": '第二次密码和第一次不相同'
@@ -68,7 +67,7 @@ export function ckUserName(value) {
 		if (value != "" && !reg.test(value)) {
 			return {
 				"status": false,
-				"mes": '必须输入中文'
+				"mes": '联系人姓名必须输入中文'
 			}
 		} else {
 			return success
@@ -89,7 +88,7 @@ export function ckPhone(value) {
 		if (value != "" && !reg.test(value)) {
 			return {
 				"status": false,
-				"mes": '只能是数字'
+				"mes": '只手机号能是数字'
 			};
 		} else {
 			if(value.length==11){
@@ -112,6 +111,18 @@ export function ckServeRange(value) {
 		return {
 			"status": false,
 			"mes": '至少选一个业务范围'
+		};
+	}
+}
+
+//判断 手机验证码是否为空
+export function ckPhoneCode(value) {
+	if (value.length>0) {
+		return success
+	} else {
+		return {
+			"status": false,
+			"mes": '请获取手机验证码'
 		};
 	}
 }

@@ -1,7 +1,7 @@
 <template>
 	<div class="password-change">
 		<!-- 主题内容顶部 -->
-		<PageHeader :breadcrumbItem="breadcrumbItem" />
+		<PageHeader :breadcrumbItem="$route.meta.headName" />
 		
 		<div class="password-box">
 			<el-col :span='10'>
@@ -73,14 +73,13 @@
 						trigger: 'blur'
 					}],
 				},
-				breadcrumbItem:[]//头部面包屑内容，如 密码更改/密码录入
 			}
 		},
 		components: {
 			PageHeader
 		},
 		mounted() {
-			this.breadcrumbItem=this.$route.meta.headName;
+		
 		}
 	}
 </script>

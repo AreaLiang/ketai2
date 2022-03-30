@@ -40,7 +40,7 @@
 							</el-input>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入联系手机号" v-model.trim="userInfo.connectPhone">
+							<el-input placeholder="请输入联系手机号" v-model.trim="userInfo.connectPhone" type="number" class="no-number">
 								<template slot="prepend">
 									<span>联系手机号</span>
 								</template>
@@ -64,9 +64,16 @@
 							</div>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入验证码" v-model.trim="userInfo.connectPhone">
+							<el-input placeholder="请输入验证码" v-model.trim="userInfo.captcha">
 								<template slot="prepend">
-									<img :src="checkCaptcha" style="height: 34px;width: 70px;" alt="">
+									<img :src="captchaUrl" @click="changeCaptcha()" class="captcha" alt="">
+								</template>
+							</el-input>
+						</div>
+						<div class="input-item" :class="{register:isRegister}">
+							<el-input type="number" placeholder="手机验证码" v-model.trim="userInfo.phoneCode"  class="phoneCode no-number">
+								<template slot="append">
+									<el-button @click="phoneCode()" :disabled="isSendCode">{{sendCodeText}}</el-button>
 								</template>
 							</el-input>
 						</div>
@@ -103,8 +110,9 @@
 </template>
 
 <script>
-	import { loginfun,checkRegister} from "@/utils/login"
+	import { loginfun,checkRegister,getPhoneCode,registerfun} from "@/utils/login"
 	import {captchaApi} from '@/api'
+	import Qs from 'qs'
 	export default {
 		name: 'Login',
 		data() {
@@ -116,11 +124,35 @@
 					connectName: '',
 					connectPhone: '',
 					agreesCheck: false,
+					captcha:'',
+					phoneCode:'',
 					checkList: [],
-					
 				},
-				checkCaptcha:'',
-				isRegister: false
+				captchaUrl:'',//验证码图片地址
+				isRegister: false,//是否显示注册界面
+				sendCodeText:'获取手机验证码',//获取手机验证码文字显示
+				isSendCode:false//是否已经发送验证码
+			}
+		},
+		watch:{
+			isRegister:function(val){
+				if(val){
+					this.changeCaptcha();
+				}
+			},
+			isSendCode:function(val){
+				if(val){
+					let time=10;//限制多少秒后可以重新发送手机验证码
+					let timeRange=setInterval(()=>{
+						time--;
+						this.sendCodeText="已经发送 "+time+" S";
+						if(time<=0){
+							this.sendCodeText='获取手机验证码';
+							this.isSendCode=false;
+							clearInterval(timeRange);
+						}
+					},1000);
+				}
 			}
 		},
 		methods: {
@@ -132,13 +164,12 @@
 				if(account !='' &&passWord !='' ){
 					//调用login.js里面的登录方法，成功后返回数据
 					loginfun(account,passWord).then(async (data) => {
-						// console.log("登录成功：",{...data});
 						data = {...data};
-						let code = data.code;
-						let token=data.data.token;
-					
+						let code = data.code;//获取状态吗
 						//后台数据和用户输入的信息做比较
 						if (code == "20000") {
+							console.log("登录成功：",{...data});
+							let token=data.data.token;
 							// 存储数据 存入vuex 
 							await this.$store.commit('UserInfo', data);
 							await sessionStorage.setItem('token',token);
@@ -151,31 +182,73 @@
 					this.$message.error('账号或密码不能为空');
 				}
 			},
+			//获取手机验证码
+			phoneCode(){
+				let {connectPhone,captcha}=this.userInfo;//用户输入的获取手机号，图形验证码
+				
+				if ( captcha !='' && connectPhone!='') {//如果都不为空的时候，发送请求验证
+					if(this.isSendCode==false){
+						this.isSendCode=true;
+						
+						getPhoneCode(connectPhone,captcha).then((data)=>{
+							if(data.code=="20000"){
+								this.$message.success("验证码发送成功");
+							}else{
+								this.changeCaptcha();//验证码输入错误后，验证码更换
+								this.userInfo.captcha= '';//验证码输入错误后，验证码输入框重置
+								this.$message.warning(data.msg);
+							}
+						})
+					}else{
+						this.$message.error('验证码已发送，请勿重复发送');
+					}
+					
+				} else{
+					this.$message.error('手机号码和验证码不能为空');
+				}
+				
+			},
+			//点击 去注册按钮 事件
 			goRegister() {
 				this.isRegister = !this.isRegister;
+				this.captchaUrl=captchaApi().url;//登录和注册界面切换后，验证码更换
+				
 				this.reset(); //重置
 			},
 			//用户注册
 			register() {
 				let isPassd=checkRegister(this,this.userInfo);
-				// if(isPassd){
-					
-				// }
+				if(isPassd){
+					registerfun(this.userInfo).then((data)=>{
+						
+						if(data.code=='20000'){
+							this.$message.success('注册成功');
+							this.reset();
+						}else{
+							this.$message.error(data.msg);
+						}
+					});
+				}
 			},
+			//表单重置
 			reset() {
-				//重置
 				this.userInfo.account = '',
 				this.userInfo.password = '',
 				this.userInfo.passwordAgain = '',
 				this.userInfo.connectName = '',
-				this.userInfo.connectPhone = ''
+				this.userInfo.connectPhone = '',
+				this.userInfo.captcha= '',
+				this.userInfo.phoneCode= ''
+			},
+			//更改注册验证码图片
+			changeCaptcha(){
+				this.captchaUrl=captchaApi().url+"?"+Math.random();
 			}
 		},
 		mounted() {
 			//修改标题名称
 			document.title = this.$route.meta.title;
 			
-			this.checkCaptcha=captchaApi().url;
 		},
 	}
 </script>
@@ -196,7 +269,8 @@
 	*** @start:开始的位置,@end：结束的位置,@color：颜色 
 	*/
 	.toggleStatus(@start, @end, @color) when (@start <=@end) {
-		&:nth-child(@{start}) .el-input-group__prepend {
+		&:nth-child(@{start}) .el-input-group__prepend ,
+		&:nth-child(@{start}) .el-input-group__append{
 			.modifyEl-input(@color)
 		}
 
@@ -267,6 +341,8 @@
 		.register {
 			.toggleStatus(1, 3, #28b779);
 			.toggleStatus(4, 6, #ffb848);
+			.toggleStatus(7, 7, white);
+			.toggleStatus(8, 8, #407fdf);
 			overflow: hidden;
 		}
 
@@ -303,6 +379,12 @@
 			transform: translateX(-50%);
 			margin-top: 30px;
 			color: white;
+		}
+		
+		.captcha{
+			height: 34px;
+			width: 70px;
+			cursor: pointer;
 		}
 	}
 </style>
