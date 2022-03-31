@@ -166,33 +166,33 @@
 			login() {
 				let account = this.userInfo.account; //获取用户输入的账号
 				let passWord = this.userInfo.password; //获取用户输入的密码
-
-				if (account != '' && passWord != '') {
-					//调用login.js里面的登录方法，成功后返回数据
-					loginApi({
-						loginname: account,
-						password: passWord
-					}).then(async (data) => {
-						data = {...data};
-						let code = data.code; //获取状态吗
-						//后台数据和用户输入的信息做比较
-						if (code == "20000") {
-							console.log("登录成功：", {
-								...data
-							});
-							let token = data.data.token;
-							// 存储数据 存入vuex 
-							await this.$store.commit('UserInfo', data);
-							await sessionStorage.setItem('token', token);
-							await this.$router.push('/Home/userinfo');
+this.$router.push('/Home/userinfo');
+				// if (account != '' && passWord != '') {
+				// 	//调用login.js里面的登录方法，成功后返回数据
+				// 	loginApi({
+				// 		loginname: account,
+				// 		password: passWord
+				// 	}).then(async (data) => {
+				// 		data = {...data};
+				// 		let code = data.code; //获取状态吗
+				// 		//后台数据和用户输入的信息做比较
+				// 		if (code == "20000") {
+				// 			console.log("登录成功：", {
+				// 				...data
+				// 			});
+				// 			let token = data.data.token;
+				// 			// 存储数据 存入vuex 
+				// 			await this.$store.commit('UserInfo', data);
+				// 			await sessionStorage.setItem('token', token);
+				// 			await this.$router.push('/Home/userinfo');
 							
-						} else {
-							this.$message.error('账号或密码不正确');
-						}
-					}, (error) => error);
-				} else {
-					this.$message.error('账号或密码不能为空');
-				}
+				// 		} else {
+				// 			this.$message.error('账号或密码不正确');
+				// 		}
+				// 	}, (error) => error);
+				// } else {
+				// 	this.$message.error('账号或密码不能为空');
+				// }
 			},
 			//获取手机验证码
 			phoneCode() {
