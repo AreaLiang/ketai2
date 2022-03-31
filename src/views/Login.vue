@@ -1,5 +1,5 @@
 <template>
-	<div class="login">11
+	<div class="login">
 		<div class="login-box">
 			<el-container>
 				<el-header>
