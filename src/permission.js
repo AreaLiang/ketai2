@@ -18,27 +18,32 @@ router.beforeEach(async (to, from, next) => {
 	}; //解构赋值
 
 	//用户权限判断
-	// if (to.path == "/Login") {
-	// 	sessionStorage.removeItem('token');
-	// } else {
-	// 	let token = sessionStorage.getItem('token', token);
-	// 	if (token) {
-	// 		if (store.state.userInfo.code == "20000") {
-				
-	// 			//发送token去后端验证用户信息
-	// 			// store.dispatch('authorityNav', token).then(() => {
-	// 			// 	//从vuex中获取过滤后的路由表
-	// 			// 	let setRoutes = store.state.permissionRoutes;
+	if (to.path == "/Login") {
+		sessionStorage.removeItem('token');
+		next();
+	} else {
+		(async ()=>{
+			let token = await sessionStorage.getItem('token', token);
+			if (token) {
+				if (store.state.userInfo.code != "20000") {
 					
-	// 			// 	router.addRoute(setRoutes)
-
-	// 			// });
-	// 		}
-
-	// 	} else {
-	// 		router.push('/Login');
-	// 	}
-	// }
-	next()
-	NProgress.done()
+					//发送token去后端验证用户信息
+					await store.dispatch('authorityNav', token).then(() => {
+						//从vuex中获取过滤后的路由表
+						let setRoutes = store.state.permissionRoutes;
+						
+						router.addRoute(setRoutes)
+					});
+				}
+				
+			} else {
+				router.push('/Login');
+			}
+			await next();
+			await NProgress.done();
+		})();
+		
+	}
+	
+	
 });

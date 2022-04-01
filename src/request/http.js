@@ -3,7 +3,7 @@ import QS from 'qs'; // 引入qs模块，用来序列化post类型的数据
 import store from '@/store';
 import router from "@/router"
 
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 15000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
 // 环境的切换

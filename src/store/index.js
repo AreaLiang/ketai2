@@ -20,16 +20,19 @@ const actions = {
 			ckUserInfoApi(value).then((data) => {
 				if (data.code == "20000") {
 					context.commit('AuthorityNav', data.data.statusCn);
+					context.commit('UserInfo',data);
 				}
 				resolve();
 			})
 		});
+		
 	}
 }
 const mutations = {
 	//保存用户的信息
 	UserInfo(state, value) {
 		state.userInfo = value;
+		console.log("我是vxu的UserInfo:",value)
 		state.token = value.data.token;
 	},
 	// 用户权限控制
@@ -49,7 +52,7 @@ const state = {
 }
 
 const getters = {
-	isCertification: (state) => '正常'
+	isCertification: (state) => {return {...state.userInfo.data}.statusCn}
 }
 
 Vue.use(Vuex)

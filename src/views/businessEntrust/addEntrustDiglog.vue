@@ -6,13 +6,13 @@
 					<el-form :model="addEntrustForm" label-position="top">
 						<el-row :gutter="30">
 							<el-col :span="12">
-								<el-form-item label="委托单位" :label-width="formLabelWidth">
-									<el-input v-model="addEntrustForm.entrustCompany" autocomplete="off"></el-input>
+								<el-form-item label="委托单位" :label-width="formLabelWidth" >
+									<el-input v-model="addEntrustForm.entrustCompany" autocomplete="off" disabled></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
 								<el-form-item label="公司地址" :label-width="formLabelWidth">
-									<el-input v-model="addEntrustForm.adress" autocomplete="off"></el-input>
+									<el-input v-model="addEntrustForm.adress" autocomplete="off" disabled></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -20,12 +20,12 @@
 						<el-row :gutter="30">
 							<el-col :span="12">
 								<el-form-item label="电子邮箱" :label-width="formLabelWidth">
-									<el-input v-model="addEntrustForm.email" autocomplete="off"></el-input>
+									<el-input v-model="addEntrustForm.email" autocomplete="off" disabled></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
 								<el-form-item label="公司座机" :label-width="formLabelWidth">
-									<el-input v-model="addEntrustForm.phone" autocomplete="off"></el-input>
+									<el-input v-model="addEntrustForm.phone" autocomplete="off" disabled></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -54,7 +54,7 @@
 						<el-row>
 							<el-col :span="24">
 								<el-upload
-								  class="upload-demo"
+								  class="upload-entrust"
 								  action="https://jsonplaceholder.typicode.com/posts/"
 								  :on-change="handleChange"
 								  :file-list="fileList">
@@ -70,8 +70,8 @@
 				</el-col>
 			</el-row>
 			<div slot="footer" class="dialog-footer">
-				<!-- <el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button> -->
+			<!-- 	<el-button @click="dialogFormVisible = false">取 消</el-button> -->
+				<el-button type="primary" @click="dialogFormVisible = false">提交委托单</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -82,7 +82,8 @@
 		name: 'addEntrustDiglog', //新建业务委托 弹出框
 		data() {
 			return {
-				dialogFormVisible: true,
+				fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+				dialogFormVisible: false,
 				addEntrustForm: {
 					entrustCompany: '',
 					adress: '',
@@ -97,6 +98,11 @@
 		},
 		components: {
 
+		},
+		methods: {
+			handleChange() {
+				
+			}
 		},
 		mounted() {
 
@@ -120,6 +126,25 @@
 		.pdfShow{
 			background: #ccc;
 			height: 460px;
+		}
+			
+		.upload-entrust{
+			height: 38px;
+			margin: 10px 0;
+			min-width: 328px;
+		}
+		.el-upload-list__item:first-child,
+		.el-upload-list__item{
+			margin: 0;
+		}
+		.el-upload{
+			width: 20%;
+		}
+		.el-upload-list{
+			display: inline-block;
+			width: 70%;
+			vertical-align: middle;
+			margin-left: 20px;
 		}
 	}
 	

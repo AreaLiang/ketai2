@@ -19,44 +19,44 @@
 					<!-- 信息表单 -->
 					<div class="info-box">
 						<el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-position="left"
-							label-width="120px" class="ruleForm">
+							label-width="120px" class="ruleForm" :disabled="certStatus">
 							<el-row :gutter="20">
 								<el-col :span="12">
 									<el-form-item label="客户名称" prop="userName">
-										<el-input v-model.trim="ruleForm.userName"></el-input>
+										<el-input v-model.trim="ruleForm.userName" ></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="联系人" prop="contactName">
-										<el-input v-model.trim="ruleForm.contactName"></el-input>
+										<el-input v-model.trim="ruleForm.contactName" ></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="手机号" prop="cellPhone">
 										<el-input oninput="value=value.replace(/[^0-9.]/g,'')"
-											v-model="ruleForm.cellPhone"></el-input>
+											v-model="ruleForm.cellPhone" ></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="联系电话(座机)">
-										<el-input v-model.number="ruleForm.phone"></el-input>
+										<el-input v-model.number="ruleForm.phone" ></el-input>
 									</el-form-item>
 								</el-col>
 
 								<el-col :span="12">
 									<el-form-item label="电子邮箱" prop="mail">
-										<el-input v-model.trim="ruleForm.mail"></el-input>
+										<el-input v-model.trim="ruleForm.mail" ></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="公司地址" prop="address">
-										<el-input v-model.trim="ruleForm.address"></el-input>
+										<el-input v-model.trim="ruleForm.address" ></el-input>
 									</el-form-item>
 								</el-col>
 
 								<el-col :span="24">
 									<el-form-item label="业务需求" prop="profession">
-										<el-checkbox-group v-model="ruleForm.profession" style="text-align: left;">
+										<el-checkbox-group v-model="ruleForm.profession" style="text-align: left;" >
 											<el-checkbox label="铝型材" name="aluminum"></el-checkbox>
 											<el-checkbox label="陶瓷" name="ceramics"></el-checkbox>
 											<el-checkbox label="汽配" name="autoParts"></el-checkbox>
@@ -71,24 +71,24 @@
 
 								<el-col :span="12">
 									<el-form-item label="安全管理员" prop="securityName">
-										<el-input v-model.trim="ruleForm.securityName"></el-input>
+										<el-input v-model.trim="ruleForm.securityName" ></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="安全员手机号" prop="securityPhone">
-										<el-input v-model.number="ruleForm.securityPhone"></el-input>
+										<el-input v-model.number="ruleForm.securityPhone" ></el-input>
 									</el-form-item>
 								</el-col>
 							</el-row>
 
 						</el-form>
-						<el-col :span="12">
+						<el-col :span="12" v-if="!certStatus">
 							<span>
 								<el-checkbox label="同意" name="type"></el-checkbox><a href="#">认证协议</a>
 							</span>
 						</el-col>
-						<el-col :span="12">
-							<el-button type="primary" @click="submitForm('ruleForm')">提交认证</el-button>
+						<el-col :span="certStatus ? 24:12">
+							<el-button type="primary" @click="submitForm('ruleForm')">{{subCertBtnText}}</el-button>
 						</el-col>
 						
 					</div>
@@ -100,7 +100,7 @@
 				<div class="grid-content bg-purple-light">
 					<div class="bs-license">
 						<p>请上传营业执照文件</p>
-						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='bsUpload'>
+						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='bsUpload' :disabled="certStatus">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -123,7 +123,7 @@
 
 					<div class="sc-license">
 						<p>请上传安全员执照文件</p>
-						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='scUpload'>
+						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='scUpload' :disabled="certStatus">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -145,7 +145,7 @@
 				</div>
 			</el-col>
 		</el-row>
-		<div class="guidelines">
+		<div class="guidelines" v-if="!certStatus">
 			<el-col :span="24">
 				<el-button type="warning" @click="guidelinesVisible = true">
 					<i class="el-icon-edit-outline"></i>认证指引
@@ -167,11 +167,13 @@
 
 <script>
 	import PageHeader from '@/components/PageHeader'
+	import { mapGetters ,mapState } from "vuex"
 	export default {
 		name: 'UserInfo',
 		data() {
 			return {
 				certification: '未认证',
+				certStatus:false,
 				ruleForm: {
 					userName: '',
 					contactName: '',
@@ -263,6 +265,19 @@
 			
 			}
 		},
+		computed: {
+			...mapGetters(["isCertification"]),
+			...mapState({
+				userdata:state => {return {...state.userInfo.data}}
+			}),
+			subCertBtnText(){
+				if(this.certStatus){
+					return '信息更改'
+				}else{
+					return '提交认证'
+				}
+			}
+		},
 		methods: {
 			//表单提交
 			submitForm(formName) {
@@ -305,7 +320,32 @@
 			PageHeader
 		},
 		mounted(){
-			
+			console.log("userdata ：",this.userdata);
+			//是否已认证 状态赋值
+			if(this.isCertification=="正常"){
+				this.certification='正常';
+				this.certStatus=true; //正常则返回 true
+				console.log(this.isCertification+"状态下 ：",this.userdata);
+				let {contact,name,mobile,phone,email,address,business,safetyMobile,safetyOfficer}=this.userdata;
+				console.log(JSON.parse(business))
+				this.ruleForm={
+					userName: name,
+					contactName: contact,
+					cellPhone: mobile,
+					phone: phone,
+					mail: email,
+					address: address,
+					profession: business,
+					securityName: safetyOfficer,
+					securityPhone: safetyMobile
+				}
+				//清除规则验证
+				this.rules={}
+				
+			}else if(this.isCertification=="未认证"){
+				this.certification='未认证';
+				this.certStatus=false;
+			}
 		}
 	}
 </script>
