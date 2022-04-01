@@ -2,10 +2,10 @@
 	<div class="password-change">
 		<!-- 主题内容顶部 -->
 		<PageHeader :breadcrumbItem="$route.meta.headName" />
-		
+
 		<div class="password-box">
 			<el-col :span='10'>
-				<el-form ref="passlist" :model="passlist" label-width="80px" :rules="rules">
+				<el-form :model="passlist" ref="pdForm" label-width="80px" :rules="rules">
 					<el-form-item label="原始密码" prop="ogPass">
 						<el-input type="password" v-model="passlist.ogPass"></el-input>
 					</el-form-item>
@@ -19,7 +19,7 @@
 			</el-col>
 			<el-col :span="24">
 				<div class="op-btn-box">
-					<el-button type="primary">提交密码更改</el-button>
+					<el-button type="primary" @click="changeFun('pdForm')">提交密码更改</el-button>
 				</div>
 			</el-col>
 		</div>
@@ -28,6 +28,12 @@
 
 <script>
 	import PageHeader from '@/components/PageHeader'
+	import NProgress from 'nprogress' // 引入头部进度条
+	import { removeSessionStorage } from "@/utils"
+	
+	import {
+		pdChangeApi
+	} from "@/request/api"
 	export default {
 		name: 'PdChange',
 		data() {
@@ -36,7 +42,7 @@
 					callback(new Error('请输入密码'));
 				} else {
 					if (this.passlist.checkPass !== '') {
-						this.$refs.passlist.validateField('checkPass');
+						this.$refs.pdForm.validateField('checkPass');
 					}
 					callback();
 				}
@@ -52,9 +58,9 @@
 			};
 			return {
 				passlist: {
-					ogPass: '',
-					newPass: '',
-					checkPass: ''
+					ogPass: '',//原密码
+					newPass: '',//新密码
+					checkPass: ''//再次输入密码
 				},
 				rules: {
 					newPass: [{
@@ -78,8 +84,47 @@
 		components: {
 			PageHeader
 		},
+		methods: {
+			changeFun(formName) {
+				this.$refs[formName].validate((valid) => {
+					let {ogPass,newPass}=this.passlist;
+					
+					if (valid) {
+						//调用修改密码接口
+						pdChangeApi({
+							oldpwd: ogPass,
+							pwd: newPass
+						}).then((data) => {
+							if(data.code=="20000"){
+								this.$message.success("修改成功,3秒后将重新登录");
+								NProgress.start() //开启进度条
+								//进度条 的进度设置
+								let time=0;
+								let np=setInterval(()=>{
+									time=time+0.2;
+									NProgress.set(0.3+time);
+								},1000)
+								
+								//修改成功后3秒自动专题登陆页面
+								setTimeout(()=>{
+									removeSessionStorage('token');//删除缓存
+									NProgress.done();
+									clearInterval(np);
+								},3000)
+							}else{
+								this.$message.error(data.msg);
+								
+								//清空表单
+								this.$refs[formName].resetFields()
+							}
+						}).catch((e) => "未知异常错误，请联系客服");
+					}
+					
+				});
+			}
+		},
 		mounted() {
-		
+
 		}
 	}
 </script>

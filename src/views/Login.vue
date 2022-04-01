@@ -177,13 +177,22 @@
 						let code = data.code; //获取状态吗
 						//后台数据和用户输入的信息做比较
 						if (code == "20000") {
-							console.log("登录成功：", {
-								...data
-							});
+							console.log("登录成功：", {...data});
+							
 							let token = data.data.token;
+							let status=data.data.customer.statusCn;
+							
 							// 存储数据 存入vuex 
-							await this.$store.commit('UserInfo', data);
+							await this.$store.commit('Login', data);
 							await sessionStorage.setItem('token', token);
+							
+							//导航的权限控制
+							await this.$store.commit('AuthorityNav',status);
+							let setRoutes = await this.$store.state.permissionRoutes;
+							//添加导航路由
+							await this.$router.addRoute(setRoutes);
+							
+							//转跳到用户信息页面
 							await this.$router.push('/Home/userinfo');
 							
 						} else {
@@ -249,12 +258,12 @@
 			//表单重置
 			reset() {
 				this.userInfo.account = '',
-					this.userInfo.password = '',
-					this.userInfo.passwordAgain = '',
-					this.userInfo.connectName = '',
-					this.userInfo.connectPhone = '',
-					this.userInfo.captcha = '',
-					this.userInfo.phoneCode = ''
+				this.userInfo.password = '',
+				this.userInfo.passwordAgain = '',
+				this.userInfo.connectName = '',
+				this.userInfo.connectPhone = '',
+				this.userInfo.captcha = '',
+				this.userInfo.phoneCode = ''
 			},
 			//更改注册验证码图片
 			changeCaptcha() {

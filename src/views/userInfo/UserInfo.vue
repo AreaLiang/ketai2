@@ -9,10 +9,10 @@
 					<div class="head-tip">
 						<el-row :gutter="20">
 							<el-col :span="8">
-								<p class='mes white'>{{certification}}</p>
+								<p class='mes white' :class="{normal:certStatus}">{{certification}}</p>
 							</el-col>
-							<el-col :span="16">
-								<p class='mes red'>请耐心等待工作人员认证</p>
+							<el-col :span="16" v-if="!certStatus">
+								<p class='mes red' >请耐心等待工作人员认证</p>
 							</el-col>
 						</el-row>
 					</div>
@@ -168,6 +168,8 @@
 <script>
 	import PageHeader from '@/components/PageHeader'
 	import { mapGetters ,mapState } from "vuex"
+	import { userformInfo } from "@/utils/userInfo"
+	
 	export default {
 		name: 'UserInfo',
 		data() {
@@ -268,7 +270,7 @@
 		computed: {
 			...mapGetters(["isCertification"]),
 			...mapState({
-				userdata:state => {return {...state.userInfo.data}}
+				userdata:state => {return {...state.userInfo}}
 			}),
 			subCertBtnText(){
 				if(this.certStatus){
@@ -320,25 +322,29 @@
 			PageHeader
 		},
 		mounted(){
-			console.log("userdata ：",this.userdata);
+			
 			//是否已认证 状态赋值
 			if(this.isCertification=="正常"){
 				this.certification='正常';
 				this.certStatus=true; //正常则返回 true
-				console.log(this.isCertification+"状态下 ：",this.userdata);
-				let {contact,name,mobile,phone,email,address,business,safetyMobile,safetyOfficer}=this.userdata;
-				console.log(JSON.parse(business))
-				this.ruleForm={
-					userName: name,
-					contactName: contact,
-					cellPhone: mobile,
-					phone: phone,
-					mail: email,
-					address: address,
-					profession: business,
-					securityName: safetyOfficer,
-					securityPhone: safetyMobile
-				}
+				console.log(this.isCertification+",状态下 ：",this.userdata);
+				
+				// let {contact,name,mobile,phone,email,address,business,safetyMobile,safetyOfficer}=this.userdata;
+				// console.log(JSON.parse(business))
+				// this.ruleForm={
+				// 	userName: name,
+				// 	contactName: contact,
+				// 	cellPhone: mobile,
+				// 	phone: phone,
+				// 	mail: email,
+				// 	address: address,
+				// 	profession: business,
+				// 	securityName: safetyOfficer,
+				// 	securityPhone: safetyMobile
+				// 
+				
+				this.ruleForm=userformInfo(this.userdata);
+				
 				//清除规则验证
 				this.rules={}
 				
@@ -354,12 +360,17 @@
 	.head-tip .mes {
 		background: #da9628;
 		padding: 2px 0;
+		
 	}
+	.head-tip .normal{
+		background:#27a9e3;
+	}
+	
 
 	.red {
 		color: red;
 	}
-
+	
 	.white {
 		color: white;
 	}

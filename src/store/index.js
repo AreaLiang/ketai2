@@ -29,16 +29,20 @@ const actions = {
 	}
 }
 const mutations = {
+	//登录后保存用户信息
+	Login(state, value){
+		state.userInfo = value.data.customer;
+		state.token = value.data.token;
+	},
 	//保存用户的信息
 	UserInfo(state, value) {
-		state.userInfo = value;
-		console.log("我是vxu的UserInfo:",value)
-		state.token = value.data.token;
+		state.userInfo = value.data;
+		console.log("我是vxu的UserInfo:",value.data)
 	},
 	// 用户权限控制
 	AuthorityNav(state, useStatus) {
 		let data = asyncRouter; //获取所有动态路由
-
+		
 		//过滤后的动态导航信息
 		let newRouter = new navRouter(data, useStatus);
 		state.permissionRoutes = newRouter.call();
@@ -52,7 +56,7 @@ const state = {
 }
 
 const getters = {
-	isCertification: (state) => {return {...state.userInfo.data}.statusCn}
+	isCertification: (state) => {return {...state.userInfo}.statusCn}
 }
 
 Vue.use(Vuex)
