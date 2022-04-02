@@ -30,7 +30,7 @@ export function userformInfo(data) {
 }
 
 //把后台传回来的业务需求转义成中文
-function changeProfessionArray(value) {
+export function changeProfessionArray(value) {
 	let array = [];
 	let chArray = {
 		dianzi: "电子",

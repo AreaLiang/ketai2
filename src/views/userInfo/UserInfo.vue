@@ -112,7 +112,6 @@
 <script>
 	import PageHeader from '@/components/PageHeader'
 	import { mapGetters ,mapState } from "vuex"
-	// import { userformInfo } from "@/utils/userInfo"
 	import formUserInfo from "./components/formUserInfo"
 	import diglogUserInfoCg from "./components/diglogUserInfoCg"
 	

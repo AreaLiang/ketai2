@@ -27,7 +27,7 @@ axios.interceptors.request.use(
 		const token = sessionStorage.getItem('token');
 		
 		if(token){
-			token && (config.headers.Authorization = `Bearer ${token}`);
+			// token && (config.headers.Authorization = `Bearer ${token}`);
 			token && (config.headers.Authorization = token);
 			
 		}else{
@@ -66,6 +66,18 @@ export function get(url, params) {
 export function post(url, params) {
 	return new Promise((resolve, reject) => {
 		axios.post(url, QS.stringify(params))
+			.then(res => {
+				resolve(res.data);
+			})
+			.catch(err => {
+				reject(err.data)
+			})
+	});
+}
+
+export function formDatapost(url, params) {
+	return new Promise((resolve, reject) => {
+		axios.post(url, params)
 			.then(res => {
 				resolve(res.data);
 			})
