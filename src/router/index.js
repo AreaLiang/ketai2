@@ -50,24 +50,24 @@ const router = new VueRouter({
 					path: 'pdfView',
 					component: () => import('@/components/PdfView')
 				},
-				// {
-				// 	name: 'businessEntrust',
-				// 	path: 'businessEntrust',
-				// 	meta: {
-				// 		isAuthority: "正常",
-				// 		headName: ['委托单管理', '/', ' 详细业务']
-				// 	},
-				// 	component: () => import('@/views/businessEntrust/bsEntrust')
-				// },
-				// {
-				// 	name: 'mgCertificate',
-				// 	path: 'mgCertificate',
-				// 	meta: {
-				// 		isAuthority: "正常",
-				// 		headName: ['证书管理', '/', ' 详情']
-				// 	},
-				// 	component: () => import('@/views/certificateManagement/mgCertificate')
-				// }
+				{
+					name: 'businessEntrust',
+					path: 'businessEntrust',
+					meta: {
+						isAuthority: "正常",
+						headName: ['委托单管理', '/', ' 详细业务']
+					},
+					component: () => import('@/views/businessEntrust/bsEntrust')
+				},
+				{
+					name: 'mgCertificate',
+					path: 'mgCertificate',
+					meta: {
+						isAuthority: "正常",
+						headName: ['证书管理', '/', ' 详情']
+					},
+					component: () => import('@/views/certificateManagement/mgCertificate')
+				}
 				// {
 				// 	path: "404",
 				// 	component: () => import('@/components/error-page/error404')

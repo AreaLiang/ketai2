@@ -57,6 +57,7 @@ const state = {
 
 const getters = {
 	isCertification: (state) => {return {...state.userInfo}.statusCn}
+	// isCertification: (state) => '正常'
 }
 
 Vue.use(Vuex)

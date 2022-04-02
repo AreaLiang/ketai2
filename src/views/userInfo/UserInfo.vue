@@ -18,77 +18,17 @@
 					</div>
 					<!-- 信息表单 -->
 					<div class="info-box">
-						<el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-position="left"
-							label-width="120px" class="ruleForm" :disabled="certStatus">
-							<el-row :gutter="20">
-								<el-col :span="12">
-									<el-form-item label="客户名称" prop="userName">
-										<el-input v-model.trim="ruleForm.userName" ></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :span="12">
-									<el-form-item label="联系人" prop="contactName">
-										<el-input v-model.trim="ruleForm.contactName" ></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :span="12">
-									<el-form-item label="手机号" prop="cellPhone">
-										<el-input oninput="value=value.replace(/[^0-9.]/g,'')"
-											v-model="ruleForm.cellPhone" ></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :span="12">
-									<el-form-item label="联系电话(座机)">
-										<el-input v-model.number="ruleForm.phone" ></el-input>
-									</el-form-item>
-								</el-col>
-
-								<el-col :span="12">
-									<el-form-item label="电子邮箱" prop="mail">
-										<el-input v-model.trim="ruleForm.mail" ></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :span="12">
-									<el-form-item label="公司地址" prop="address">
-										<el-input v-model.trim="ruleForm.address" ></el-input>
-									</el-form-item>
-								</el-col>
-
-								<el-col :span="24">
-									<el-form-item label="业务需求" prop="profession">
-										<el-checkbox-group v-model="ruleForm.profession" style="text-align: left;" >
-											<el-checkbox label="铝型材" name="aluminum"></el-checkbox>
-											<el-checkbox label="陶瓷" name="ceramics"></el-checkbox>
-											<el-checkbox label="汽配" name="autoParts"></el-checkbox>
-											<el-checkbox label="电子" name="electronic"></el-checkbox>
-											<el-checkbox label="危化品" name="hazardous"></el-checkbox>
-											<el-checkbox label="水泥" name="cement"></el-checkbox>
-											<el-checkbox label="印染" name="printing"></el-checkbox>
-											<el-checkbox label="其他" name="other"></el-checkbox>
-										</el-checkbox-group>
-									</el-form-item>
-								</el-col>
-
-								<el-col :span="12">
-									<el-form-item label="安全管理员" prop="securityName">
-										<el-input v-model.trim="ruleForm.securityName" ></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :span="12">
-									<el-form-item label="安全员手机号" prop="securityPhone">
-										<el-input v-model.number="ruleForm.securityPhone" ></el-input>
-									</el-form-item>
-								</el-col>
-							</el-row>
-
-						</el-form>
+						<!-- 用户信息表单组件 -->
+						<formUserInfo :status="certStatus" :userdata="userdata"></formUserInfo>
+						
 						<el-col :span="12" v-if="!certStatus">
 							<span>
 								<el-checkbox label="同意" name="type"></el-checkbox><a href="#">认证协议</a>
 							</span>
 						</el-col>
 						<el-col :span="certStatus ? 24:12">
-							<el-button type="primary" @click="submitForm('ruleForm')">{{subCertBtnText}}</el-button>
+							<el-button type="primary" v-if="!certStatus" @click="submitForm('ruleForm')">提交认证</el-button>
+							<el-button type="primary" v-if="certStatus" @click="changeUserInfoBtn()">信息更改</el-button>
 						</el-col>
 						
 					</div>
@@ -145,6 +85,10 @@
 				</div>
 			</el-col>
 		</el-row>
+		
+		<!-- 用户信息修改弹窗 -->
+		<diglogUserInfoCg ref="diglogUserInfoCg"/>
+		
 		<div class="guidelines" v-if="!certStatus">
 			<el-col :span="24">
 				<el-button type="warning" @click="guidelinesVisible = true">
@@ -168,7 +112,9 @@
 <script>
 	import PageHeader from '@/components/PageHeader'
 	import { mapGetters ,mapState } from "vuex"
-	import { userformInfo } from "@/utils/userInfo"
+	// import { userformInfo } from "@/utils/userInfo"
+	import formUserInfo from "./components/formUserInfo"
+	import diglogUserInfoCg from "./components/diglogUserInfoCg"
 	
 	export default {
 		name: 'UserInfo',
@@ -176,84 +122,6 @@
 			return {
 				certification: '未认证',
 				certStatus:false,
-				ruleForm: {
-					userName: '',
-					contactName: '',
-					cellPhone: '',
-					phone: '',
-					mail: '',
-					address: '',
-					profession: [],
-					securityName: '',
-					securityPhone: ''
-				},
-				rules: {
-					userName: [{
-							required: true,
-							message: '请输入名称',
-							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 6,
-							message: '长度在 2 到 6 个字符',
-							trigger: 'blur'
-						}
-					],
-					contactName: [{
-						required: true,
-						message: '请输入联系人',
-						trigger: 'blur'
-					}],
-					cellPhone: [{
-							required: true,
-							message: '请输入手机号',
-							trigger: 'blur'
-						},
-						{
-							min: 11,
-							max: 11,
-							message: '请输入11位手机号',
-							trigger: 'blur'
-						}
-					],
-					profession: [{
-						type: 'array',
-						required: true,
-						message: '请至少选择业务',
-						trigger: 'change'
-					}],
-					type: [{
-						type: 'array',
-						required: true,
-						message: '请至少选择一个活动性质',
-						trigger: 'blur'
-					}],
-					mail: [{
-						required: true,
-						message: '请输入电子邮箱',
-						trigger: 'blur'
-					}, {
-						type: 'email',
-						message: '邮箱格式不对',
-						trigger: 'blur'
-					}],
-					address: [{
-						required: true,
-						message: '请填写公司地址',
-						trigger: 'blur'
-					}],
-					securityName: [{
-						required: true,
-						message: '请输入安全管理员名称',
-						trigger: 'blur'
-					}],
-					securityPhone: [{
-						required: true,
-						message: '请输入安全员手机号',
-						trigger: 'blur'
-					}]
-				},
 				bs_dialogImageUrl: '',//放大照片的链接
 				bs_dialogVisible: false,//放大查看照片的会话框
 				bs_disabled: false, //是否显示上传照片中的放大、删除操作按钮
@@ -263,22 +131,13 @@
 				sc_disabled: false,//是否显示上传照片中的放大、删除操作按钮
 				
 				guidelinesVisible:false,//打开 认证指引 开关
-				
-			
 			}
 		},
 		computed: {
 			...mapGetters(["isCertification"]),
 			...mapState({
 				userdata:state => {return {...state.userInfo}}
-			}),
-			subCertBtnText(){
-				if(this.certStatus){
-					return '信息更改'
-				}else{
-					return '提交认证'
-				}
-			}
+			})
 		},
 		methods: {
 			//表单提交
@@ -290,6 +149,10 @@
 						})
 					} else false
 				});
+			},
+			//信息更改 按钮事件
+			changeUserInfoBtn(){
+				this.$refs["diglogUserInfoCg"].dialogFormVisible=true;
 			},
 			//文件上传删除功能
 			handleRemove(file,name) {
@@ -319,7 +182,9 @@
 			}
 		},
 		components: {
-			PageHeader
+			PageHeader,
+			formUserInfo,
+			diglogUserInfoCg
 		},
 		mounted(){
 			
@@ -329,21 +194,7 @@
 				this.certStatus=true; //正常则返回 true
 				console.log(this.isCertification+",状态下 ：",this.userdata);
 				
-				// let {contact,name,mobile,phone,email,address,business,safetyMobile,safetyOfficer}=this.userdata;
-				// console.log(JSON.parse(business))
-				// this.ruleForm={
-				// 	userName: name,
-				// 	contactName: contact,
-				// 	cellPhone: mobile,
-				// 	phone: phone,
-				// 	mail: email,
-				// 	address: address,
-				// 	profession: business,
-				// 	securityName: safetyOfficer,
-				// 	securityPhone: safetyMobile
-				// 
-				
-				this.ruleForm=userformInfo(this.userdata);
+				// this.ruleForm=userformInfo(this.userdata);
 				
 				//清除规则验证
 				this.rules={}
@@ -366,7 +217,6 @@
 		background:#27a9e3;
 	}
 	
-
 	.red {
 		color: red;
 	}
