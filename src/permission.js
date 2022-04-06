@@ -31,7 +31,7 @@ router.beforeEach(async (to, from, next) => {
 						//从vuex中获取过滤后的路由表
 						let setRoutes = store.state.permissionRoutes;
 						
-						router.addRoute(setRoutes)
+						// router.addRoute(setRoutes)
 					});
 				}
 				

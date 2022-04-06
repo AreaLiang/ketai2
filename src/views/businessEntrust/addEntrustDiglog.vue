@@ -53,12 +53,10 @@
 						
 						<el-row>
 							<el-col :span="24">
-								<el-upload
-								  class="upload-entrust"
-								  action="https://jsonplaceholder.typicode.com/posts/"
-								  :on-change="handleChange"
-								  :file-list="fileList">
-								  <el-button size="small" type="primary">点击上传</el-button>
+								<el-upload class="upload-UserInfoCg" ref="upload" action="#" 
+									:limit="1" accept=".jpg,.jpeg,.png" :before-upload="beforeLicenseUpload"
+									:http-request="uploadLicense">
+									<el-button slot="trigger" size="small" type="primary">点击上传</el-button>
 								</el-upload>
 							</el-col>
 						</el-row>
@@ -71,18 +69,19 @@
 			</el-row>
 			<div slot="footer" class="dialog-footer">
 			<!-- 	<el-button @click="dialogFormVisible = false">取 消</el-button> -->
-				<el-button type="primary" @click="dialogFormVisible = false">提交委托单</el-button>
+				<el-button type="primary" @click="addEntrust()">提交委托单</el-button>
 			</div>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+	import { addEntrustOrderApi } from "@/request/api.js"
+	import {getBase64} from "@/utils"
 	export default {
 		name: 'addEntrustDiglog', //新建业务委托 弹出框
 		data() {
 			return {
-				fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
 				dialogFormVisible: false,
 				addEntrustForm: {
 					entrustCompany: '',
@@ -102,6 +101,49 @@
 		methods: {
 			handleChange() {
 				
+			},
+			addEntrust(){
+				this.dialogFormVisible = false;
+				
+				let {contact,contactCellphone,remark}=this.addEntrustForm;
+				
+				// addEntrustOrderApi({
+				// 	contact:'',
+				// 	mobile:'',
+				// 	remark:'',
+				// 	wordFile:'',
+				// 	orderFile:''
+				// }).then((data)=>{
+				// 	console.log("新建委托单",data)
+				// });
+			},
+			//上传证件文件前，对文件类型做判断
+			beforeLicenseUpload(file) {
+				const isJEPG = file.type === 'image/jpeg';
+				const isJPG = file.type === 'image/jpg';
+				const isPNG = file.type === 'image/png';
+			
+				if (isJEPG || isJPG || isPNG) {
+					return true
+				} else {
+					this.$message.error('上传头像图片只能是 JPG 格式!');
+					return false
+				}
+			},
+			uploadLicense(res){
+				//照片转base64格式
+				getBase64(res.file).then((data)=>{
+					this.licenseUrl=data;
+				});
+					
+				let params = new FormData();
+				params.append('file', res.file);
+				
+				//调用接口上传证件
+				addEntrustOrderApi(params).then((data) => {
+					console.log(data)
+					// this.certFile = data.data.certFile;
+				})
 			}
 		},
 		mounted() {

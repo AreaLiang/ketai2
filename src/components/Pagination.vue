@@ -19,8 +19,8 @@
 		},
 		methods:{
 			//点击页码触发事件
-			pageChange(e){
-				console.log(e)
+			pageChange(page){
+				this.$bus.$emit('pageNumber',page)
 			}
 		},
 		components: {
