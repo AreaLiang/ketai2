@@ -13,7 +13,7 @@
 				</el-button>
 				<slot>
 					<ul style="padding: 0;">
-						<li style="list-style: none;cursor: pointer;">
+						<li style="list-style: none;cursor: pointer;" @click="signou()">
 							<span class="iconfont icon-exit" style="padding: 0 10px;"></span>
 							<span>退出</span>
 						</li>
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+	import { signoutApi } from "@/request/api"
 	export default {
 		name: 'HomeHead',
 		data() {
@@ -34,6 +35,21 @@
 		},
 		components: {
 
+		},
+		methods:{
+			signou(){
+				signoutApi({}).then((data)=>{
+					console.log("登出",data)
+					if (data.code=="20000") {
+						this.$message.success("退出成功");
+						setTimeout(()=> {
+							this.$router.push("/Login")
+						}, 1000);
+					}else{
+						this.$message.error("退出失败");
+					}
+				});
+			}
 		},
 		mounted(){
 			

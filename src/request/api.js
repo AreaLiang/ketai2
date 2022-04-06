@@ -8,9 +8,13 @@ export const registerApi = p => post(baseUrl+'/register', p);//注册Api
 export const captchaApi = p => baseUrl+'/captcha?'+ Math.random();//图形验证码Api
 export const phoneCodeApi = p => post(baseUrl+'/sendSms', p);//注册时候手机验证码Api
 
+//主界面头部 
+export const signoutApi = p => post(baseUrl+'/logout', p);//退出登录
+
 //用户信息页面
 export const ckUserInfoApi = p => post(baseUrl+'/getCurrentCustomerInfo', p);//验证用户信息
-export const uploadCertFileApi = p => formDatapost(baseUrl+'/uploadCertificateFile', p);//用户 信息修改的证件上传
+export const cgUserInfoApi = p => post(baseUrl+'/modifyCustomerData', p);//修改客户信息
+export const uploadCertFileApi = p => formDatapost(baseUrl+'/uploadCertificateFile', p);//证件上传
 
 //密码更改页面
 export const pdChangeApi = p => post(baseUrl+'/updatepwd', p);//用户 修改密码

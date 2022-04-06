@@ -19,7 +19,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="联系电话(座机)">
+					<el-form-item label="联系电话(座机)" prop="phone">
 						<el-input v-model.number="ruleForm.phone"></el-input>
 					</el-form-item>
 				</el-col>
@@ -67,6 +67,7 @@
 
 <script>
 	import { userformInfo } from "@/utils/userInfo"
+	import { getBase64 } from "@/utils"
 	export default {
 		name: 'formUserInfo', //用户信息表单
 		data() {
@@ -87,12 +88,6 @@
 					userName: [{
 							required: true,
 							message: '请输入名称',
-							trigger: 'blur'
-						},
-						{
-							min: 2,
-							max: 6,
-							message: '长度在 2 到 6 个字符',
 							trigger: 'blur'
 						}
 					],
@@ -139,6 +134,11 @@
 						message: '请填写公司地址',
 						trigger: 'blur'
 					}],
+					phone:[{
+						required: true,
+						message: '请填写公司电话',
+						trigger: 'blur'
+					}],	
 					securityName: [{
 						required: true,
 						message: '请输入安全管理员名称',
@@ -153,7 +153,15 @@
 			}
 		},
 		methods: {
-			
+			submit(){
+				this.$refs['ruleForm'].validate((valid) => {
+					if (valid) {
+						console.log({
+							...this.ruleForm
+						})
+					} else false
+				});
+			}
 		},
 		computed: {
 

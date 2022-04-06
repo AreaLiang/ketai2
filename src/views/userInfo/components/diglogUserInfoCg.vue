@@ -5,15 +5,16 @@
 			<el-row :gutter="20">
 				<el-col :span="14">
 					<!-- 表单 -->
-					<formUserInfo :userdata="userdata" :dialogFormVisible="dialogFormVisible"></formUserInfo>
+					<formUserInfo :userdata="userdata" :dialogFormVisible="dialogFormVisible" ref="modifyUerInfo">
+					</formUserInfo>
 					<div class="license-box">
 						<div class="business-license">
 							<span>营业执照</span>
 						</div>
 						<div class="business-license">
-							<el-upload class="upload-UserInfoCg" ref="upload" action="#" 
-								:file-list="fileList" :limit="1" 
-								accept=".jpg,.jpeg,.png" :before-upload="beforeLicenseUpload" :http-request="uploadLicense">
+							<el-upload class="upload-UserInfoCg" ref="upload" action="#" :file-list="fileList"
+								:limit="1" accept=".jpg,.jpeg,.png" :before-upload="beforeLicenseUpload"
+								:http-request="uploadLicense">
 								<el-button slot="trigger" size="small" type="primary">选择营业执照文件</el-button>
 							</el-upload>
 						</div>
@@ -23,7 +24,9 @@
 					</div>
 				</el-col>
 				<el-col :span="10">
-
+					<div class="lc-img-box">
+						<img :src="licenseUrl" class="licensePic" alt="">
+					</div>
 				</el-col>
 			</el-row>
 		</el-dialog>
@@ -34,8 +37,9 @@
 	import formUserInfo from "./formUserInfo"
 	import QS from 'qs'
 	import {uploadCertFileApi,cgUserInfoApi} from "@/request/api"
-	import { changeProfessionArray } from "@/utils/userInfo"
-	
+	import {getBase64} from "@/utils"
+	// import { changeProfessionArray } from "@/utils/userInfo"
+
 	import {
 		mapGetters,
 		mapState
@@ -44,11 +48,10 @@
 		name: 'diglogUserInfoCg', //信息修改 的弹窗
 		data() {
 			return {
-				dialogFormVisible: true,
+				dialogFormVisible: false,
 				fileList: [],
-				uploadUrl: '',
-				token: '',
-				certFile:''
+				certFile: '',
+				licenseUrl:''
 			}
 		},
 		components: {
@@ -67,14 +70,17 @@
 		methods: {
 			//证件照上传
 			uploadLicense(res) {
-				console.log("params:", res);
 
+				//照片转base64格式
+				getBase64(res.file).then((data)=>{
+					this.licenseUrl=data;
+				});
+					
 				let params = new FormData();
-				params.append('file', res.file)
+				params.append('file', res.file);
 				//调用接口上传证件
 				uploadCertFileApi(params).then((data) => {
-					console.log(data.data.certFile);
-					this.certFile=data.data.certFile;
+					this.certFile = data.data.certFile;
 				})
 			},
 			//上传证件文件前，对文件类型做判断
@@ -91,34 +97,47 @@
 				}
 			},
 			//提交 修改用户信息
-			submitCgUserInfo(){
-				
+			submitCgUserInfo() {
+
 				//解构
-				let {address,contact,phone,mobile,email,business,name}=this.userdata;
+				let userInfoFrom = this.$refs['modifyUerInfo'].ruleForm; //从表单组件中获取用户信息
+				let {
+					address,
+					contactName,
+					phone,
+					cellPhone,
+					mail,
+					profession,
+					userName
+				} = {
+					...userInfoFrom
+				};
 				//整理需要发送的用户信息
-				let data={
-					name:name,
-					contact:contact,
-					phone:phone,
-					address:address,
-					email:email,
-					mobile:mobile,
-					certificate:this.certFile,
-					business:changeProfessionArray(JSON.parse(business))
+				let data = {
+					name: userName,
+					contact: contactName,
+					phone: phone,
+					address: address,
+					email: mail,
+					mobile: cellPhone,
+					certificate: this.certFile,
+					business: JSON.stringify(profession)
 				}
-				console.log("66，",data)
-				// cgUserInfoApi().then((data)=>{
-					
-				// })
-				
+
+				console.log("修改信息：", data)
+				cgUserInfoApi(data).then((data) => {
+					if (data.code == "20000") {
+						this.$message.success("修改成功");
+						this.dialogFormVisible=false;
+					} else {
+						this.$message.success("修改失败");
+					}
+				})
+
 			}
 		},
 		mounted() {
-			this.uploadUrl = uploadCertFileApi;
-			let token = sessionStorage.getItem('token')
-			this.token = {
-				Authorization: token
-			}
+
 		}
 	}
 </script>
@@ -138,6 +157,15 @@
 		.userInfoCg-diglog {
 			width: 60%;
 			min-width: 900px;
+		}
+		
+		.licensePic{
+			width: 100%;
+		}
+		
+		.lc-img-box{
+			height: 450px;
+			background-color: #b5b5b5;
 		}
 
 		//上传按钮 的样式
