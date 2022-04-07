@@ -92,7 +92,7 @@
 				if (isJEPG || isJPG || isPNG) {
 					return true
 				} else {
-					this.$message.error('上传头像图片只能是 JPG 格式!');
+					this.$message.error('证件只能是上传图片格式!');
 					return false
 				}
 			},

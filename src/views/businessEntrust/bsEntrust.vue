@@ -37,6 +37,10 @@
 							</el-button>
 							<el-button type="primary" v-if="scope.row.opBtnList.downCertBtn" size="small">下载证书
 							</el-button>
+							<el-button type="primary" v-if="scope.row.opBtnList.acceptanceListBtn" size="small">上传验收单
+							</el-button>
+							<el-button type="primary" v-if="scope.row.opBtnList.resubmitBtn" size="small">重新提交
+							</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -61,6 +65,7 @@
 	} from "@/request/api"
 	import {timestamp} from '@/utils'
 	import {cgBsEntrustData} from '@/utils/bsEntrust'
+	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {
 		name: 'bsEntrust', //业务委托
@@ -68,7 +73,7 @@
 			return {
 				tableData: [],
 				dataTotal: 0, //数据一共有多少条
-				pageSize:10,//每页显示多少条数据
+				pageSize:8,//每页显示多少条数据
 			}
 		},
 		components: {
@@ -85,6 +90,7 @@
 			},
 			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
 			PaginationClick(page,pageSize){
+				NProgress.start() //开启进度条
 				bsEntrustmentApi({
 					page:page,
 					pageSize:pageSize
@@ -93,9 +99,8 @@
 					if(res.code=="20000"){
 						this.dataTotal=data.totalElements;
 					}
-					
-					this.tableData=cgBsEntrustData(data);
-					// JSON.parse(JSON.stringify(cgBsEntrustData(data)))
+					this.tableData=cgBsEntrustData(data);//赋值数据渲染
+					NProgress.done();//结束进度条
 					// console.log("业务委托：",data)
 				});
 			}

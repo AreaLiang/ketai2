@@ -44,7 +44,7 @@
 						this.$message.success("退出成功");
 						setTimeout(()=> {
 							this.$router.push("/Login")
-						}, 1000);
+						}, 500);
 					}else{
 						this.$message.error("退出失败");
 					}

@@ -1,13 +1,13 @@
 <template>
 	<div class="entrustDiglog">
-		<el-dialog title="业务委托单" :visible.sync="dialogFormVisible" :modal-append-to-body="false"  custom-class="entrust-diglog">
-			<el-row :gutter="30">
+		<el-dialog title="业务委托单" :visible.sync="dialogFormVisible"  :modal-append-to-body="false"  custom-class="entrust-diglog">
+			<el-row :gutter="30" v-loading="loading" >
 				<el-col :span="12">
-					<el-form :model="addEntrustForm" label-position="top">
+					<el-form :model="addEntrustForm" label-position="top" ref="addEntrustForm" :rules="rules">
 						<el-row :gutter="30">
 							<el-col :span="12">
 								<el-form-item label="委托单位" :label-width="formLabelWidth" >
-									<el-input v-model="addEntrustForm.entrustCompany" autocomplete="off" disabled></el-input>
+									<el-input v-model="addEntrustForm.name" autocomplete="off" disabled></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
@@ -32,12 +32,12 @@
 					
 						<el-row :gutter="30">
 							<el-col :span="12">
-								<el-form-item label="联系人 " :label-width="formLabelWidth">
+								<el-form-item label="联系人 " :label-width="formLabelWidth" prop="contact">
 									<el-input v-model="addEntrustForm.contact" autocomplete="off"></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
-								<el-form-item label="联系手机号" :label-width="formLabelWidth">
+								<el-form-item label="联系手机号" :label-width="formLabelWidth" prop="contactCellphone">
 									<el-input v-model="addEntrustForm.contactCellphone" autocomplete="off"></el-input>
 								</el-form-item>
 							</el-col>
@@ -53,10 +53,10 @@
 						
 						<el-row>
 							<el-col :span="24">
-								<el-upload class="upload-UserInfoCg" ref="upload" action="#" 
-									:limit="1" accept=".jpg,.jpeg,.png" :before-upload="beforeLicenseUpload"
-									:http-request="uploadLicense">
-									<el-button slot="trigger" size="small" type="primary">点击上传</el-button>
+								<el-upload  class="upload-UserInfoCg" ref="upload" action="#" 
+									:limit="1" accept=".doc,.docx,.pdf" :before-upload="beforeLicenseUpload"
+									:http-request="uploadLicense" style="margin: 10px 0;">
+									<el-button slot="trigger" size="small" type="primary">委托文件</el-button>
 								</el-upload>
 							</el-col>
 						</el-row>
@@ -76,15 +76,16 @@
 </template>
 
 <script>
-	import { addEntrustOrderApi } from "@/request/api.js"
-	import {getBase64} from "@/utils"
+	import { addEntrustOrderApi , uploadEntrustOrderApi} from "@/request/api.js"
+	import {mapState} from 'vuex'
+	
 	export default {
 		name: 'addEntrustDiglog', //新建业务委托 弹出框
 		data() {
 			return {
 				dialogFormVisible: false,
 				addEntrustForm: {
-					entrustCompany: '',
+					name: '',
 					adress: '',
 					email: '',
 					phone: '',
@@ -92,63 +93,120 @@
 					contactCellphone: '',
 					remark: ''
 				},
-				formLabelWidth: '120px'
+				rules:{
+					contact: [{
+							required: true,
+							message: '请输入联系人',
+							trigger: 'blur'
+						}
+					],
+					contactCellphone: [{
+						required: true,
+						message: '请输入联系手机号',
+						trigger: 'blur'
+					}]
+				},
+				formLabelWidth: '120px',
+				wordFile:'',
+				ispdf:false,
+				loading: false
 			}
 		},
+		computed: {
+			...mapState({
+				userdata: state => {
+					return {
+						...state.userInfo
+					}
+				}
+			})
+		},
 		components: {
-
+			
 		},
 		methods: {
 			handleChange() {
 				
 			},
 			addEntrust(){
-				this.dialogFormVisible = false;
-				
-				let {contact,contactCellphone,remark}=this.addEntrustForm;
-				
-				// addEntrustOrderApi({
-				// 	contact:'',
-				// 	mobile:'',
-				// 	remark:'',
-				// 	wordFile:'',
-				// 	orderFile:''
-				// }).then((data)=>{
-				// 	console.log("新建委托单",data)
-				// });
+				this.$refs['addEntrustForm'].validate((valid) => {
+					if (valid) {//校验是否信息为空
+						if(this.wordFile!=''){//校验是否上传委托文件
+							let {contact,contactCellphone,remark}=this.addEntrustForm;
+							let postData={
+									contact:contact,
+									mobile:contactCellphone,
+									remark:remark,
+									wordFile:'',
+									orderFile:''
+								}
+							if(!this.ispdf){//判断是否pdf文件，如果是修改参数传值
+								postData.wordFile=this.wordFile;
+							}else{
+								postData.orderFile=this.wordFile;
+							}
+							addEntrustOrderApi(postData).then((data)=>{
+								console.log("新建委托单",data)
+								if(data.code=="20000"){
+									this.$message.success('新建成功!');
+									this.dialogFormVisible = false;
+									this.$bus.$emit('pageNumber',1);
+								}else{
+									this.$message.error('新建失败!');
+								}
+							});
+						}else{
+							this.$message.warning('请上传委托文件!');
+						}
+					} else false
+				});
 			},
 			//上传证件文件前，对文件类型做判断
 			beforeLicenseUpload(file) {
-				const isJEPG = file.type === 'image/jpeg';
-				const isJPG = file.type === 'image/jpg';
-				const isPNG = file.type === 'image/png';
+				const isPDF = file.type === 'application/pdf';
+				const isDOCX = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+				const isDOC= file.type === 'application/msword';
 			
-				if (isJEPG || isJPG || isPNG) {
-					return true
+				if (isDOCX || isDOC) {
+					this.ispdf=false;
+				}else if(isPDF){
+					this.ispdf=true;
 				} else {
-					this.$message.error('上传头像图片只能是 JPG 格式!');
-					return false
+					this.$message.error('只能是文档格式或者PDF格式!');
 				}
 			},
+			//上传委托文件
 			uploadLicense(res){
-				//照片转base64格式
-				getBase64(res.file).then((data)=>{
-					this.licenseUrl=data;
-				});
-					
+				this.loading=true;//加载图标开启
+				
+				//转换formdata格式
 				let params = new FormData();
 				params.append('file', res.file);
 				
 				//调用接口上传证件
-				addEntrustOrderApi(params).then((data) => {
-					console.log(data)
-					// this.certFile = data.data.certFile;
+				uploadEntrustOrderApi(params).then((data) => {
+					console.log(data.data.wordFile)
+					if(data.code=="20000"){
+						this.loading=false;//关闭 加载图标
+						this.wordFile = data.data.wordFile;
+					}else{
+						this.loading=false;
+						this.$message.error('上传失败!');
+					}
 				})
+				
 			}
 		},
 		mounted() {
-
-		},
+			//渲染数据
+			let {name,address,email,phone,contact,mobile}=this.userdata;
+			this.addEntrustForm.name=name;
+			this.addEntrustForm.adress=address;
+			this.addEntrustForm.email=email;
+			this.addEntrustForm.phone=phone;
+			this.addEntrustForm.contact=contact;
+			this.addEntrustForm.contactCellphone=mobile;
+		}
 
 	}
 </script>
