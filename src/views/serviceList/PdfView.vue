@@ -10,7 +10,7 @@
 <script>
 	// import pdf from 'vue-pdf'
 	export default {
-		name: 'PdfView',
+		name: 'PdfView',//服务项列表
 		data() {
 			return {
 				url: 'https://www.gjtool.cn/pdfh5/git.pdf',

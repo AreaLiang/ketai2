@@ -57,7 +57,7 @@
 				},{
 					name:'服务项目列表',
 					icon:'el-icon-s-unfold',
-					address:'/Home/pdfView',
+					address:'/Home/serviceList',
 					isAuthorize:false
 				},{
 					name:'业务委托表格下载',

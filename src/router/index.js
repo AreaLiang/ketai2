@@ -47,8 +47,8 @@ const router = new VueRouter({
 				},
 				{
 					name: 'pdfView',
-					path: 'pdfView',
-					component: () => import('@/components/PdfView')
+					path: 'serviceList',
+					component: () => import('@/views/serviceList/PdfView')
 				},
 				{
 					name: 'businessEntrust',

@@ -19,7 +19,9 @@ export const uploadCertFileApi = p => formDatapost(baseUrl+'/uploadCertificateFi
 //业务委托界面
 export const bsEntrustmentApi = p => post(baseUrl+'/loadPagingOrders', p);//业务委托页面数据
 export const addEntrustOrderApi = p => post(baseUrl+'/newOrderForm', p);//新建业务委托
+export const modifyCheckFileApi = p => post(baseUrl+'/modifyCheckFile', p);//完工单保存
 export const uploadEntrustOrderApi = p => formDatapost(baseUrl+'/uploadOrderFile', p);//新建业务委托
+export const uploadTempFileApi = p => formDatapost(baseUrl+'/uploadTempFile', p);//上传支付证明、完工单
 
 //密码更改页面
 export const pdChangeApi = p => post(baseUrl+'/updatepwd', p);//用户 修改密码
