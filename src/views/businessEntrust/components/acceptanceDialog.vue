@@ -20,7 +20,7 @@
 </template>
 
 <script>
-	import {getBase64} from "@/utils"
+	import {getBase64,isImgFormat} from "@/utils"
 	import { uploadTempFileApi ,modifyCheckFileApi} from "@/request/api"
 	export default{
 		name:'acceptanceDialog',//完成验收单
@@ -35,16 +35,7 @@
 		methods:{
 			//上传证件文件前，对文件类型做判断
 			beforeLicenseUpload(file) {
-				const isJEPG = file.type === 'image/jpeg';
-				const isJPG = file.type === 'image/jpg';
-				const isPNG = file.type === 'image/png';
-			
-				if (isJEPG || isJPG || isPNG) {
-					return true
-				} else {
-					this.$message.error('证件只能是上传图片格式!');
-					return false
-				}
+				isImgFormat(file);//调用公共校验方法
 			},
 			//完成验收单上传
 			uploadAcceptanceOrder(res){

@@ -1,32 +1,51 @@
 <template>
 	<div class="">
-		<el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false">
-			<iframe class="pdf-show" :src="diglogUrl" width="500" height="500"></iframe>
+		<el-dialog title="检测委托书" :visible.sync="dialogFormVisible" :modal-append-to-body="false" custom-class="entrustFileDialog">
+			<iframe class="pdf-show" :src="wordUrl" width="100%" height="700"></iframe>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+	import {fileShowPath} from '@/utils'
 	export default {
-		name: 'entrustFileDialog',
+		name: 'entrustFileDialog',//委托文件	
 		data() {
 			return {
 				dialogFormVisible:false,
-				diglogUrl:''
+				wordUrl:'',
+				data:{}
 			}
 		},
 		components: {
 
 		},
 		mounted(){
+			//监听 点击改行时候返回的数据
 			this.$bus.$on("currentRowData",(data)=>{
-				let rawData={...data.rawData};
-				this.diglogUrl="http://192.168.0.103:9010/"+rawData.orderFilePdf;
+				let jsonData=JSON.parse(JSON.stringify(data));//转换成JSON格式
+				this.data=jsonData;
+				console.log("6")
 			})
+			
+			//获取后台返回文件路径，pdf和doc文件不一样，返回路径不一样
+			// if(this.data.rawData.orderFile){
+			// 	this.wordUrl=fileShowPath(jsonData.rawData.orderFile);
+			// }else{
+			// 	this.wordUrl=fileShowPath(jsonData.rawData.orderFilePdf);
+			// }
+			
 		}
 	}
 </script>
 
-<style scoped lang="less">
-
+<style lang="less">
+.entrustFileDialog{
+	width: 80%;
+	height: 800px;
+	margin-top:5vh !important;
+	.el-dialog__body{
+		padding: 10px 10px;
+	}
+}
 </style>

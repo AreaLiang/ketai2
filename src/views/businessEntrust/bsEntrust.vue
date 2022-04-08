@@ -19,31 +19,35 @@
 					<el-table-column prop="statusCn" label="状态" width="80">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">
-								<el-tag :type="scope.row.statusBtnColor" :effect="scope.row.statusBtnStyle" size="medium">{{ scope.row.statusCn }}</el-tag>
+								<el-tag :type="scope.row.statusBtnColor" :effect="scope.row.statusBtnStyle"
+									size="medium">{{ scope.row.statusCn }}</el-tag>
 							</div>
 						</template>
 					</el-table-column>
 					<el-table-column prop="receiver" label="受理业务员" width="120">
 					</el-table-column>
-					<el-table-column label="操作" width="300">
+					<el-table-column label="操作" width="350">
 						<template slot-scope="scope">
-							<!-- <el-button @click="handleClick(scope.row)" type="primary" size="small">查看</el-button>
-							 -->
-							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small">委托单编辑
+							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small">
+								<i class="el-icon-edit-outline"></i>
+								委托单编辑
 							</el-button>
-							<el-button type="primary" v-if="scope.row.opBtnList.entrustFileBtn" size="small" @click="openDialog('entrustFileDialog',scope.row)">委托文件
+							<el-button type="primary" v-if="scope.row.opBtnList.entrustFileBtn" size="small"
+								@click="openDialog('entrustFileDialog',scope.row)">委托文件
 							</el-button>
-							<el-button type="primary" v-if="scope.row.opBtnList.paymentShowBtn" size="small">支付证明
+							<el-button type="primary" v-if="scope.row.opBtnList.acceptanceListBtn" size="small"
+								@click="openDialog('acceptanceDialog',scope.row)">
+								{{scope.row.rawData.checkFile ? "完工验收单" : "上传验收单"}}
 							</el-button>
-							<el-button type="primary" v-if="scope.row.opBtnList.paymentProveBtn" size="small">支付证明
+							<el-button type="primary" v-if="scope.row.opBtnList.paymentProveBtn"
+								@click="openDialog('paymentProveDialog',scope.row)" size="small">
+								{{scope.row.rawData.payFile ? "支付证明" : "上传支付证明"}}
 							</el-button>
 							<el-button type="primary" v-if="scope.row.opBtnList.downCertBtn" size="small">下载证书
 							</el-button>
-							<el-button type="primary" v-if="scope.row.opBtnList.acceptanceListBtn" size="small" @click="openDialog('acceptanceDialog',scope.row)">上传验收单
-							</el-button>
 							<el-button type="primary" v-if="scope.row.opBtnList.resubmitBtn" size="small">重新提交
 							</el-button>
-							
+
 						</template>
 					</el-table-column>
 				</el-table>
@@ -55,14 +59,17 @@
 		</div>
 
 		<!-- 新建业务委托 弹出框 -->
-		<addEntrustDiglog ref="addEntrustDiglog"></addEntrustDiglog>
-		
+		<addEntrustDiglog ref="addEntrustDiglog" />
+
 		<!-- 委托文件查看 弹出框 -->
-		<entrustFileDialog ref="entrustFileDialog"/>
-		
-		<!-- 上传验收单 弹出框 -->
-		<acceptanceDialog ref="acceptanceDialog"/>
-		
+		<entrustFileDialog ref="entrustFileDialog" />
+
+		<!-- 上传验收单/完工验收单 弹出框 -->
+		<acceptanceDialog ref="acceptanceDialog" />
+
+		<!-- 支付证明/上传支付证明 弹出框 -->
+		<paymentProveDialog ref="paymentProveDialog" />
+
 	</div>
 </template>
 
@@ -70,11 +77,19 @@
 	import PageHeader from "@/components/PageHeader"
 	import Pagination from "@/components/Pagination"
 	import addEntrustDiglog from "./components/addEntrustDiglog"
-	import entrustFileDialog  from "./components/entrustFileDialog"
+	import entrustFileDialog from "./components/entrustFileDialog"
 	import acceptanceDialog from "./components/acceptanceDialog"
-	import {bsEntrustmentApi} from "@/request/api"
-	import {timestamp} from '@/utils'
-	import {cgBsEntrustData} from '@/utils/bsEntrust'
+	import paymentProveDialog from "./components/paymentProveDialog"
+	
+	import {
+		bsEntrustmentApi
+	} from "@/request/api"
+	import {
+		timestamp
+	} from '@/utils'
+	import {
+		cgBsEntrustData
+	} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {
@@ -83,7 +98,7 @@
 			return {
 				tableData: [],
 				dataTotal: 0, //数据一共有多少条
-				pageSize:8,//每页显示多少条数据
+				pageSize: 8, //每页显示多少条数据
 			}
 		},
 		components: {
@@ -91,34 +106,31 @@
 			Pagination,
 			addEntrustDiglog,
 			entrustFileDialog,
-			acceptanceDialog
+			acceptanceDialog,
+			paymentProveDialog
 		},
 		methods: {
-			// handleClick(row) {
-			// 	console.log(row);
-			// },
-			
 			/* 打开弹出层 
-			*** 第一个参数为该弹出层组件的ref 名字，字符串传入,
-			*** 第二个是表格每行的参数 默认scope.row 
-			* */
-			openDialog(dialogName,row){
+			 *** 第一个参数为该弹出层组件的ref 名字，字符串传入,
+			 *** 第二个是表格每行的参数 默认scope.row 
+			 * */
+			openDialog(dialogName, row) {
 				this.$refs[dialogName].dialogFormVisible = true;
-				this.$bus.$emit('currentRowData',row); //赋值所点击的行 数据
+				this.$bus.$emit('currentRowData', row); //赋值所点击的行 数据
 			},
 			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
-			PaginationClick(page,pageSize){
+			PaginationClick(page, pageSize) {
 				NProgress.start() //开启进度条
 				bsEntrustmentApi({
-					page:page,
-					pageSize:pageSize
+					page: page,
+					pageSize: pageSize
 				}).then((res) => {
-					let data=res.data;
-					if(res.code=="20000"){
-						this.dataTotal=data.totalElements;
+					let data = res.data;
+					if (res.code == "20000") {
+						this.dataTotal = data.totalElements;
 					}
-					this.tableData=cgBsEntrustData(data);//赋值数据渲染
-					NProgress.done();//结束进度条
+					this.tableData = cgBsEntrustData(data); //赋值数据渲染
+					NProgress.done(); //结束进度条
 					// console.log("业务委托：",data)
 				});
 			}
@@ -127,10 +139,10 @@
 			// }
 		},
 		mounted() {
-			this.PaginationClick(0,this.pageSize);//进来默认渲染第一页，后端数据第一页的页码为 0
+			this.PaginationClick(0, this.pageSize); //进来默认渲染第一页，后端数据第一页的页码为 0
 			//绑定事件，页码发生改变时候重新发送请求显示数据
-			this.$bus.$on('pageNumber',(page)=>{
-				this.PaginationClick(page-1,this.pageSize);
+			this.$bus.$on('pageNumber', (page) => {
+				this.PaginationClick(page - 1, this.pageSize);
 			})
 		}
 	}

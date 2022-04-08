@@ -2,7 +2,7 @@
 	<div class="entrustDiglog">
 		<el-dialog title="业务委托单" :visible.sync="dialogFormVisible"  :modal-append-to-body="false"  custom-class="entrust-diglog">
 			<el-row :gutter="30" v-loading="loading" >
-				<el-col :span="12">
+				<el-col :md="12" :lg="10">
 					<el-form :model="addEntrustForm" label-position="top" ref="addEntrustForm" :rules="rules">
 						<el-row :gutter="30">
 							<el-col :span="12">
@@ -63,8 +63,10 @@
 					</el-form>
 				</el-col>
 				
-				<el-col :span="12">
-					<div class="pdfShow"></div>
+				<el-col :md="12" :lg="14">
+					<div class="pdfShow">
+						<iframe class="pdf-show" :src="wordUrl" width="100%" height="460"></iframe>
+					</div>
 				</el-col>
 			</el-row>
 			<div slot="footer" class="dialog-footer">
@@ -78,7 +80,9 @@
 <script>
 	import { addEntrustOrderApi , uploadEntrustOrderApi} from "@/request/api.js"
 	import {mapState} from 'vuex'
-	
+	import {baseUrl} from '@/request/api'
+	import {fileShowPath} from '@/utils'
+		
 	export default {
 		name: 'addEntrustDiglog', //新建业务委托 弹出框
 		data() {
@@ -109,7 +113,8 @@
 				formLabelWidth: '120px',
 				wordFile:'',
 				ispdf:false,
-				loading: false
+				loading: false,
+				wordUrl:''
 			}
 		},
 		computed: {
@@ -125,9 +130,7 @@
 			
 		},
 		methods: {
-			handleChange() {
-				
-			},
+			//确认添加业务委托
 			addEntrust(){
 				this.$refs['addEntrustForm'].validate((valid) => {
 					if (valid) {//校验是否信息为空
@@ -189,6 +192,7 @@
 					if(data.code=="20000"){
 						this.loading=false;//关闭 加载图标
 						this.wordFile = data.data.wordFile;
+						// this.wordUrl=fileShowPath(data.data.wordFile);
 					}else{
 						this.loading=false;
 						this.$message.error('上传失败!');
@@ -221,7 +225,7 @@
 			padding: 0;
 		}
 		.entrust-diglog{
-			width: 60%;
+			width: 75%;
 		}
 		.pdfShow{
 			background: #ccc;

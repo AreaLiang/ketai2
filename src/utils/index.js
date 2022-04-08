@@ -1,4 +1,6 @@
 import router from '@/router'
+import { Message } from 'element-ui';
+import {baseUrl} from '@/request/api'
 // import store from './store'
 
 //删除浏览器缓存,isGoLoigin是否转跳到登录页面，默认转跳
@@ -28,12 +30,26 @@ export function timestamp(nS) {
 	return new Date(parseInt(nS) * 1).toLocaleString().replace(/:\d{1,2}$/, ' ');
 }
 
-// //发送token去后端验证用户信息
-// export function sendInfoCk(name,isGoLoigin){
-// 	await store.dispatch('authorityNav', token).then(() => {
-// 		//从vuex中获取过滤后的路由表
-// 		let setRoutes = store.state.permissionRoutes;
+//仅使用于element UI 的照片格式验证
+export function isImgFormat(file){
+	const isJEPG = file.type === 'image/jpeg';
+	const isJPG = file.type === 'image/jpg';
+	const isPNG = file.type === 'image/png';
+				
+	if (isJEPG || isJPG || isPNG) {
+		return true
+	} else {
+		Message.error('证件只能是上传图片格式!');
+		return false
+	}
+}
 
-// 		router.addRoute(setRoutes)
-// 	});
-// }
+//委托文件、委托单返回的路径
+export function fileShowPath(file){
+	let fileUrl=file+'.pdf';//文件路径
+	
+	let reg=new RegExp("hall");//匹配服务端的 hall字符串，准备替换
+	let newUrl=baseUrl.replace(reg,fileUrl);
+	
+	return newUrl;
+}

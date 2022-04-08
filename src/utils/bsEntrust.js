@@ -36,7 +36,7 @@ export function cgBsEntrustData(data) {
 
 function statusItemShow(status) {
 	switch (status) {
-		case 'DaiFenPei':
+		case 'DaiFenPei'://("待分配", "待受理")
 			return {
 				color: 'info',//标签颜色
 				effect:'light',//标签样式
@@ -45,7 +45,7 @@ function statusItemShow(status) {
 				}
 			}
 			break;
-		case 'DaiShouLi':
+		case 'DaiShouLi'://("待受理", "待受理")
 			return {
 				color: 'info',
 				effect: 'light',
@@ -54,7 +54,7 @@ function statusItemShow(status) {
 				}
 			}
 			break;
-		case 'DaiShenHe':
+		case 'DaiShenHe'://("待审核", "待受理")
 			return {
 				color: 'success',
 				effect: 'light',
@@ -63,41 +63,38 @@ function statusItemShow(status) {
 				}
 			}
 			break;
-		case 'DaiWanGong':
+		case 'DaiWanGong'://("待完工", "检测中")
 			return {
 				color: 'warning',
 				effect: 'light',
 				opBtnList: {
-					acceptanceListBtn: true, //委托单编辑 按钮
+					acceptanceListBtn: true, //上传验收单 按钮
 					entrustFileBtn: true, //委托文件 按钮
 				}
 			}
 			break;
-		case 'DaiFuKuan':
+		case 'DaiFuKuan'://("待付款", "待付款")
 			return {
 				color: '',
 				effect: 'plain',
 				opBtnList: {
-					orderEditBtn: false, //委托单编辑 按钮
 					entrustFileBtn: true, //委托文件 按钮
-					paymentShowBtn: false, //支付证明 按钮
-					downCertBtn: true, //下载证书 按钮
+					acceptanceListBtn: true, //完工验收单 按钮
+					paymentProveBtn:true //支付证明
 				}
 			}
 			break;
-		case 'DaiHeDui':
+		case 'DaiHeDui'://("待核对", "已付款")
 			return {
-				color: 'warning',
-				effect: 'light',
+				color: '',
+				effect: 'dark',
 				opBtnList: {
-					orderEditBtn: false, //委托单编辑 按钮
 					entrustFileBtn: true, //委托文件 按钮
-					paymentShowBtn: false, //支付证明 按钮
-					downCertBtn: true, //下载证书 按钮
+					paymentProveBtn: true,//支付证明
 				}
 			}
 			break;
-		case 'YiWanCheng':
+		case 'YiWanCheng'://("可取证", "可取证")
 			return {
 				color: '',
 				effect: 'light',
@@ -108,7 +105,7 @@ function statusItemShow(status) {
 				}
 			}
 			break;
-		case 'ShouLiShiBai':
+		case 'ShouLiShiBai'://("已退回", "受理失败")
 			return {
 				color: 'danger',
 				effect: 'light',
