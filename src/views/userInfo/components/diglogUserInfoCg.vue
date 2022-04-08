@@ -7,6 +7,7 @@
 					<!-- 表单 -->
 					<formUserInfo :userdata="userdata" :dialogFormVisible="dialogFormVisible" ref="modifyUerInfo">
 					</formUserInfo>
+					
 					<div class="license-box">
 						<div class="business-license">
 							<span>营业执照</span>
@@ -37,7 +38,7 @@
 	import formUserInfo from "./formUserInfo"
 	import QS from 'qs'
 	import {uploadCertFileApi,cgUserInfoApi} from "@/request/api"
-	import {getBase64} from "@/utils"
+	import {getBase64,isImgFormat} from "@/utils"
 	// import { changeProfessionArray } from "@/utils/userInfo"
 
 	import {
@@ -70,7 +71,6 @@
 		methods: {
 			//证件照上传
 			uploadLicense(res) {
-
 				//照片转base64格式
 				getBase64(res.file).then((data)=>{
 					this.licenseUrl=data;
@@ -85,55 +85,48 @@
 			},
 			//上传证件文件前，对文件类型做判断
 			beforeLicenseUpload(file) {
-				const isJEPG = file.type === 'image/jpeg';
-				const isJPG = file.type === 'image/jpg';
-				const isPNG = file.type === 'image/png';
-
-				if (isJEPG || isJPG || isPNG) {
-					return true
-				} else {
-					this.$message.error('证件只能是上传图片格式!');
-					return false
-				}
+				isImgFormat(file);
 			},
 			//提交 修改用户信息
 			submitCgUserInfo() {
-
-				//解构
-				let userInfoFrom = this.$refs['modifyUerInfo'].ruleForm; //从表单组件中获取用户信息
-				let {
-					address,
-					contactName,
-					phone,
-					cellPhone,
-					mail,
-					profession,
-					userName
-				} = {
-					...userInfoFrom
-				};
-				//整理需要发送的用户信息
-				let data = {
-					name: userName,
-					contact: contactName,
-					phone: phone,
-					address: address,
-					email: mail,
-					mobile: cellPhone,
-					certificate: this.certFile,
-					business: JSON.stringify(profession)
-				}
-
-				console.log("修改信息：", data)
-				cgUserInfoApi(data).then((data) => {
-					if (data.code == "20000") {
-						this.$message.success("修改成功");
-						this.dialogFormVisible=false;
-					} else {
-						this.$message.success("修改失败");
+				let isPass=	this.$refs.modifyUerInfo.submit();//表单验证返回的值
+				if(isPass){
+					//解构
+					let userInfoFrom = this.$refs['modifyUerInfo'].ruleForm; //从表单组件中获取用户信息
+					let {
+						address,
+						contactName,
+						phone,
+						cellPhone,
+						mail,
+						profession,
+						userName
+					} = {
+						...userInfoFrom
+					};
+					//整理需要发送的用户信息
+					let data = {
+						name: userName,
+						contact: contactName,
+						phone: phone,
+						address: address,
+						email: mail,
+						mobile: cellPhone,
+						certificate: this.certFile,
+						business: JSON.stringify(profession)
 					}
-				})
-
+					
+					console.log("修改信息：", data)
+					
+					cgUserInfoApi(data).then((data) => {
+						if (data.code == "20000") {
+							this.$message.success("修改成功");
+							this.dialogFormVisible=false;
+						} else {
+							this.$message.success("修改失败");
+						}
+					})
+				}
 			}
 		},
 		mounted() {

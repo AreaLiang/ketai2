@@ -44,9 +44,9 @@ export function isImgFormat(file){
 	}
 }
 
-//委托文件、委托单返回的路径
-export function fileShowPath(file){
-	let fileUrl=file+'.pdf';//文件路径
+//委托文件、委托单返回的路径,suffix:文件后缀，传入字符串
+export function fileShowPath(file,suffix){
+	let fileUrl=file+suffix;//文件路径
 	
 	let reg=new RegExp("hall");//匹配服务端的 hall字符串，准备替换
 	let newUrl=baseUrl.replace(reg,fileUrl);

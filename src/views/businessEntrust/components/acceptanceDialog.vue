@@ -11,24 +11,24 @@
 					<el-button slot="trigger" size="small" type="primary">选择验收单</el-button>
 				</el-upload>
 			</div>
-			 <div slot="footer" class="dialog-footer">
+			<div slot="footer" class="dialog-footer">
 			    <el-button @click="dialogFormVisible = false">取 消</el-button>
 			    <el-button type="primary" @click="subAcceptanceOrder()">提 交</el-button>
-			  </div>
+			</div>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
-	import {getBase64,isImgFormat} from "@/utils"
+	import {isImgFormat,fileShowPath} from "@/utils"
 	import { uploadTempFileApi ,modifyCheckFileApi} from "@/request/api"
 	export default{
-		name:'acceptanceDialog',//完成验收单
+		name:'acceptanceDialog',//完工验收单
 		data(){
 			return{
 				dialogFormVisible:false,
 				imgUrl:'',
-				tempFile:'',
+				tempFile:'',//验工单的文件路径
 				data:{}
 			}
 		},
@@ -37,29 +37,25 @@
 			beforeLicenseUpload(file) {
 				isImgFormat(file);//调用公共校验方法
 			},
-			//完成验收单上传
+			//完工验收单上传
 			uploadAcceptanceOrder(res){
-				//照片转base64格式
-				getBase64(res.file).then((data)=>{
-					this.imgUrl=data;
-				});
-				
 				let params = new FormData();
 				params.append('file', res.file);
-				//调用接口上传证件
+				//调用完工单上传接口
 				uploadTempFileApi(params).then((data) => {
 					console.log("完成验工单",data)
 					if(data.code=="20000"){
 						this.tempFile=data.data.tempFile;
+						this.imgUrl=fileShowPath(data.data.tempFile,'');
 					}else{
-						this.$message.error("上传失败")
+						this.$message.error("上传失败");
 					}
 				})
 			},
+			//提交验收单信息
 			subAcceptanceOrder(){
-				console.log({...this.data}.id)
 				let rowData={...this.data};
-				if(this.tempFile){
+				if(this.tempFile){//如果已经上传文件
 					modifyCheckFileApi({
 						id:rowData.id,
 						checkFile:this.tempFile
@@ -79,8 +75,10 @@
 		},
 		mounted(){
 			this.$bus.$on("currentRowData",(data)=>{
-				this.data=data.rawData;
-				this.tempFile={...data.rawData}.checkFile;
+				let res={...data.rawData};
+				this.data=res;
+				this.tempFile=res.checkFile;
+				this.imgUrl=fileShowPath(res.checkFile,'');
 			})
 		}
 	}
@@ -96,7 +94,10 @@
 				width: 100%;
 			}
 		}
-
+		.uploadbox{
+			margin-top: 10px;
+		}
+		
 		.upload-entrust{
 			height: 38px;
 			margin: 10px 0;

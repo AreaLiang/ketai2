@@ -150,24 +150,21 @@
 						trigger: 'blur'
 					}]
 				},
+				
 			}
 		},
 		methods: {
 			submit(){
+				let isPass;
 				this.$refs['ruleForm'].validate((valid) => {
 					if (valid) {
-						console.log({
-							...this.ruleForm
-						})
-					} else false
+						isPass= true
+					} else {
+						isPass=false
+					}
 				});
+				return isPass;
 			}
-		},
-		computed: {
-
-		},
-		components: {
-
 		},
 		props: ['status', 'userdata','dialogFormVisible'],
 		mounted() {

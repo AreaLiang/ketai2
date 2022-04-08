@@ -2,7 +2,7 @@
 	<div class="businessEntrust">
 		<!-- 主题内容顶部 -->
 		<PageHeader :breadcrumbItem="$route.meta.headName">
-			<el-button type="primary" @click="openDialog('addEntrustDiglog','')">新建业务委托</el-button>
+			<el-button type="primary" @click="addEntrust()">新建业务委托</el-button>
 		</PageHeader>
 		<div class="entrust-manage">
 			<template>
@@ -28,7 +28,7 @@
 					</el-table-column>
 					<el-table-column label="操作" width="350">
 						<template slot-scope="scope">
-							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small">
+							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small" @click="modifyEntrust(scope.row)">
 								<i class="el-icon-edit-outline"></i>
 								委托单编辑
 							</el-button>
@@ -117,6 +117,18 @@
 			openDialog(dialogName, row) {
 				this.$refs[dialogName].dialogFormVisible = true;
 				this.$bus.$emit('currentRowData', row); //赋值所点击的行 数据
+			},
+			//新建业务委托
+			addEntrust(){
+				let dialog=this.$refs.addEntrustDiglog;
+				dialog.dialogFormVisible = true;
+				dialog.operateType=1;
+			},
+			modifyEntrust(data){
+				let dialog=this.$refs.addEntrustDiglog;
+				dialog.dialogFormVisible = true;
+				dialog.operateType=0;
+				dialog.rowData=JSON.parse(JSON.stringify(data));
 			},
 			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
 			PaginationClick(page, pageSize) {
