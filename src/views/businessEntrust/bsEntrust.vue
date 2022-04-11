@@ -28,23 +28,30 @@
 					</el-table-column>
 					<el-table-column label="操作" width="350">
 						<template slot-scope="scope">
-							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small" @click="modifyEntrust(scope.row)">
+							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small"
+								@click="modifyEntrust(scope.row)">
 								<i class="el-icon-edit-outline"></i>
 								委托单编辑
 							</el-button>
+
 							<el-button type="primary" v-if="scope.row.opBtnList.entrustFileBtn" size="small"
 								@click="openDialog('entrustFileDialog',scope.row)">委托文件
 							</el-button>
+
 							<el-button type="primary" v-if="scope.row.opBtnList.acceptanceListBtn" size="small"
 								@click="openDialog('acceptanceDialog',scope.row)">
 								{{scope.row.rawData.checkFile ? "完工验收单" : "上传验收单"}}
 							</el-button>
+
 							<el-button type="primary" v-if="scope.row.opBtnList.paymentProveBtn"
 								@click="openDialog('paymentProveDialog',scope.row)" size="small">
 								{{scope.row.rawData.payFile ? "支付证明" : "上传支付证明"}}
 							</el-button>
-							<el-button type="primary" v-if="scope.row.opBtnList.downCertBtn" size="small">下载证书
+
+							<el-button type="primary" v-if="scope.row.opBtnList.downCertBtn" size="small"
+								@click="DownloadCertificate()">下载证书
 							</el-button>
+
 							<el-button type="primary" v-if="scope.row.opBtnList.resubmitBtn" size="small">重新提交
 							</el-button>
 
@@ -80,7 +87,7 @@
 	import entrustFileDialog from "./components/entrustFileDialog"
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
-	
+
 	import {
 		bsEntrustmentApi
 	} from "@/request/api"
@@ -119,16 +126,16 @@
 				this.$bus.$emit('currentRowData', row); //赋值所点击的行 数据
 			},
 			//新建业务委托
-			addEntrust(){
-				let dialog=this.$refs.addEntrustDiglog;
+			addEntrust() {
+				let dialog = this.$refs.addEntrustDiglog;
 				dialog.dialogFormVisible = true;
-				dialog.operateType=1;
+				dialog.operateType = 1;
 			},
-			modifyEntrust(data){
-				let dialog=this.$refs.addEntrustDiglog;
+			modifyEntrust(data) {
+				let dialog = this.$refs.addEntrustDiglog;
 				dialog.dialogFormVisible = true;
-				dialog.operateType=0;
-				dialog.rowData=JSON.parse(JSON.stringify(data));
+				dialog.operateType = 0;
+				dialog.rowData = data;
 			},
 			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
 			PaginationClick(page, pageSize) {
@@ -145,6 +152,9 @@
 					NProgress.done(); //结束进度条
 					// console.log("业务委托：",data)
 				});
+			},
+			DownloadCertificate() {
+				this.$router.push('/Home/mgCertificate');
 			}
 			// cellStyle(row, column, rowIndex, columnIndex) {
 			// 	console.log("66")
@@ -156,6 +166,9 @@
 			this.$bus.$on('pageNumber', (page) => {
 				this.PaginationClick(page - 1, this.pageSize);
 			})
+		},
+		beforeDestroy() {
+			this.$bus.$off('currentRowData');
 		}
 	}
 </script>

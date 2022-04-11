@@ -2,7 +2,7 @@
 	<div class="navigation">
 		<el-row class="tac">
 			<el-col :span="24" style="height: 100%;">
-				<el-menu default-active="1" class="el-menu-vertical" @select="handleindex" :router="true"
+				<el-menu :default-active="currentUrl" class="el-menu-vertical" @select="handleindex" :router="true"
 					background-color="#f3f3f3" text-color="black" active-text-color="#34b160" style="height:100%">
 					<!-- 循环遍历导航 -->
 					<el-menu-item v-for="(p,index) in navList" :index="p.address" :key="index">
@@ -65,26 +65,33 @@
 					address: '#',
 					isAuthorize: true
 				}],
-				infoWarning: false //未认证警告提示
+				infoWarning: false ,//未认证警告提示
+				currentUrl:""
+			}
+		},
+		watch:{
+			$route(to,from) {//监听导航变化，更改选中导航的链接
+				this.currentUrl=to.path;
 			}
 		},
 		computed: {
-			...mapGetters(["isCertification"])
+			...mapGetters(["isCertification"])//获取身份信息
 		},
 		methods: {
 			//获取用户所点击的导航地址
 			handleindex(key, keyPath) {
-				this.$bus.$emit('isPageHeader', key)
-			},
-
+				this.$bus.$emit('isPageHeader', key);
+			}
 		},
 		mounted() {
+			//当前导航的地址
+			this.currentUrl=this.$router.history.current.fullPath;
+			
 			//导航权限控制，客户要是 未认证 ，不显示全部导航 
 			if (this.isCertification != "正常") {
 				this.navList = this.navList.filter((p) => {
 					return !p.isAuthorize
 				});
-
 				this.infoWarning = true; //未认证警告提示
 			}
 		}

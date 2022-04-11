@@ -29,8 +29,8 @@
 							</el-col>
 							<el-col :span="certStatus ? 24:12">
 								<el-button type="primary" v-if="!certStatus" @click="submitForm()">提交认证</el-button>
-								<el-button type="primary" v-if="certStatus" @click="changeUserInfoBtn()">信息更改
-								</el-button>
+							<!-- 	<el-button type="primary" v-if="certStatus" @click="changeUserInfoBtn()">信息更改
+								</el-button> -->
 							</el-col>
 						</div>
 
@@ -43,8 +43,8 @@
 				<div class="grid-content bg-purple-light">
 					<div class="bs-license">
 						<p>请上传营业执照文件</p>
-						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='bsUpload'
-							:disabled="certStatus">
+						<el-upload action="#" list-type="picture-card" :limit="1" ref='bsUpload'
+							:disabled="certStatus" :http-request="bsLicenseUpload" :before-upload="beforeUpload">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -68,8 +68,8 @@
 
 					<div class="sc-license">
 						<p>请上传安全员执照文件</p>
-						<el-upload action="#" list-type="picture-card" :auto-upload="false" :limit="1" ref='scUpload'
-							:disabled="certStatus">
+						<el-upload action="#" list-type="picture-card" :limit="1" ref='scUpload'
+							:disabled="certStatus" :http-request="scLicenseUpload" :before-upload="beforeUpload">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -114,12 +114,11 @@
 
 <script>
 	import PageHeader from '@/components/PageHeader'
-	import {
-		mapGetters,
-		mapState
-	} from "vuex"
+	import {mapGetters,mapState} from "vuex"
 	import formUserInfo from "./components/formUserInfo"
 	import diglogUserInfoCg from "./components/diglogUserInfoCg"
+	import { uploadCertFileApi ,modifyRegistApi} from "@/request/api"
+	import { isImgFormat} from "@/utils"
 
 	export default {
 		name: 'UserInfo',
@@ -136,6 +135,8 @@
 				sc_disabled: false, //是否显示上传照片中的放大、删除操作按钮
 
 				guidelinesVisible: false, //打开 认证指引 开关
+				bs_certFile:'',
+				sc_certFile:''
 			}
 		},
 		computed: {
@@ -150,8 +151,11 @@
 		},
 		methods: {
 			//表单提交
-			submitForm(formName) {
-				this.$refs['modifyUerInfo'].submit();
+			submitForm() {
+				let uerInfoComponent=this.$refs['modifyUerInfo'];//声明 表单组件
+				uerInfoComponent.$refs['ruleForm'].validate((valid) => {//触发验证效果
+					console.log(valid)
+				});
 			},
 			//信息更改 按钮事件
 			changeUserInfoBtn() {
@@ -163,11 +167,12 @@
 				// bs 是营业执照 标识，sc 是安全员执照 标识
 				if (name == 'bs') {
 					uploadFiles = this.$refs['bsUpload'].uploadFiles;
-					index = uploadFiles.indexOf(file);
 					this.bs_dialogImageUrl = '';
+					this.bs_certFile= '';//清除后台返回的文件链接
 				} else if (name == 'sc') {
 					uploadFiles = this.$refs['scUpload'].uploadFiles;
 					this.sc_dialogImageUrl = '';
+					this.sc_certFile= '';//清除后台返回的文件链接
 				}
 				index = uploadFiles.indexOf(file);
 				uploadFiles.splice(index, 1); //删除照片
@@ -182,6 +187,38 @@
 					this.sc_dialogImageUrl = file.url;
 					this.sc_dialogVisible = true;
 				}
+			},
+			//上传营业执照
+			bsLicenseUpload(res){
+				let params = new FormData();
+				params.append('file', res.file);
+				
+				uploadCertFileApi(params).then((data)=>{
+					console.log(data)
+					if(data.code=="20000"){
+						this.bs_certFile=data.data.certFile;//保存后台返回的 营业执照地址
+					}else{
+						this.$message.error("营业执照上传失败");
+					}
+				});
+			},
+			//上传安全员执照
+			scLicenseUpload(res){
+				let params = new FormData();
+				params.append('file', res.file);
+				
+				uploadCertFileApi(params).then((data)=>{
+					console.log(data)
+					if(data.code=="20000"){
+						this.sc_certFile=data.data.certFile;//保存后台返回的 营业执照地址
+					}else{
+						this.$message.error("安全员执照上传失败");
+					}
+				});
+			},
+			//上传前，校验是否为照片格式
+			beforeUpload(file){
+				isImgFormat(file);//调用公共校验方法
 			}
 		},
 		components: {

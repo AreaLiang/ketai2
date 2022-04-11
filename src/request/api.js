@@ -16,7 +16,9 @@ export const signoutApi = p => post(baseUrl+'/logout', p);//退出登录
 //用户信息页面
 export const ckUserInfoApi = p => post(baseUrl+'/getCurrentCustomerInfo', p);//验证用户信息
 export const cgUserInfoApi = p => post(baseUrl+'/modifyCustomerData', p);//修改客户信息
+export const modifyRegistApi = p => post(baseUrl+'/modifyRegist', p);//提交认证
 export const uploadCertFileApi = p => formDatapost(baseUrl+'/uploadCertificateFile', p);//证件上传
+
 
 //业务委托界面
 export const bsEntrustmentApi = p => post(baseUrl+'/loadPagingOrders', p);//业务委托页面数据

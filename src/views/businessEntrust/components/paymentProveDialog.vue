@@ -77,11 +77,13 @@
 		},
 		mounted(){
 			this.$bus.$on("currentRowData",(data)=>{
-				console.log(data)
 				let res={...data.rawData};
 				this.data=res;
-				this.payFile=res.payFile;
-				this.imgUrl=fileShowPath(res.payFile,'');
+				this.imgUrl='';//清空支付证明链接
+				if(res.payFile){
+					this.payFile=res.payFile;
+					this.imgUrl=fileShowPath(res.payFile,'');
+				}
 			})
 		}
 	}
@@ -97,7 +99,6 @@
 				width: 100%;
 			}
 		}
-		
 		.upload-entrust{
 			height: 38px;
 			margin: 10px 0;
