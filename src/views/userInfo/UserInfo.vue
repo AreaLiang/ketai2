@@ -9,7 +9,7 @@
 					<div class="head-tip">
 						<el-row :gutter="20">
 							<el-col :span="8">
-								<p class='mes white' :class="{normal:certStatus}">{{certification}}</p>
+								<p class='mes white' :class="{normal:certStatus}">{{userdata.statusCn}}</p>
 							</el-col>
 							<el-col :span="16" v-if="!certStatus">
 								<p class='mes red'>请耐心等待工作人员认证</p>
@@ -21,15 +21,20 @@
 						<!-- 用户信息表单组件 -->
 						<formUserInfo :status="certStatus" :userdata="userdata" ref="modifyUerInfo"></formUserInfo>
 
+						<el-alert :title="userdata.reason" type="warning" effect="dark"
+							v-if="userdata.statusCn=='认证失败'?true :false" :closable="false">
+						</el-alert>
 						<div class="bottom-op">
 							<el-col :span="12" v-if="!certStatus">
 								<span>
-									<el-checkbox label="同意" name="type"></el-checkbox><a href="#">认证协议</a>
+									<el-checkbox v-model="agreeServe" label="同意" name="type"></el-checkbox><a
+										href="#">认证协议</a>
 								</span>
 							</el-col>
 							<el-col :span="certStatus ? 24:12">
-								<el-button type="primary" v-if="!certStatus" @click="submitForm()">提交认证</el-button>
-							<!-- 	<el-button type="primary" v-if="certStatus" @click="changeUserInfoBtn()">信息更改
+								<el-button type="primary" v-if="!certStatus" @click="submitForm()">
+									{{userdata.statusCn=="认证失败"?"重新提交":"提交认证"}}</el-button>
+								<!-- 	<el-button type="primary" v-if="certStatus" @click="changeUserInfoBtn()">信息更改
 								</el-button> -->
 							</el-col>
 						</div>
@@ -43,8 +48,8 @@
 				<div class="grid-content bg-purple-light">
 					<div class="bs-license">
 						<p>请上传营业执照文件</p>
-						<el-upload action="#" list-type="picture-card" :limit="1" ref='bsUpload'
-							:disabled="certStatus" :http-request="bsLicenseUpload" :before-upload="beforeUpload">
+						<el-upload action="#" list-type="picture-card" :limit="1" ref='bsUpload' :disabled="certStatus"
+							:http-request="bsLicenseUpload" :before-upload="beforeUpload" :file-list="bsList">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -53,7 +58,7 @@
 										@click="handlePictureCardPreview(file,'bs')">
 										<i class="el-icon-zoom-in"></i>
 									</span>
-									<span v-if="!bs_disabled" class="el-upload-list__item-delete"
+									<span v-if="bs_disabled" class="el-upload-list__item-delete"
 										@click="handleRemove(file,'bs')">
 										<i class="el-icon-delete"></i>
 									</span>
@@ -68,8 +73,8 @@
 
 					<div class="sc-license">
 						<p>请上传安全员执照文件</p>
-						<el-upload action="#" list-type="picture-card" :limit="1" ref='scUpload'
-							:disabled="certStatus" :http-request="scLicenseUpload" :before-upload="beforeUpload">
+						<el-upload action="#" list-type="picture-card" :limit="1" ref='scUpload' :disabled="certStatus"
+							:http-request="scLicenseUpload" :before-upload="beforeUpload" :file-list="scList">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
 								<img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -78,7 +83,7 @@
 										@click="handlePictureCardPreview(file,'sc')">
 										<i class="el-icon-zoom-in"></i>
 									</span>
-									<span v-if="!sc_disabled" class="el-upload-list__item-delete"
+									<span v-if="sc_disabled" class="el-upload-list__item-delete"
 										@click="handleRemove(file,'sc')">
 										<i class="el-icon-delete"></i>
 									</span>
@@ -114,29 +119,41 @@
 
 <script>
 	import PageHeader from '@/components/PageHeader'
-	import {mapGetters,mapState} from "vuex"
+	import {
+		mapGetters,
+		mapState
+	} from "vuex"
 	import formUserInfo from "./components/formUserInfo"
 	import diglogUserInfoCg from "./components/diglogUserInfoCg"
-	import { uploadCertFileApi ,modifyRegistApi} from "@/request/api"
-	import { isImgFormat} from "@/utils"
+	import {
+		uploadCertFileApi,
+		modifyRegistApi
+	} from "@/request/api"
+	import {
+		isImgFormat,
+		fileShowPath
+	} from "@/utils"
 
 	export default {
 		name: 'UserInfo',
 		data() {
 			return {
-				certification: '未认证',
 				certStatus: false,
 				bs_dialogImageUrl: '', //放大照片的链接
 				bs_dialogVisible: false, //放大查看照片的会话框
-				bs_disabled: false, //是否显示上传照片中的放大、删除操作按钮
+				bs_disabled: true, //是否显示上传照片中的放大、删除操作按钮
 
 				sc_dialogImageUrl: '', //放大照片的链接
 				sc_dialogVisible: false, //放大查看照片的会话框
-				sc_disabled: false, //是否显示上传照片中的放大、删除操作按钮
+				sc_disabled: true, //是否显示上传照片中的放大、删除操作按钮
 
 				guidelinesVisible: false, //打开 认证指引 开关
-				bs_certFile:'',
-				sc_certFile:''
+				bs_certFile: '', //营业执照文件路径
+				sc_certFile: '', //安全员执照文件路径
+				bsList: [], //初始化的营业执照文件照片地址
+				scList: [], //初始化的安全员执照文件照片地址
+
+				agreeServe: false,
 			}
 		},
 		computed: {
@@ -152,9 +169,55 @@
 		methods: {
 			//表单提交
 			submitForm() {
-				let uerInfoComponent=this.$refs['modifyUerInfo'];//声明 表单组件
-				uerInfoComponent.$refs['ruleForm'].validate((valid) => {//触发验证效果
-					console.log(valid)
+				let uerInfoComponent = this.$refs['modifyUerInfo']; //声明 表单组件
+
+				uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
+					if (valid) { //如果表单验证通过
+						if (this.agreeServe) { //如果已勾选 认证协议
+							//获取用户输入的数据
+							let {
+								address,
+								cellPhone,
+								contactName,
+								mail,
+								phone,
+								profession,
+								securityName,
+								securityPhone,
+								userName
+							} = uerInfoComponent.ruleForm;
+
+							//整理认证接口的数据
+							let formdata = {
+								id: this.userdata.id,
+								name: userName,
+								contact: contactName,
+								mobile: cellPhone,
+								phone: phone,
+								address: address,
+								email: mail,
+								certificate: this.bs_certFile,
+								safetyOfficer: securityName,
+								safetyMobile: securityPhone,
+								safetyCertificate: this.sc_certFile,
+								business: JSON.stringify(profession)
+							}
+
+							//提交认证接口
+							modifyRegistApi(formdata).then((data) => {
+								console.log(data)
+								if (data.code == "20000") {
+									let token = sessionStorage.getItem('token');
+									this.$store.dispatch('authorityNav', token);
+									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
+								} else {
+									this.$message.error("认证失败");
+								}
+							});
+						} else {
+							this.$message.warning("请勾选同意认证协议");
+						}
+					}
 				});
 			},
 			//信息更改 按钮事件
@@ -168,11 +231,11 @@
 				if (name == 'bs') {
 					uploadFiles = this.$refs['bsUpload'].uploadFiles;
 					this.bs_dialogImageUrl = '';
-					this.bs_certFile= '';//清除后台返回的文件链接
+					this.bs_certFile = ''; //清除后台返回的文件链接
 				} else if (name == 'sc') {
 					uploadFiles = this.$refs['scUpload'].uploadFiles;
 					this.sc_dialogImageUrl = '';
-					this.sc_certFile= '';//清除后台返回的文件链接
+					this.sc_certFile = ''; //清除后台返回的文件链接
 				}
 				index = uploadFiles.indexOf(file);
 				uploadFiles.splice(index, 1); //删除照片
@@ -189,36 +252,36 @@
 				}
 			},
 			//上传营业执照
-			bsLicenseUpload(res){
+			bsLicenseUpload(res) {
 				let params = new FormData();
 				params.append('file', res.file);
-				
-				uploadCertFileApi(params).then((data)=>{
+
+				uploadCertFileApi(params).then((data) => {
 					console.log(data)
-					if(data.code=="20000"){
-						this.bs_certFile=data.data.certFile;//保存后台返回的 营业执照地址
-					}else{
+					if (data.code == "20000") {
+						this.bs_certFile = data.data.certFile; //保存后台返回的 营业执照地址
+					} else {
 						this.$message.error("营业执照上传失败");
 					}
 				});
 			},
 			//上传安全员执照
-			scLicenseUpload(res){
+			scLicenseUpload(res) {
 				let params = new FormData();
 				params.append('file', res.file);
-				
-				uploadCertFileApi(params).then((data)=>{
+
+				uploadCertFileApi(params).then((data) => {
 					console.log(data)
-					if(data.code=="20000"){
-						this.sc_certFile=data.data.certFile;//保存后台返回的 营业执照地址
-					}else{
+					if (data.code == "20000") {
+						this.sc_certFile = data.data.certFile; //保存后台返回的 营业执照地址
+					} else {
 						this.$message.error("安全员执照上传失败");
 					}
 				});
 			},
 			//上传前，校验是否为照片格式
-			beforeUpload(file){
-				isImgFormat(file);//调用公共校验方法
+			beforeUpload(file) {
+				isImgFormat(file); //调用公共校验方法
 			}
 		},
 		components: {
@@ -227,21 +290,29 @@
 			diglogUserInfoCg
 		},
 		mounted() {
+			this.bs_certFile = this.userdata.certificate || "";//营业执照路径
+			this.sc_certFile = this.userdata.safetyCertificate || "";//安全员执照路径
+
+			
+			this.bsList = [{//营业执照文件照片初始值
+				url: fileShowPath(this.bs_certFile, '')
+			}]
+			
+			this.scList = [{//安全员执照文件照片初始值
+				url: fileShowPath(this.sc_certFile, '')
+			}]
+
 
 			//是否已认证 状态赋值
 			if (this.isCertification == "正常") {
-				this.certification = '正常';
 				this.certStatus = true; //正常则返回 true
+				this.bs_disabled = false;
+				this.sc_disabled = false;
 				console.log(this.isCertification + ",状态下 ：", this.userdata);
-
-				// this.ruleForm=userformInfo(this.userdata);
-
-				//清除规则验证
-				this.rules = {}
-
 			} else if (this.isCertification == "未认证") {
 				console.log(this.isCertification + ",状态下 ：", this.userdata);
-				this.certification = '未认证';
+				this.certStatus = false;
+			} else if (this.isCertification == "认证失败") {
 				this.certStatus = false;
 			}
 		}

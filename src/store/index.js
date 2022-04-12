@@ -14,10 +14,10 @@ import {
 
 const actions = {
 	// 用户权限控制
-	authorityNav(context, value) {
+	authorityNav(context, token) {
 		return new Promise((resolve, reject) => {
 			//发送请求查询用户信息
-			ckUserInfoApi(value).then((data) => {
+			ckUserInfoApi(token).then((data) => {
 				if (data.code == "20000") {
 					context.commit('AuthorityNav', data.data.statusCn);
 					context.commit('UserInfo',data);
@@ -25,7 +25,6 @@ const actions = {
 				resolve();
 			})
 		});
-		
 	}
 }
 const mutations = {

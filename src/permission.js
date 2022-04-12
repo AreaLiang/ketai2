@@ -23,7 +23,7 @@ router.beforeEach(async (to, from, next) => {
 		NProgress.done();
 	} else {
 		(async ()=>{
-			let token = await sessionStorage.getItem('token', token);
+			let token = await sessionStorage.getItem('token');
 			if (token) {
 				if (JSON.stringify(data)=="[]") {
 				 	//发送token去后端验证用户信息
