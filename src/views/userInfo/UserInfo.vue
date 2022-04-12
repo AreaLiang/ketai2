@@ -9,7 +9,12 @@
 					<div class="head-tip">
 						<el-row :gutter="20">
 							<el-col :span="8">
-								<p class='mes white' :class="{normal:certStatus}">{{userdata.statusCn}}</p>
+								<p class='mes white' :class="{
+										normal:certStatus,
+										danger:userdata.statusCn=='已禁用'?true:false
+									}">
+									{{userdata.statusCn}}
+								</p>
 							</el-col>
 							<el-col :span="16" v-if="!certStatus">
 								<p class='mes red'>请耐心等待工作人员认证</p>
@@ -119,20 +124,11 @@
 
 <script>
 	import PageHeader from '@/components/PageHeader'
-	import {
-		mapGetters,
-		mapState
-	} from "vuex"
+	import {mapGetters,mapState} from "vuex"
 	import formUserInfo from "./components/formUserInfo"
 	import diglogUserInfoCg from "./components/diglogUserInfoCg"
-	import {
-		uploadCertFileApi,
-		modifyRegistApi
-	} from "@/request/api"
-	import {
-		isImgFormat,
-		fileShowPath
-	} from "@/utils"
+	import {uploadCertFileApi,modifyRegistApi} from "@/request/api"
+	import {isImgFormat,fileShowPath} from "@/utils"
 
 	export default {
 		name: 'UserInfo',
@@ -242,13 +238,16 @@
 			},
 			//文件放大查看功能
 			handlePictureCardPreview(file, name) {
-				// bs 是营业执照 标识，sc 是安全员执照 标识
-				if (name == 'bs') {
-					this.bs_dialogImageUrl = file.url;
-					this.bs_dialogVisible = true;
-				} else if (name == 'sc') {
-					this.sc_dialogImageUrl = file.url;
-					this.sc_dialogVisible = true;
+				let ishasLicense = file.url.indexOf('file');
+				if(ishasLicense>0){//判断是否有执照文件
+					// bs 是营业执照 标识，sc 是安全员执照 标识
+					if (name == 'bs') {
+						this.bs_dialogImageUrl = file.url;
+						this.bs_dialogVisible = true;
+					} else if (name == 'sc') {
+						this.sc_dialogImageUrl = file.url;
+						this.sc_dialogVisible = true;
+					}
 				}
 			},
 			//上传营业执照
@@ -293,21 +292,23 @@
 			this.bs_certFile = this.userdata.certificate || "";//营业执照路径
 			this.sc_certFile = this.userdata.safetyCertificate || "";//安全员执照路径
 
+			if(this.bs_certFile){//如果是空的时候，不给与初始值
+				this.bsList = [{//营业执照文件照片初始值
+					url: fileShowPath(this.bs_certFile, '')
+				}]
+			}
 			
-			this.bsList = [{//营业执照文件照片初始值
-				url: fileShowPath(this.bs_certFile, '')
-			}]
-			
-			this.scList = [{//安全员执照文件照片初始值
-				url: fileShowPath(this.sc_certFile, '')
-			}]
-
+			if(this.sc_certFile){//如果是空的时候，不给与初始值
+				this.scList = [{//安全员执照文件照片初始值
+					url: fileShowPath(this.sc_certFile, '')
+				}]
+			}
 
 			//是否已认证 状态赋值
-			if (this.isCertification == "正常") {
-				this.certStatus = true; //正常则返回 true
-				this.bs_disabled = false;
-				this.sc_disabled = false;
+			if (this.isCertification == "正常" ||this.isCertification == "已禁用") {
+				this.certStatus = true; //返回 true，禁用所有修改信息功能
+				this.bs_disabled = false;//隐藏上传营业执照证件的删除按钮
+				this.sc_disabled = false;//隐藏上传安全员执照证件的删除按钮
 				console.log(this.isCertification + ",状态下 ：", this.userdata);
 			} else if (this.isCertification == "未认证") {
 				console.log(this.isCertification + ",状态下 ：", this.userdata);
@@ -330,6 +331,10 @@
 
 		.head-tip .normal {
 			background: #27a9e3;
+		}
+		
+		.head-tip .danger {
+			background: red;
 		}
 
 		.red {

@@ -16,7 +16,7 @@
 					</el-table-column>
 					<el-table-column prop="remark" label="备注">
 					</el-table-column>
-					<el-table-column prop="statusCn" label="状态" width="80">
+					<el-table-column prop="statusCn" label="状态" width="100">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">
 								<el-tag :type="scope.row.statusBtnColor" :effect="scope.row.statusBtnStyle"

@@ -50,35 +50,27 @@ const router = new VueRouter({
 					path: 'serviceList',
 					component: () => import('@/views/serviceList/PdfView')
 				},
-				{
-					name: 'businessEntrust',
-					path: 'businessEntrust',
-					meta: {
-						isAuthority: "正常",
-						headName: ['委托单管理', '/', ' 详细业务']
-					},
-					component: () => import('@/views/businessEntrust/bsEntrust')
-				},
-				{
-					name: 'mgCertificate',
-					path: 'mgCertificate',
-					meta: {
-						isAuthority: "正常",
-						headName: ['证书管理', '/', ' 详情']
-					},
-					component: () => import('@/views/certificateManagement/mgCertificate')
-				}
 				// {
-				// 	path: "404",
-				// 	component: () => import('@/components/error-page/error404')
+				// 	name: 'businessEntrust',
+				// 	path: 'businessEntrust',
+				// 	meta: {
+				// 		isAuthority: "正常",
+				// 		headName: ['委托单管理', '/', ' 详细业务']
+				// 	},
+				// 	component: () => import('@/views/businessEntrust/bsEntrust')
 				// },
 				// {
-				// 	path: "*",
-				// 	redirect: '404',
+				// 	name: 'mgCertificate',
+				// 	path: 'mgCertificate',
+				// 	meta: {
+				// 		isAuthority: "正常",
+				// 		headName: ['证书管理', '/', ' 详情']
+				// 	},
+				// 	component: () => import('@/views/certificateManagement/mgCertificate')
 				// }
-			]
-		},
 
+			]
+		}
 	]
 })
 
@@ -95,7 +87,7 @@ export const asyncRouter = [{
 			headName: ['委托单管理', '/', ' 详细业务']
 		},
 		component: () => import('@/views/businessEntrust/bsEntrust')
-	},{
+	}, {
 		name: 'mgCertificate',
 		path: 'mgCertificate',
 		meta: {
@@ -103,7 +95,7 @@ export const asyncRouter = [{
 			headName: ['证书管理', '/', ' 详情']
 		},
 		component: () => import('@/views/certificateManagement/mgCertificate')
-	},{
+	}, {
 		name: 'entrustTbDownload',
 		path: 'entrustTb',
 		meta: {
@@ -112,5 +104,30 @@ export const asyncRouter = [{
 		component: () => import('@/views/entrustTbDownload/entrustTbDL')
 	}]
 }]
+
+//错误提示的路由
+export const errorRouter = [
+	{
+		path: "/404",
+		component: () => import('@/components/error-page/error404')
+	},
+	{
+		path: "*",
+		redirect: '404',
+	},
+	{
+		path: '/Home',
+		component: () => import('@/views/HomePage'),
+		children: [{
+				path: "404",
+				component: () => import('@/components/error-page/error404')
+			},
+			{
+				path: "*",
+				redirect: '404',
+			}
+		]
+	}
+]
 
 export default router

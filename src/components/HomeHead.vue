@@ -8,7 +8,7 @@
 			<el-popover placement="bottom" width="100" trigger="click">
 				<el-button slot="reference">
 					<i class="el-icon-user-solid"></i>
-					<span>{{username}}</span>
+					<span>{{userInfo.name}}</span>
 					<i class="el-icon-caret-bottom"></i>
 				</el-button>
 				<slot>
@@ -26,15 +26,16 @@
 
 <script>
 	import { signoutApi } from "@/request/api"
+	import {mapState} from "vuex"
 	export default {
 		name: 'HomeHead',
 		data() {
 			return {
-				username: 'Area6666666'
+				
 			}
 		},
-		components: {
-
+		computed: {
+			...mapState(['userInfo'])
 		},
 		methods:{
 			signou(){

@@ -4,14 +4,14 @@
 			<div class="paymentProvePic">
 				<img :src="imgUrl" alt="">
 			</div>
-			<div class="uploadbox">
+			<div class="uploadbox" v-if="!isUploadPay">
 				<el-upload  class="upload-payment-prove" action="#"
 					:limit="1" accept=".jpg,.jpeg,.png" :before-upload="beforePaymentProve"
 					:http-request="uploadPaymentProve" style="margin: 10px 0;">
-					<el-button slot="trigger" v-if="!payFile" size="small" type="primary">上传支付证明</el-button>
+					<el-button slot="trigger" size="small" type="primary">上传支付证明</el-button>
 				</el-upload>
 			</div>
-			<div slot="footer" v-if="!payFile" class="dialog-footer">
+			<div slot="footer" v-if="!isUploadPay" class="dialog-footer">
 			    <el-button @click="dialogFormVisible = false">取 消</el-button>
 			    <el-button type="primary" @click="submitPaymentProve()">提 交</el-button>
 			</div>
@@ -30,7 +30,8 @@
 				dialogFormVisible:false,
 				imgUrl:"",
 				data:'',
-				payFile:''
+				payFile:'',
+				isUploadPay:false
 			}
 		},
 		methods: {
@@ -81,8 +82,11 @@
 				this.data=res;
 				this.imgUrl='';//清空支付证明链接
 				if(res.payFile){
+					this.isUploadPay=true;
 					this.payFile=res.payFile;
 					this.imgUrl=fileShowPath(res.payFile,'');
+				}else{
+					this.isUploadPay=false;
 				}
 			})
 		}
