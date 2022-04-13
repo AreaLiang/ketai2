@@ -55,7 +55,7 @@
 						<el-row>
 							<el-col :span="24">
 								<el-upload class="upload-UserInfoCg" ref="uploadUserInfoCg" action="#" :limit="1"
-									accept=".doc,.docx,.pdf" :before-upload="beforeLicenseUpload"
+									accept=".doc,.docx" :before-upload="beforeLicenseUpload"
 									:http-request="uploadLicense" style="margin: 10px 0;">
 									<el-button slot="trigger" size="small" type="primary">委托文件</el-button>
 								</el-upload>
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-	import {addEntrustOrderApi,uploadEntrustOrderApi,modifyEntrustOrderApi} from "@/request/api.js"
+	import {addEntrustOrderApi,uploadEntrustOrderApi,modifyEntrustOrderApi} from "@/request/api"
 	import {mapState} from 'vuex'
 	import {baseUrl} from '@/request/api'
 	import {fileShowPath} from '@/utils'
@@ -132,18 +132,28 @@
 						this.wordUrl = '';
 					})
 					if (this.operateType == 1) { //新建业务委托表单信息
-						this.formdata(this.userdata);
+						this.formdata(this.userdata,1);
 					} else if (this.operateType == 0) { //修改业务委托 表单信息
+					
 						let jsonData = JSON.parse(JSON.stringify(this.rowData));
+						
+						if(jsonData.rawData.orderFile){//如果证件的路径不为空
+							this.$nextTick(() => {//如果已经上传了委托文件，则赋值路径显示文件内容
+								this.wordUrl = fileShowPath(jsonData.rawData.orderFile,'.pdf');
+							})
+						}
+						//解构赋值
 						let {
 							contact,
-							mobile
+							mobile,
+							remark
 						} = jsonData;
 						let newdata = this.userdata;
-
+						//添加新的key并且赋值
 						newdata.contact = contact;
 						newdata.mobile = mobile;
-						this.formdata(newdata);
+						newdata.remark = remark;
+						this.formdata(newdata,0);
 					}
 				}
 			}
@@ -211,15 +221,13 @@
 			},
 			//上传证件文件前，对文件类型做判断
 			beforeLicenseUpload(file) {
-				const isPDF = file.type === 'application/pdf';
+				// const isPDF = file.type === 'application/pdf';
 				const isDOCX = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 				const isDOC = file.type === 'application/msword';
 
 				if (isDOCX || isDOC) {
 					this.ispdf = false;
-				} else if (isPDF) {
-					this.ispdf = true;
-				} else {
+				}else {
 					this.$message.error('只能是文档格式或者PDF格式!');
 				}
 			},
@@ -244,8 +252,8 @@
 					}
 				})
 			},
-			//赋值表单中的数据
-			formdata(data) {
+			//赋值表单中的数据，data是需要渲染的数据，status是操作状态，1 是新建业务委托，0 是修改业务委托
+			formdata(data,status) {
 				//渲染数据
 				let {
 					name,
@@ -253,7 +261,8 @@
 					email,
 					phone,
 					contact,
-					mobile
+					mobile,
+					remark
 				} = data;
 				this.addEntrustForm.name = name;
 				this.addEntrustForm.adress = address;
@@ -261,6 +270,13 @@
 				this.addEntrustForm.phone = phone;
 				this.addEntrustForm.contact = contact;
 				this.addEntrustForm.contactCellphone = mobile;
+				
+				if(status==1){//如果是新建业务，则备注清空，如果是其他操作，显示备注内容
+					this.addEntrustForm.remark = '';
+				}else{
+					this.addEntrustForm.remark = remark;
+				}
+				
 			}
 		},
 		mounted() {

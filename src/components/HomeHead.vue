@@ -1,8 +1,12 @@
 <template>
 	<div class="home-head">
 		<div class="img-box">
-			<img src="../assets/home/steelyard.png">
-			<img src="../assets/login/fromtitle.png">
+			<a href="http://www.gdketai.com/">
+				<img src="../assets/home/steelyard.png">
+			</a>
+			<a href="http://www.gdketai.com/">
+				<img src="../assets/login/fromtitle.png">
+			</a>
 		</div>
 		<div class="username">
 			<el-popover placement="bottom" width="100" trigger="click">
@@ -13,7 +17,7 @@
 				</el-button>
 				<slot>
 					<ul style="padding: 0;">
-						<li style="list-style: none;cursor: pointer;" @click="signou()">
+						<li style="list-style: none;cursor: pointer;" @click="signOut()">
 							<span class="iconfont icon-exit" style="padding: 0 10px;"></span>
 							<span>退出</span>
 						</li>
@@ -38,7 +42,7 @@
 			...mapState(['userInfo'])
 		},
 		methods:{
-			signou(){
+			signOut(){
 				signoutApi({}).then((data)=>{
 					console.log("登出",data)
 					if (data.code=="20000") {

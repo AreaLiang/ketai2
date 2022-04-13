@@ -21,7 +21,6 @@
 			this.$bus.$on("currentRowData",(data)=>{
 				let jsonData=JSON.parse(JSON.stringify(data));//转换成JSON格式
 				//获取后台返回文件路径，pdf和doc文件不一样，返回路径不一样
-				
 				if(jsonData.rawData.orderFile){
 					this.wordUrl=fileShowPath(jsonData.rawData.orderFile,'.pdf');
 				}else{

@@ -19,8 +19,10 @@
 					<el-table-column prop="statusCn" label="状态" width="100">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">
-								<el-tag :type="scope.row.statusBtnColor" :effect="scope.row.statusBtnStyle"
-									size="medium">{{ scope.row.statusCn }}</el-tag>
+								<el-tooltip class="item" effect="dark" :content="scope.row.rawData.reason" :disabled="statusMeg(scope.row)" placement="top-start">
+								    <el-tag :type="scope.row.statusBtnColor" :effect="scope.row.statusBtnStyle"
+								      	size="medium">{{ scope.row.statusCn }}</el-tag>
+								</el-tooltip>
 							</div>
 						</template>
 					</el-table-column>
@@ -52,7 +54,7 @@
 								@click="DownloadCertificate()">下载证书
 							</el-button>
 
-							<el-button type="primary" v-if="scope.row.opBtnList.resubmitBtn" size="small">重新提交
+							<el-button type="primary" v-if="scope.row.opBtnList.resubmitBtn" @click="submitAgain(scope.row)" size="small">重新提交
 							</el-button>
 
 						</template>
@@ -88,15 +90,9 @@
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
 
-	import {
-		bsEntrustmentApi
-	} from "@/request/api"
-	import {
-		timestamp
-	} from '@/utils'
-	import {
-		cgBsEntrustData
-	} from '@/utils/bsEntrust'
+	import {bsEntrustmentApi,modifyEntrustOrderApi} from "@/request/api"
+	import {timestamp} from '@/utils'
+	import {cgBsEntrustData} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {
@@ -106,6 +102,13 @@
 				tableData: [],
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
+			}
+		},
+		computed: {
+			statusMeg(){//状态框，指针指中时候提示信息，如果有则显示
+				return (currentRow)=> {
+					return currentRow.rawData.reason ? false:true
+				}
 			}
 		},
 		components: {
@@ -131,11 +134,33 @@
 				dialog.dialogFormVisible = true;
 				dialog.operateType = 1;
 			},
+			//委托单编辑
 			modifyEntrust(data) {
 				let dialog = this.$refs.addEntrustDiglog;
 				dialog.dialogFormVisible = true;
 				dialog.operateType = 0;
 				dialog.rowData = data;
+			},
+			//重新提交委托单
+			submitAgain(currentRow){
+				let data=JSON.parse(JSON.stringify(currentRow));
+				
+				let postData = {
+					contact: data.contact,
+					mobile: data.mobile,
+					remark: data.remark,
+					wordFile: data.rawData.orderFile,
+					orderFile: data.rawData.orderFilePdf,
+					id:data.rawData.id
+				}
+				modifyEntrustOrderApi(postData).then((data) => {
+					if (data.code == "20000") {
+						this.$message.success("提交成功");
+						this.$bus.$emit('pageNumber', 1);
+					} else {
+						this.$message.error("提交失败");
+					}
+				});
 			},
 			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
 			PaginationClick(page, pageSize) {
@@ -153,6 +178,7 @@
 					// console.log("业务委托：",data)
 				});
 			},
+			//点击下载证书事件
 			DownloadCertificate() {
 				this.$router.push('/Home/mgCertificate');
 			}
