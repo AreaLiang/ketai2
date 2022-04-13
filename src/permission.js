@@ -50,6 +50,4 @@ router.beforeEach(async (to, from, next) => {
 			await NProgress.done();
 		})();
 	}
-	
-	
 });

@@ -2,13 +2,6 @@ import Qs from 'qs' //增加了一些安全性的查询字符串解析和序列�
 import axios from 'axios'
 import {loginApi,phoneCodeApi,registerApi} from "@/request/api"
 
-// import {
-// 	phoneCodeApi,
-// 	registerApi
-// } from '@/api'
-
-
-
 import {
 	ckUserId,
 	ckPassword,

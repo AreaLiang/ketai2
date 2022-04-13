@@ -38,18 +38,17 @@
 				<el-col :span="24">
 					<el-form-item label="业务需求" prop="profession">
 						<el-checkbox-group v-model="ruleForm.profession" style="text-align: left;">
-							<el-checkbox label="铝型材" name="aluminum"></el-checkbox>
-							<el-checkbox label="陶瓷" name="ceramics"></el-checkbox>
-							<el-checkbox label="汽配" name="autoParts"></el-checkbox>
-							<el-checkbox label="电子" name="electronic"></el-checkbox>
-							<el-checkbox label="危化品" name="hazardous"></el-checkbox>
-							<el-checkbox label="水泥" name="cement"></el-checkbox>
-							<el-checkbox label="印染" name="printing"></el-checkbox>
-							<el-checkbox label="其他" name="other"></el-checkbox>
+							<el-checkbox label="铝型材" name="profession"></el-checkbox>
+							<el-checkbox label="陶瓷" name="profession"></el-checkbox>
+							<el-checkbox label="汽配" name="profession"></el-checkbox>
+							<el-checkbox label="电子" name="profession"></el-checkbox>
+							<el-checkbox label="危化品" name="profession"></el-checkbox>
+							<el-checkbox label="水泥" name="profession"></el-checkbox>
+							<el-checkbox label="印染" name="profession"></el-checkbox>
+							<el-checkbox label="其他" name="profession"></el-checkbox>
 						</el-checkbox-group>
 					</el-form-item>
 				</el-col>
-
 				<el-col :span="12">
 					<el-form-item label="安全管理员" prop="securityName">
 						<el-input v-model.trim="ruleForm.securityName"></el-input>
@@ -170,7 +169,12 @@
 		mounted() {
 			this.$nextTick(function() {
 					this.certStatus = this.status;
-					this.ruleForm=userformInfo(this.userdata);
+					if(this.status){
+						this.ruleForm=userformInfo(this.userdata,1);
+					}else{
+						this.ruleForm=userformInfo(this.userdata,0);
+					}
+					
 				}
 			)
 		}

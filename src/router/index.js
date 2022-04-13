@@ -49,32 +49,13 @@ const router = new VueRouter({
 					name: 'pdfView',
 					path: 'serviceList',
 					component: () => import('@/views/serviceList/PdfView')
-				},
-				// {
-				// 	name: 'businessEntrust',
-				// 	path: 'businessEntrust',
-				// 	meta: {
-				// 		isAuthority: "正常",
-				// 		headName: ['委托单管理', '/', ' 详细业务']
-				// 	},
-				// 	component: () => import('@/views/businessEntrust/bsEntrust')
-				// },
-				// {
-				// 	name: 'mgCertificate',
-				// 	path: 'mgCertificate',
-				// 	meta: {
-				// 		isAuthority: "正常",
-				// 		headName: ['证书管理', '/', ' 详情']
-				// 	},
-				// 	component: () => import('@/views/certificateManagement/mgCertificate')
-				// }
-
+				}
 			]
 		}
 	]
 })
 
-//异步挂载的路由
+// 异步挂载的路由
 // 动态需要根据权限加载的路由表
 export const asyncRouter = [{
 	path: '/Home',

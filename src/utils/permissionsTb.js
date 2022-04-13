@@ -1,7 +1,11 @@
 import axios from 'axios'
 // import {ckUserInfoApi} from '@/api'
 
-//过滤路由表的构造函数
+/**
+ * 过滤路由表的构造函数，此方法未完善，只操作数组前面第一个对象
+ * @param {Array} routeList [需要添加的路由表]
+ * @param {String} identity [用户的中文状态信息，如 “正常” ，“未验证”]
+ */
 class navRouter {
 	constructor(routeList, identity) {
 		this.routeList = routeList;
@@ -20,26 +24,4 @@ class navRouter {
 	}
 };
 
-
-//检查用户信息
-// async function ckUserInfo(token) {
-// 	let {
-// 		method,
-// 		url
-// 	} = ckUserInfoApi();
-	
-// 	await axios({
-// 			method: method,
-// 			url: url,
-// 			data: {
-// 				token: token
-// 			}
-// 		}).then((data) => {
-// 			console.log(data)
-// 		})
-// 		.catch((e) => e);
-// }
-
-export {
-	navRouter,
-};
+export {navRouter};

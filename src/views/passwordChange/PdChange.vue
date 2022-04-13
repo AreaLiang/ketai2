@@ -110,6 +110,7 @@
 									removeSessionStorage('token');//删除缓存
 									NProgress.done();
 									clearInterval(np);
+									this.$router.push("/Login");
 								},3000)
 							}else{
 								this.$message.error(data.msg);

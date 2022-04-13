@@ -27,7 +27,7 @@
 		data(){
 			return{
 				dialogFormVisible:false,
-				imgUrl:'',
+				imgUrl:'',//照片显示的链接
 				tempFile:'',//验工单的文件路径
 				data:{}
 			}
@@ -62,8 +62,8 @@
 					}).then((data)=>{
 						if(data.code=="20000"){
 							this.$message.success("上传成功");
-							this.dialogFormVisible = false;
-							this.$bus.$emit('pageNumber',1);
+							this.dialogFormVisible = false;//关闭dialog
+							this.$bus.$emit('pageNumber',1);//刷新页面
 						}else{
 							this.$message.error("上传失败");
 						}
@@ -78,6 +78,7 @@
 				let res={...data.rawData};
 				this.data=res;
 				this.tempFile=res.checkFile;
+				console.log(res.checkFile)
 				this.imgUrl=fileShowPath(res.checkFile,'');
 			})
 		}

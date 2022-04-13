@@ -3,12 +3,16 @@ import { Message } from 'element-ui';
 import {baseUrl} from '@/request/api'
 // import store from './store'
 
-//删除浏览器缓存,isGoLoigin是否转跳到登录页面，默认转跳
+/**
+ * 删除浏览器缓存
+ * @param {String} name [缓存的名称]
+ * @param {boolean} isGoLoigin [是否转跳到登录页面，默认转跳]
+ */
 export function removeSessionStorage(name, isGoLoigin) {
 	isGoLoigin = isGoLoigin == true ? true : false;
 
 	sessionStorage.removeItem(name); //清除缓存
-	if (isGoLoigin) {
+	if (isGoLoigin) {//转跳登陆页面
 		router.push("/Login");
 	}
 }
@@ -44,12 +48,19 @@ export function isImgFormat(file){
 	}
 }
 
-//委托文件、委托单返回的路径,suffix:文件后缀，传入字符串
+/**
+ * 委托文件、委托单返回的路径
+ * @param {String} file [传入后台返回的路径字符串]
+ * @param {String} suffix [文件后缀]
+ */
 export function fileShowPath(file,suffix){
-	let fileUrl=file+suffix;//文件路径
-	
-	let reg=new RegExp("hall");//匹配服务端的 hall字符串，准备替换
-	let newUrl=baseUrl.replace(reg,fileUrl);
-	
-	return newUrl;
+	if(file){
+		let fileUrl=file+suffix;//文件路径
+		
+		let reg=new RegExp("hall");//匹配服务端的 hall字符串，准备替换
+		let newUrl=baseUrl.replace(reg,fileUrl);
+		return newUrl;
+	}else{
+		return '';
+	}
 }

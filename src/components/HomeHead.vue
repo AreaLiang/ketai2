@@ -5,7 +5,7 @@
 				<img src="../assets/home/steelyard.png">
 			</a>
 			<a href="http://www.gdketai.com/">
-				<img src="../assets/login/fromtitle.png">
+				<img src="../assets/home/fromtitle.png">
 			</a>
 		</div>
 		<div class="username">
@@ -84,15 +84,21 @@
 			img {
 				position: relative;
 				vertical-align: middle;
+				
+				width: 100%;
+			}
+			
+			a{
+				display: block;
 				float: left;
 				padding: 2px 15px;
+				line-height: 71px;
 			}
-
-			img:nth-child(1) {
+			a:nth-child(1) {
 				width: 260px;
 			}
 
-			img:nth-child(2) {
+			a:nth-child(2) {
 				width: 540px;
 			}
 		}

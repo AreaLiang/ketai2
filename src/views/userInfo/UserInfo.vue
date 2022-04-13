@@ -170,6 +170,7 @@
 				uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
 					if (valid) { //如果表单验证通过
 						if (this.agreeServe) { //如果已勾选 认证协议
+						
 							//获取用户输入的数据
 							let {
 								address,
@@ -182,6 +183,8 @@
 								securityPhone,
 								userName
 							} = uerInfoComponent.ruleForm;
+
+							console.log("提交",uerInfoComponent.ruleForm)
 
 							//整理认证接口的数据
 							let formdata = {
@@ -256,7 +259,6 @@
 				params.append('file', res.file);
 
 				uploadCertFileApi(params).then((data) => {
-					console.log(data)
 					if (data.code == "20000") {
 						this.bs_certFile = data.data.certFile; //保存后台返回的 营业执照地址
 					} else {
@@ -270,7 +272,6 @@
 				params.append('file', res.file);
 
 				uploadCertFileApi(params).then((data) => {
-					console.log(data)
 					if (data.code == "20000") {
 						this.sc_certFile = data.data.certFile; //保存后台返回的 营业执照地址
 					} else {

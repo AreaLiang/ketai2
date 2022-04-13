@@ -175,16 +175,12 @@
 					}
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
 					NProgress.done(); //结束进度条
-					// console.log("业务委托：",data)
 				});
 			},
 			//点击下载证书事件
 			DownloadCertificate() {
 				this.$router.push('/Home/mgCertificate');
 			}
-			// cellStyle(row, column, rowIndex, columnIndex) {
-			// 	console.log("66")
-			// }
 		},
 		mounted() {
 			this.PaginationClick(0, this.pageSize); //进来默认渲染第一页，后端数据第一页的页码为 0
@@ -194,7 +190,7 @@
 			})
 		},
 		beforeDestroy() {
-			this.$bus.$off('currentRowData');
+			this.$bus.$off('currentRowData');// 解绑
 		}
 	}
 </script>

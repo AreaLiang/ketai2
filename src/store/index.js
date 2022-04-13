@@ -1,16 +1,10 @@
 import Vuex from "vuex"
 import Vue from 'vue'
 import axios from 'axios'
-import {
-	asyncRouter
-} from '@/router'
-import {
-	navRouter
-} from '@/utils/permissionsTb'
-import '@/request/http.js'
-import {
-	ckUserInfoApi
-} from "@/request/api"
+import {asyncRouter} from '@/router'
+import {navRouter} from '@/utils/permissionsTb'
+// import '@/request/http.js'
+import {ckUserInfoApi} from "@/request/api"
 
 const actions = {
 	// 用户权限控制
@@ -40,10 +34,10 @@ const mutations = {
 	},
 	// 用户权限控制
 	AuthorityNav(state, useStatus) {
-		let data = asyncRouter; //获取所有动态路由
+		let  asyncRouteList = asyncRouter; //获取所有动态路由
 		
 		//过滤后的动态导航信息
-		let newRouter = new navRouter(data, useStatus);
+		let newRouter = new navRouter(asyncRouteList, useStatus);
 		state.permissionRoutes = newRouter.call();
 	}
 }
