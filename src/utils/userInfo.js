@@ -97,5 +97,5 @@ function isJSON(str) {
             return false;
         }
     }
-    console.log('It is not a string!')    
+    console.log('业务范围参数不是JSON格式字符串!')    
 }

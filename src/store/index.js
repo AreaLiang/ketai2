@@ -3,7 +3,6 @@ import Vue from 'vue'
 import axios from 'axios'
 import {asyncRouter} from '@/router'
 import {navRouter} from '@/utils/permissionsTb'
-// import '@/request/http.js'
 import {ckUserInfoApi} from "@/request/api"
 
 const actions = {

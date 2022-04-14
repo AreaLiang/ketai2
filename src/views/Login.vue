@@ -91,8 +91,7 @@
 								href="http://customer.gdketai.com/file/pdfDocument/zcb.pdf">客户注册协议</a></el-checkbox>
 						<span class="hotline">客服热线：0758-2777310</span>
 						<div class="op-div">
-							<el-button type="success" v-show="!isRegister"
-								style="background-color: #49afcd;border-color: #49afcd;" @click="login()">登录</el-button>
+							<el-button type="success" v-show="!isRegister" style="background-color: #49afcd;border-color: #49afcd;"  @click="login()">登录</el-button>
 							<el-button type="success" v-show="!isRegister" @click='goRegister()'>我要注册</el-button>
 
 							<el-button type="success" v-show="isRegister"
@@ -112,13 +111,11 @@
 </template>
 
 <script>
-	import {
-		checkRegister,
-		getPhoneCode,
-		registerfun
-	} from "@/utils/login"
+	import {checkRegister,getPhoneCode,registerfun} from "@/utils/login"
+	import { addAsyncRouter } from "@/utils"
 	import Qs from 'qs'
 	import {loginApi,captchaApi} from "@/request/api"
+	import {errorRouter} from '@/router'
 	export default {
 		name: 'Login',
 		data() {
@@ -166,7 +163,7 @@
 			login() {
 				let account = this.userInfo.account; //获取用户输入的账号
 				let passWord = this.userInfo.password; //获取用户输入的密码
-				// this.$router.push('/Home/userinfo');
+			
 				if (account != '' && passWord != '') {
 					//调用login.js里面的登录方法，成功后返回数据
 					loginApi({
@@ -191,6 +188,11 @@
 							let setRoutes = await this.$store.state.permissionRoutes;
 							//添加导航路由
 							await this.$router.addRoute(setRoutes);
+							
+							//加载 错误提示页面 的路由
+							errorRouter.forEach((p)=>{
+								this.$router.addRoute(p);
+							})
 							
 							//转跳到用户信息页面
 							await this.$router.push('/Home/userinfo');
@@ -269,12 +271,7 @@
 			changeCaptcha() {
 				this.captchaUrl = captchaApi({});
 			}
-		},
-		mounted() {
-			//修改标题名称
-			document.title = this.$route.meta.title;
-
-		},
+		}
 	}
 </script>
 

@@ -33,11 +33,6 @@
 	import {mapState} from "vuex"
 	export default {
 		name: 'HomeHead',
-		data() {
-			return {
-				
-			}
-		},
 		computed: {
 			...mapState(['userInfo'])
 		},
@@ -55,9 +50,6 @@
 					}
 				});
 			}
-		},
-		mounted(){
-			
 		}
 	}
 </script>

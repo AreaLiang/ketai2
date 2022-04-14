@@ -66,7 +66,7 @@
 
 <script>
 	import { userformInfo } from "@/utils/userInfo"
-	import { getBase64 } from "@/utils"
+	import { getBase64,formValidation } from "@/utils"
 	export default {
 		name: 'formUserInfo', //用户信息表单
 		data() {
@@ -101,9 +101,7 @@
 							trigger: 'blur'
 						},
 						{
-							min: 11,
-							max: 11,
-							message: '请输入11位手机号',
+							validator: formValidation.phone,
 							trigger: 'blur'
 						}
 					],
@@ -156,7 +154,7 @@
 			submit(){
 				let isPass;
 				this.$refs['ruleForm'].validate((valid) => {
-					if (valid) {
+					if (valid) {//如果表单验证全部通过
 						isPass= true
 					} else {
 						isPass=false
@@ -169,18 +167,14 @@
 		mounted() {
 			this.$nextTick(function() {
 					this.certStatus = this.status;
-					if(this.status){
+					if(this.status){//根据后台返回的状态码做判断，因为业务范围返回格式不一样，所以需要做判断。
 						this.ruleForm=userformInfo(this.userdata,1);
 					}else{
 						this.ruleForm=userformInfo(this.userdata,0);
 					}
-					
 				}
 			)
 		}
 	}
 </script>
 
-<style scoped lang="less">
-
-</style>

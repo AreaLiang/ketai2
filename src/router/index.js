@@ -33,7 +33,8 @@ const router = new VueRouter({
 					name: 'UserInfo',
 					path: 'userinfo',
 					meta: {
-						headName: ['客户信息', '/', '完善认证信息']
+						headName: ['客户信息', '/', '完善认证信息'],
+						title: '业务大厅'
 					},
 					component: () => import('@/views/userInfo/UserInfo')
 				},
@@ -41,7 +42,8 @@ const router = new VueRouter({
 					name: 'PdChange',
 					path: 'password',
 					meta: {
-						headName: ['密码更改', '/', ' 密码录入']
+						headName: ['密码更改', '/', ' 密码录入'],
+						title: '业务大厅'
 					},
 					component: () => import('@/views/passwordChange/PdChange')
 				},
@@ -65,7 +67,8 @@ export const asyncRouter = [{
 		path: 'businessEntrust',
 		meta: {
 			isAuthority: "正常",
-			headName: ['委托单管理', '/', ' 详细业务']
+			headName: ['委托单管理', '/', ' 详细业务'],
+			title: '业务大厅'
 		},
 		component: () => import('@/views/businessEntrust/bsEntrust')
 	}, {
@@ -73,7 +76,8 @@ export const asyncRouter = [{
 		path: 'mgCertificate',
 		meta: {
 			isAuthority: "正常",
-			headName: ['证书管理', '/', ' 详情']
+			headName: ['证书管理', '/', ' 详情'],
+			title: '业务大厅'
 		},
 		component: () => import('@/views/certificateManagement/mgCertificate')
 	}, {
@@ -81,6 +85,7 @@ export const asyncRouter = [{
 		path: 'entrustTb',
 		meta: {
 			isAuthority: "正常",
+			title: '业务大厅'
 		},
 		component: () => import('@/views/entrustTbDownload/entrustTbDL')
 	}]
@@ -110,5 +115,11 @@ export const errorRouter = [
 		]
 	}
 ]
+
+//路由守卫后置钩子
+router.afterEach((to,from)=>{
+	//修改标题名称
+	document.title = to.meta.title || "业务大厅"; //如果没有标题名，默认显示“ 业务大厅 ”
+})
 
 export default router

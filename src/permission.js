@@ -17,15 +17,16 @@ router.beforeEach(async (to, from, next) => {
 	
 	let userInfo = JSON.parse(JSON.stringify(data)); //去除隐形属性
 	
-	
 	//用户权限判断
 	if (to.path == "/Login") {
 		removeSessionStorage('token',false);//清除缓存
 		next();
 		NProgress.done();
 	} else {
+		console.log("不是登录页面");
 		(async ()=>{
 			let token = await sessionStorage.getItem('token');//获取缓存中的token
+			
 			if (token) {
 				if (JSON.stringify(data)=="[]") {
 				 	//发送token去后端验证用户信息
@@ -38,14 +39,15 @@ router.beforeEach(async (to, from, next) => {
 						errorRouter.forEach((p)=>{
 							router.addRoute(p);
 						})
-						
-						next(to.path);//放行
+						console.log("错误页面路由添加了",{...to})
+						next({...to});//放行
 					});
 				}
-				
 			} else {
+				console.log("转跳登录");
 				router.push('/Login');
 			}
+			
 			next();
 			await NProgress.done();
 		})();

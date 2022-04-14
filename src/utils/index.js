@@ -1,8 +1,8 @@
 import router from '@/router'
 import { Message } from 'element-ui';
 import {baseUrl} from '@/request/api'
-// import store from './store'
-
+import {errorRouter} from '@/router'
+import store from '@/store'
 /**
  * 删除浏览器缓存
  * @param {String} name [缓存的名称]
@@ -63,4 +63,35 @@ export function fileShowPath(file,suffix){
 	}else{
 		return '';
 	}
+}
+
+ /* 登录后和当前页面刷新权限验证时候 动态路由添加*/
+// export function addAsyncRouter(){
+// 	let setRoutes = store.state.permissionRoutes;
+// 	console.log("66",setRoutes)
+// 	//添加导航路由
+// 	router.addRoute(setRoutes);
+	
+// 	//加载 错误提示页面 的路由
+// 	errorRouter.forEach((p)=>{
+// 		router.addRoute(p);
+// 	})
+// }
+
+/**
+ * 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用
+ * @param  rule	[源描述符中的验证规则，对应于正在验证的字段名称。它总是被分配一个field带有被验证字段名称的属性。]
+ * @param  value [正在验证的源对象属性的值。]
+ * @param  callback [验证完成后调用的回调函数。它期望传递一个Error实例数组来指示验证失败。如果检查是同步的，可以直接返回一个falseorError或Error Array]
+ * *** 验证里面的type 可选email、string、number、boolean、url、date、any等等
+ * 详细参考 https://github.com/yiminghe/async-validator（需要翻墙）
+ */
+export const formValidation={
+	//判断只能输入1开头第二位数字是3456789中一个，后面九位数随便填，总共十一位电话号码。
+	phone:(rule, value, callback)=>{
+		var patrn = /^1[3456789]\d{9}$/;
+		if(patrn.test(value)==false){
+			callback(new Error('请输入正确的11位手机号码！'));
+		}
+	},
 }

@@ -39,12 +39,8 @@
 	import QS from 'qs'
 	import {uploadCertFileApi,cgUserInfoApi} from "@/request/api"
 	import {getBase64,isImgFormat} from "@/utils"
-	// import { changeProfessionArray } from "@/utils/userInfo"
-
-	import {
-		mapGetters,
-		mapState
-	} from "vuex"
+	import {mapGetters,mapState} from "vuex"
+	
 	export default {
 		name: 'diglogUserInfoCg', //信息修改 的弹窗
 		data() {
@@ -128,9 +124,6 @@
 					})
 				}
 			}
-		},
-		mounted() {
-
 		}
 	}
 </script>
