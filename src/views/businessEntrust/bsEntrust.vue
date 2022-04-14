@@ -92,7 +92,7 @@
 
 	import {bsEntrustmentApi,modifyEntrustOrderApi} from "@/request/api"
 	import {timestamp} from '@/utils'
-	import {cgBsEntrustData} from '@/utils/bsEntrust'
+	import {cgBsEntrustData,entrustObj} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {
@@ -145,14 +145,9 @@
 			submitAgain(currentRow){
 				let data=JSON.parse(JSON.stringify(currentRow));
 				
-				let postData = {
-					contact: data.contact,
-					mobile: data.mobile,
-					remark: data.remark,
-					wordFile: data.rawData.orderFile,
-					orderFile: data.rawData.orderFilePdf,
-					id:data.rawData.id
-				}
+				let postData=new entrustObj(data);//委托单需要的信息
+				postData.id=data.rawData.id;//添加id的属性
+				
 				modifyEntrustOrderApi(postData).then((data) => {
 					if (data.code == "20000") {
 						this.$message.success("提交成功");

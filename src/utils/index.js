@@ -66,20 +66,21 @@ export function fileShowPath(file,suffix){
 }
 
  /* 登录后和当前页面刷新权限验证时候 动态路由添加*/
-// export function addAsyncRouter(){
-// 	let setRoutes = store.state.permissionRoutes;
-// 	console.log("66",setRoutes)
-// 	//添加导航路由
-// 	router.addRoute(setRoutes);
+export  function addAsyncRouter(){
+	//从vuex中获取过滤后的路由表
+	let setRoutes =  store.state.permissionRoutes;
+
+	//添加导航路由
+	router.addRoute(setRoutes);
 	
-// 	//加载 错误提示页面 的路由
-// 	errorRouter.forEach((p)=>{
-// 		router.addRoute(p);
-// 	})
-// }
+	//加载 错误提示页面 的路由
+	errorRouter.forEach((p)=>{
+		router.addRoute(p);
+	})
+}
 
 /**
- * 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用
+ * 用于ElementUI 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用
  * @param  rule	[源描述符中的验证规则，对应于正在验证的字段名称。它总是被分配一个field带有被验证字段名称的属性。]
  * @param  value [正在验证的源对象属性的值。]
  * @param  callback [验证完成后调用的回调函数。它期望传递一个Error实例数组来指示验证失败。如果检查是同步的，可以直接返回一个falseorError或Error Array]
@@ -91,7 +92,9 @@ export const formValidation={
 	phone:(rule, value, callback)=>{
 		var patrn = /^1[3456789]\d{9}$/;
 		if(patrn.test(value)==false){
-			callback(new Error('请输入正确的11位手机号码！'));
+			return callback(new Error('请输入正确的11位手机号码！'));
+		}else{
+			return callback();
 		}
 	},
 }

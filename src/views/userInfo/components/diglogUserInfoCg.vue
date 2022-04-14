@@ -51,9 +51,7 @@
 				licenseUrl:''
 			}
 		},
-		components: {
-			formUserInfo
-		},
+		components: {formUserInfo},
 		computed: {
 			...mapGetters(["isCertification"]),
 			...mapState({

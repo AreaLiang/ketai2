@@ -3,7 +3,7 @@ import store from './store'
 import axios from 'axios'
 import NProgress from 'nprogress' // 引入头部进度条
 import 'nprogress/nprogress.css' // 进度条样式
-import { removeSessionStorage ,sendInfoCk} from "@/utils"
+import { removeSessionStorage ,sendInfoCk ,addAsyncRouter} from "@/utils"
 import {errorRouter} from './router'
 
 NProgress.configure({
@@ -23,7 +23,6 @@ router.beforeEach(async (to, from, next) => {
 		next();
 		NProgress.done();
 	} else {
-		console.log("不是登录页面");
 		(async ()=>{
 			let token = await sessionStorage.getItem('token');//获取缓存中的token
 			
@@ -31,25 +30,17 @@ router.beforeEach(async (to, from, next) => {
 				if (JSON.stringify(data)=="[]") {
 				 	//发送token去后端验证用户信息
 					await store.dispatch('authorityNav', token).then(() => {
-						//从vuex中获取过滤后的路由表
-						let setRoutes = store.state.permissionRoutes;
-						router.addRoute(setRoutes)//添加路由
-						
-						//加载 错误提示页面 的路由
-						errorRouter.forEach((p)=>{
-							router.addRoute(p);
-						})
-						console.log("错误页面路由添加了",{...to})
+						/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
+						addAsyncRouter();
 						next({...to});//放行
 					});
 				}
 			} else {
-				console.log("转跳登录");
 				router.push('/Login');
 			}
 			
 			next();
-			await NProgress.done();
+			NProgress.done();
 		})();
 	}
 });

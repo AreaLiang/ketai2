@@ -123,3 +123,20 @@ function statusItemShow(status) {
 			break;
 	}
 }
+
+//构造函数，提交委托单需要的信息
+export class entrustObj{
+	constructor(data){
+		this.contact=data.contact;
+		this.mobile=data.mobile;
+		this.remark=data.remark;
+		
+		try{
+			this.wordFile=data.rawData.orderFile;
+			this.orderFile=data.rawData.orderFilePdf;
+		}catch(e){
+			this.wordFile='';
+			this.orderFile='';
+		}
+	}
+}

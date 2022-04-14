@@ -185,14 +185,9 @@
 							
 							//导航的权限控制
 							await this.$store.commit('AuthorityNav',status);
-							let setRoutes = await this.$store.state.permissionRoutes;
-							//添加导航路由
-							await this.$router.addRoute(setRoutes);
 							
-							//加载 错误提示页面 的路由
-							errorRouter.forEach((p)=>{
-								this.$router.addRoute(p);
-							})
+							/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
+							await addAsyncRouter();
 							
 							//转跳到用户信息页面
 							await this.$router.push('/Home/userinfo');

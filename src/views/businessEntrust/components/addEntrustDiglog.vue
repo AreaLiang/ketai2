@@ -38,8 +38,8 @@
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">
-								<el-form-item label="联系手机号" :label-width="formLabelWidth" prop="contactCellphone">
-									<el-input v-model="addEntrustForm.contactCellphone" autocomplete="off"></el-input>
+								<el-form-item label="联系手机号" :label-width="formLabelWidth" prop="mobile">
+									<el-input v-model="addEntrustForm.mobile" autocomplete="off"></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
@@ -81,7 +81,8 @@
 	import {addEntrustOrderApi,uploadEntrustOrderApi,modifyEntrustOrderApi} from "@/request/api"
 	import {mapState} from 'vuex'
 	import {baseUrl} from '@/request/api'
-	import {fileShowPath} from '@/utils'
+	import {fileShowPath,formValidation} from '@/utils'
+	import {entrustObj} from '@/utils/bsEntrust'
 
 	export default {
 		name: 'addEntrustDiglog', //新建业务委托 弹出框
@@ -95,7 +96,7 @@
 					email: '',
 					phone: '',
 					contact: "",
-					contactCellphone: '',
+					mobile: '',
 					remark: ''
 				},
 				rules: {
@@ -104,15 +105,13 @@
 						message: '请输入联系人',
 						trigger: 'blur'
 					}],
-					contactCellphone: [{
+					mobile: [{
 						required: true,
 						message: '请输入联系手机号',
 						trigger: 'blur',
 					},
 					{
-						min: 11,
-						max: 11,
-						message: '请正确输入11位手机号',
+						validator: formValidation.phone,
 						trigger: 'blur'
 					}]
 				},
@@ -172,24 +171,21 @@
 			addEntrust() {
 				this.$refs['addEntrustForm'].validate((valid) => {
 					if (valid) { //校验是否信息为空
-						if (this.wordFile != '') { //校验是否上传委托文件
+						if (this.wordFile != '') {//校验是否上传委托文件
 							let {
 								contact,
-								contactCellphone,
+								mobile,
 								remark
 							} = this.addEntrustForm;
-							let postData = {
-								contact: contact,
-								mobile: contactCellphone,
-								remark: remark,
-								wordFile: '',
-								orderFile: ''
-							}
+						
+							let postData=new entrustObj(this.addEntrustForm);//委托单需要的信息
+							
 							if (!this.ispdf) { //判断是否pdf文件，如果是修改参数传值
 								postData.wordFile = this.wordFile;
 							} else {
 								postData.orderFile = this.wordFile;
 							}
+						
 							if (this.operateType == 1) {
 								addEntrustOrderApi(postData).then((data) => {
 									this.afterSubmit(data, "新建成功", "新建失败")
@@ -221,15 +217,18 @@
 			},
 			//上传证件文件前，对文件类型做判断
 			beforeLicenseUpload(file) {
-				// const isPDF = file.type === 'application/pdf';
+				const isPDF = file.type === 'application/pdf';
 				const isDOCX = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 				const isDOC = file.type === 'application/msword';
 
 				if (isDOCX || isDOC) {
 					this.ispdf = false;
+				}else if(isPDF){
+					this.ispdf = true;
 				}else {
 					this.$message.error('只能是文档格式或者PDF格式!');
 				}
+				
 			},
 			//上传委托文件
 			uploadLicense(res) {
@@ -264,12 +263,13 @@
 					mobile,
 					remark
 				} = data;
+				
 				this.addEntrustForm.name = name;
 				this.addEntrustForm.adress = address;
 				this.addEntrustForm.email = email;
 				this.addEntrustForm.phone = phone;
 				this.addEntrustForm.contact = contact;
-				this.addEntrustForm.contactCellphone = mobile;
+				this.addEntrustForm.mobile = mobile;
 				
 				if(status==1){//如果是新建业务，则备注清空，如果是其他操作，显示备注内容
 					this.addEntrustForm.remark = '';
@@ -278,11 +278,7 @@
 				}
 				
 			}
-		},
-		mounted() {
-
 		}
-
 	}
 </script>
 

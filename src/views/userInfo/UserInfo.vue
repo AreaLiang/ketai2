@@ -199,7 +199,7 @@
 								safetyOfficer: securityName,
 								safetyMobile: securityPhone,
 								safetyCertificate: this.sc_certFile,
-								business: JSON.stringify(profession)
+								business: ["印染","汽配"]
 							}
 
 							//提交认证接口
@@ -220,9 +220,9 @@
 				});
 			},
 			//信息更改 按钮事件
-			changeUserInfoBtn() {
-				this.$refs["diglogUserInfoCg"].dialogFormVisible = true;
-			},
+			// changeUserInfoBtn() {
+			// 	this.$refs["diglogUserInfoCg"].dialogFormVisible = true;
+			// },
 			//文件上传删除功能
 			handleRemove(file, name) {
 				let uploadFiles, index;
