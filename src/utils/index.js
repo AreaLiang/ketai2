@@ -70,6 +70,8 @@ export  function addAsyncRouter(){
 	//从vuex中获取过滤后的路由表
 	let setRoutes =  store.state.permissionRoutes;
 
+	console.log("添加路由",setRoutes)
+
 	//添加导航路由
 	router.addRoute(setRoutes);
 	

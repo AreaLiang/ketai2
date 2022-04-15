@@ -4,18 +4,18 @@
 			class="ruleForm" :disabled="certStatus">
 			<el-row :gutter="20">
 				<el-col :span="12">
-					<el-form-item label="客户名称" prop="userName" >
-						<el-input v-model.trim="ruleForm.userName" :disabled="dialogFormVisible"></el-input>
+					<el-form-item label="客户名称" prop="name" >
+						<el-input v-model.trim="ruleForm.name" :disabled="dialogFormVisible"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="联系人" prop="contactName">
-						<el-input v-model.trim="ruleForm.contactName"></el-input>
+					<el-form-item label="联系人" prop="contact">
+						<el-input v-model.trim="ruleForm.contact"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="手机号" prop="cellPhone">
-						<el-input oninput="value=value.replace(/[^0-9.]/g,'')" v-model="ruleForm.cellPhone"></el-input>
+					<el-form-item label="手机号" prop="mobile">
+						<el-input oninput="value=value.replace(/[^0-9.]/g,'')" v-model="ruleForm.mobile"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -25,8 +25,8 @@
 				</el-col>
 
 				<el-col :span="12">
-					<el-form-item label="电子邮箱" prop="mail">
-						<el-input v-model.trim="ruleForm.mail"></el-input>
+					<el-form-item label="电子邮箱" prop="email">
+						<el-input v-model.trim="ruleForm.email"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -36,8 +36,8 @@
 				</el-col>
 
 				<el-col :span="24">
-					<el-form-item label="业务需求" prop="profession">
-						<el-checkbox-group v-model="ruleForm.profession" style="text-align: left;">
+					<el-form-item label="业务需求" prop="business">
+						<el-checkbox-group v-model="ruleForm.business" style="text-align: left;">
 							<el-checkbox label="铝型材" name="profession"></el-checkbox>
 							<el-checkbox label="陶瓷" name="profession"></el-checkbox>
 							<el-checkbox label="汽配" name="profession"></el-checkbox>
@@ -50,13 +50,13 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="安全管理员" prop="securityName">
-						<el-input v-model.trim="ruleForm.securityName"></el-input>
+					<el-form-item label="安全管理员" prop="safetyOfficer">
+						<el-input v-model.trim="ruleForm.safetyOfficer"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="安全员手机号" prop="securityPhone">
-						<el-input v-model.number="ruleForm.securityPhone"></el-input>
+					<el-form-item label="安全员手机号" prop="safetyMobile">
+						<el-input v-model.number="ruleForm.safetyMobile"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -73,29 +73,29 @@
 			return {
 				certStatus: false,
 				ruleForm: {
-					userName: '',
-					contactName: '',
-					cellPhone: '',
+					name: '',
+					contact: '',
+					mobile: '',
 					phone: '',
-					mail: '',
+					email: '',
 					address: '',
-					profession: [],
-					securityName: '',
-					securityPhone: ''
+					business: [],
+					safetyOfficer: '',
+					safetyMobile: ''
 				},
 				rules: {
-					userName: [{
+					name: [{
 							required: true,
 							message: '请输入名称',
 							trigger: 'blur'
 						}
 					],
-					contactName: [{
+					contact: [{
 						required: true,
 						message: '请输入联系人',
 						trigger: 'blur'
 					}],
-					cellPhone: [{
+					mobile: [{
 							required: true,
 							message: '请输入手机号',
 							trigger: 'blur'
@@ -105,7 +105,7 @@
 							trigger: 'blur'
 						}
 					],
-					profession: [{
+					business: [{
 						type: 'array',
 						required: true,
 						message: '请至少选择业务',
@@ -117,7 +117,7 @@
 						message: '请至少选择一个活动性质',
 						trigger: 'blur'
 					}],
-					mail: [{
+					email: [{
 						required: true,
 						message: '请输入电子邮箱',
 						trigger: 'blur'
@@ -136,12 +136,12 @@
 						message: '请填写公司电话',
 						trigger: 'blur'
 					}],	
-					securityName: [{
+					safetyOfficer: [{
 						required: true,
 						message: '请输入安全管理员名称',
 						trigger: 'blur'
 					}],
-					securityPhone: [{
+					safetyMobile: [{
 						required: true,
 						message: '请输入安全员手机号',
 						trigger: 'blur'

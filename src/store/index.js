@@ -14,6 +14,7 @@ const actions = {
 				if (data.code == "20000") {
 					context.commit('AuthorityNav', data.data.statusCn);
 					context.commit('UserInfo',data);
+					console.log("666：",asyncRouter);
 				}
 				resolve();
 			})
@@ -33,11 +34,17 @@ const mutations = {
 	},
 	// 用户权限控制
 	AuthorityNav(state, useStatus) {
-		let  asyncRouteList = asyncRouter; //获取所有动态路由
+		let asyncRouteList = asyncRouter; //获取所有动态路由
 		
+		// setTimeout(()=>{
+		// 	console.log("我是vux的状态",useStatus,"路由：",asyncRouter);
+		// },1000)
 		//过滤后的动态导航信息
-		let newRouter = new navRouter(asyncRouteList, useStatus);
-		state.permissionRoutes = newRouter.call();
+		
+		setTimeout(()=>{
+			console.log("我是vux",navRouter(asyncRouteList, useStatus))
+		},1000)
+		state.permissionRoutes = navRouter(asyncRouter, useStatus);
 	}
 }
 

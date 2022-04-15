@@ -8,9 +8,9 @@ export function userformInfo(data,status) {
 	
 	if(status==1){//已经认证
 		//业务范围 转义成中文的数组
-		ruleForm.profession=changeProfessionArray(ruleForm.profession);
+		ruleForm.business=changeProfessionArray(ruleForm.business);
 	}else if(status==0){//非认证
-		ruleForm.profession=JSON.parse(ruleForm.profession);
+		ruleForm.business=JSON.parse(ruleForm.business);
 	}
 
 	return ruleForm;
@@ -71,13 +71,13 @@ function isJSON(str) {
 
 //用户信息界面 初始化数据的 构造函数
 export function userInfoObj(data){
-	this.userName=data.name,
-	this.contactName=data.contact,
-	this.cellPhone=data.mobile,
+	this.name=data.name,
+	this.contact=data.contact,
+	this.mobile=data.mobile,
 	this.phone=data.phone,
-	this.mail=data.email,
+	this.email=data.email,
 	this.address=data.address,
-	this.profession=data.business,
-	this.securityName=data.safetyOfficer,
-	this.securityPhone=data.safetyMobile
+	this.business=data.business,
+	this.safetyOfficer=data.safetyOfficer,
+	this.safetyMobile=data.safetyMobile
 }

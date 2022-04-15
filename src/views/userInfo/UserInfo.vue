@@ -171,43 +171,27 @@
 				uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
 					if (valid) { //如果表单验证通过
 						if (this.agreeServe) { //如果已勾选 认证协议
-						
 							//获取用户输入的数据
-							let {
-								address,
-								cellPhone,
-								contactName,
-								mail,
-								phone,
-								profession,
-								securityName,
-								securityPhone,
-								userName
-							} = uerInfoComponent.ruleForm;
+							let postData=new userInfoObj(uerInfoComponent.ruleForm);
+							postData.business=JSON.stringify(postData.business);
 							
 							//整理认证接口的数据
-							let formdata = {
+							let formData = {
 								id: this.userdata.id,
-								name: userName,
-								contact: contactName,
-								mobile: cellPhone,
-								phone: phone,
-								address: address,
-								email: mail,
 								certificate: this.bs_certFile,
-								safetyOfficer: securityName,
-								safetyMobile: securityPhone,
 								safetyCertificate: this.sc_certFile,
-								business: JSON.stringify(profession)
 							}
-						
+							//合并对象，如果键名相同，第二个参数覆盖第一个
+							formData=Object.assign(formData,postData);
+							
 							//提交认证接口
-							modifyRegistApi(formdata).then((data) => {
+							modifyRegistApi(formData).then((data) => {
 								console.log(data)
 								if (data.code == "20000") {
 									let token = sessionStorage.getItem('token');
 									this.$store.dispatch('authorityNav', token);
 									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
+									this.agreeServe=false;
 								} else {
 									this.$message.error("认证失败");
 								}
@@ -317,6 +301,7 @@
 				this.certStatus = false;
 			}
 			
+		
 		}
 	}
 </script>

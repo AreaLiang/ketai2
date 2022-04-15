@@ -39,7 +39,6 @@
 		methods:{
 			signOut(){
 				signoutApi({}).then((data)=>{
-					console.log("登出",data)
 					if (data.code=="20000") {
 						this.$message.success("退出成功");
 						setTimeout(()=> {
