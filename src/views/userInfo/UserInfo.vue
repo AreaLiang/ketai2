@@ -124,11 +124,12 @@
 
 <script>
 	import PageHeader from '@/components/PageHeader'
-	import {mapGetters,mapState} from "vuex"
 	import formUserInfo from "./components/formUserInfo"
 	import diglogUserInfoCg from "./components/diglogUserInfoCg"
+	import {mapGetters,mapState} from "vuex"
 	import {uploadCertFileApi,modifyRegistApi} from "@/request/api"
 	import {isImgFormat,fileShowPath} from "@/utils"
+	import { userInfoObj } from "@/utils/userInfo"
 
 	export default {
 		name: 'UserInfo',
@@ -183,9 +184,7 @@
 								securityPhone,
 								userName
 							} = uerInfoComponent.ruleForm;
-
-							console.log("提交",uerInfoComponent.ruleForm)
-
+							
 							//整理认证接口的数据
 							let formdata = {
 								id: this.userdata.id,
@@ -201,7 +200,7 @@
 								safetyCertificate: this.sc_certFile,
 								business: JSON.stringify(profession)
 							}
-
+						
 							//提交认证接口
 							modifyRegistApi(formdata).then((data) => {
 								console.log(data)
@@ -318,7 +317,6 @@
 				this.certStatus = false;
 			}
 			
-		
 		}
 	}
 </script>

@@ -60,7 +60,7 @@ function checkRegister(obj, objInfo) {
 	let isUserName = ckUserName(connectName);
 	let isPhone = ckPhone(connectPhone);
 	let isServeRange = ckServeRange(checkList);
-	let isPhoneCode = ckPhoneCode(phoneCode)
+	let isPhoneCode = ckPhoneCode(phoneCode);
 
 	if (isUserId.status) {
 		if (isPassword.status) {

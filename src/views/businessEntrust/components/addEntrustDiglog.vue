@@ -128,6 +128,7 @@
 				if (this.dialogFormVisible) {
 					this.$nextTick(() => {
 						this.$refs['uploadUserInfoCg'].clearFiles(); //清空上传文件的列表
+						this.$refs['addEntrustForm'].clearValidate();//移除表单验证结果
 						this.wordUrl = '';
 					})
 					if (this.operateType == 1) { //新建业务委托表单信息
@@ -257,8 +258,6 @@
 					mobile,
 					remark
 				} = data;
-				console.log(data)
-				console.log(Object.getOwnPropertyNames(data))
 				
 				this.addEntrustForm.name = name;
 				this.addEntrustForm.adress = address;
@@ -274,7 +273,8 @@
 				}
 				
 			}
-		}
+		},
+		
 	}
 </script>
 

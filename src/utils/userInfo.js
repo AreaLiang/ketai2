@@ -70,7 +70,7 @@ function isJSON(str) {
 
 
 //用户信息界面 初始化数据的 构造函数
-function userInfoObj(data){
+export function userInfoObj(data){
 	this.userName=data.name,
 	this.contactName=data.contact,
 	this.cellPhone=data.mobile,

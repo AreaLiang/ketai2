@@ -125,18 +125,13 @@ function statusItemShow(status) {
 }
 
 //构造函数，提交委托单需要的信息
+// ?. 链判断运算符 可以参考 https://es6.ruanyifeng.com/#docs/operator#%E9%93%BE%E5%88%A4%E6%96%AD%E8%BF%90%E7%AE%97%E7%AC%A6
 export class entrustObj{
 	constructor(data){
 		this.contact=data.contact;
 		this.mobile=data.mobile;
 		this.remark=data.remark;
-		
-		try{
-			this.wordFile=data.rawData.orderFile;
-			this.orderFile=data.rawData.orderFilePdf;
-		}catch(e){
-			this.wordFile='';
-			this.orderFile='';
-		}
+		this.wordFile=data?.rawData?.orderFile || '';//如果找不到，则默认值为''
+		this.orderFile=data?.rawData?.orderFilePdf || '';
 	}
 }
