@@ -172,12 +172,6 @@
 				this.$refs['addEntrustForm'].validate((valid) => {
 					if (valid) { //校验是否信息为空
 						if (this.wordFile != '') {//校验是否上传委托文件
-							let {
-								contact,
-								mobile,
-								remark
-							} = this.addEntrustForm;
-						
 							let postData=new entrustObj(this.addEntrustForm);//委托单需要的信息
 							
 							if (!this.ispdf) { //判断是否pdf文件，如果是修改参数传值
@@ -186,11 +180,11 @@
 								postData.orderFile = this.wordFile;
 							}
 						
-							if (this.operateType == 1) {
+							if (this.operateType == 1) {//新建委托
 								addEntrustOrderApi(postData).then((data) => {
 									this.afterSubmit(data, "新建成功", "新建失败")
 								});
-							} else if (this.operateType == 0) {
+							} else if (this.operateType == 0) {//修改委托
 								postData.id = this.rowData.rawData.id;
 								modifyEntrustOrderApi(postData).then((data) => {
 									this.afterSubmit(data, "修改成功", "修改失败")
@@ -263,6 +257,8 @@
 					mobile,
 					remark
 				} = data;
+				console.log(data)
+				console.log(Object.getOwnPropertyNames(data))
 				
 				this.addEntrustForm.name = name;
 				this.addEntrustForm.adress = address;

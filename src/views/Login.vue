@@ -126,9 +126,9 @@
 					passwordAgain: '',
 					connectName: '',
 					connectPhone: '',
-					agreesCheck: false,
 					captcha: '',
 					phoneCode: '',
+					agreesCheck: false,
 					checkList: [],
 				},
 				captchaUrl: '', //验证码图片地址
@@ -165,7 +165,7 @@
 				let passWord = this.userInfo.password; //获取用户输入的密码
 			
 				if (account != '' && passWord != '') {
-					//调用login.js里面的登录方法，成功后返回数据
+					//调用login接口，成功后返回数据
 					loginApi({
 						loginname: account,
 						password: passWord
@@ -254,13 +254,15 @@
 			},
 			//表单重置
 			reset() {
-				this.userInfo.account = '',
-				this.userInfo.password = '',
-				this.userInfo.passwordAgain = '',
-				this.userInfo.connectName = '',
-				this.userInfo.connectPhone = '',
-				this.userInfo.captcha = '',
-				this.userInfo.phoneCode = ''
+				//重置对象的键值，注意顺序，agreesCheck 后面的都是自己填写重置信息，然后跳出循环
+				for(let item in this.userInfo){
+					if(item=="agreesCheck"){//根据需要自己填写
+						this.userInfo.agreesCheck=false;
+						this.userInfo.checkList=[];
+						break;
+					}
+					this.userInfo[item]="";
+				}
 			},
 			//更改注册验证码图片
 			changeCaptcha() {

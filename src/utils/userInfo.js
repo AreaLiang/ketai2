@@ -4,45 +4,13 @@
  * @param {Number} status [因为后台返回来的业务范围数据格式不一样，1是已经认证，0是非认证]
  */
 export function userformInfo(data,status) {
-	// 解构赋值
-	let {
-		contact,
-		name,
-		mobile,
-		phone,
-		email,
-		address,
-		business,
-		safetyMobile,
-		safetyOfficer
-	} = data;
+	let ruleForm=new userInfoObj(data);//初始化数据
 	
-	let ruleForm;
 	if(status==1){//已经认证
-		//表单所需要的对象内容，重新赋值
-		ruleForm = {
-			userName: name,
-			contactName: contact,
-			cellPhone: mobile,
-			phone: phone,
-			mail: email,
-			address: address,
-			securityName: safetyOfficer,
-			securityPhone: safetyMobile,
-			profession: changeProfessionArray(business)
-		}
+		//业务范围 转义成中文的数组
+		ruleForm.profession=changeProfessionArray(ruleForm.profession);
 	}else if(status==0){//非认证
-		ruleForm = {
-			userName: name,
-			contactName: contact,
-			cellPhone: mobile,
-			phone: phone,
-			mail: email,
-			address: address,
-			securityName: safetyOfficer,
-			securityPhone: safetyMobile,
-			profession: JSON.parse(business)
-		}
+		ruleForm.profession=JSON.parse(ruleForm.profession);
 	}
 
 	return ruleForm;
@@ -98,4 +66,18 @@ function isJSON(str) {
         }
     }
     console.log('业务范围参数不是JSON格式字符串!')    
+}
+
+
+//用户信息界面 初始化数据的 构造函数
+function userInfoObj(data){
+	this.userName=data.name,
+	this.contactName=data.contact,
+	this.cellPhone=data.mobile,
+	this.phone=data.phone,
+	this.mail=data.email,
+	this.address=data.address,
+	this.profession=data.business,
+	this.securityName=data.safetyOfficer,
+	this.securityPhone=data.safetyMobile
 }

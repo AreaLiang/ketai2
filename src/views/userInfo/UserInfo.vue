@@ -199,7 +199,7 @@
 								safetyOfficer: securityName,
 								safetyMobile: securityPhone,
 								safetyCertificate: this.sc_certFile,
-								business: ["印染","汽配"]
+								business: JSON.stringify(profession)
 							}
 
 							//提交认证接口
@@ -317,6 +317,8 @@
 			} else if (this.isCertification == "认证失败") {
 				this.certStatus = false;
 			}
+			
+		
 		}
 	}
 </script>
