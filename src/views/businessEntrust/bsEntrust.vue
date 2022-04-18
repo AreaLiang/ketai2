@@ -186,6 +186,7 @@
 		},
 		beforeDestroy() {
 			this.$bus.$off('currentRowData');// 解绑
+			this.$bus.$off('pageNumber');// 解绑分页
 		}
 	}
 </script>

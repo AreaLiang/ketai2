@@ -30,3 +30,6 @@ export const uploadTempFileApi = p => formDatapost(baseUrl+'/uploadTempFile', p)
 
 //密码更改页面
 export const pdChangeApi = p => post(baseUrl+'/updatepwd', p);//用户 修改密码
+
+//证书管理
+export const mgCertificateApi = p => post(baseUrl+'/queryTaskHis', p);//证书管理列表

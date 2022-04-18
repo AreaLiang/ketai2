@@ -112,7 +112,7 @@
 
 <script>
 	import {checkRegister,getPhoneCode,registerfun} from "@/utils/login"
-	import { addAsyncRouter } from "@/utils"
+	import { addAsyncRouter} from "@/utils"
 	import Qs from 'qs'
 	import {loginApi,captchaApi} from "@/request/api"
 	import {errorRouter} from '@/router'
@@ -121,7 +121,7 @@
 		data() {
 			return {
 				userInfo: {
-					account: 'XX1公司',
+					account: 'test002',
 					password: '123456',
 					passwordAgain: '',
 					connectName: '',
@@ -190,7 +190,8 @@
 							await addAsyncRouter();
 							
 							//转跳到用户信息页面
-							await this.$router.push('/Home/userinfo');
+							await this.$router.replace('/Home/userinfo');
+							
 							
 						} else {
 							this.$message.error('账号或密码不正确');

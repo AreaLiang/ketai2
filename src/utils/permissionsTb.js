@@ -8,14 +8,15 @@ import axios from 'axios'
  */
 
 function navRouter(routeList, identity){
-	console.log("路由表",routeList, identity)
+
 	//过滤 符合条件的路由导航 路由
 	let filterRouter = routeList[0].children.filter((p) => {
 		return p.meta.isAuthority == identity;
 	})
 	
-	let originalRoute = routeList[0]; //原路由
+	let originalRoute =Object.assign({},routeList[0]); //原路由
 	originalRoute.children = filterRouter //替换原路由的子路由
+
 	return originalRoute;
 }
 

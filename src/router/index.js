@@ -95,14 +95,17 @@ export const asyncRouter = [{
 //错误提示的路由
 export const errorRouter = [
 	{
+		name:'error',
 		path: "/404",
 		component: () => import('@/components/error-page/error404')
 	},
 	{
+		name:'error2',
 		path: "*",
 		redirect: '404',
 	},
 	{
+		name:'error3',
 		path: '/Home',
 		component: () => import('@/views/HomePage'),
 		children: [{
