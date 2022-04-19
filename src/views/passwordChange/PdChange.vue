@@ -30,10 +30,8 @@
 	import PageHeader from '@/components/PageHeader'
 	import NProgress from 'nprogress' // 引入头部进度条
 	import { removeSessionStorage } from "@/utils"
-	
-	import {
-		pdChangeApi
-	} from "@/request/api"
+	import {pdChangeApi} from "@/request/api"
+	import {resetRouter} from '@/router'
 	export default {
 		name: 'PdChange',
 		data() {
@@ -111,6 +109,7 @@
 									NProgress.done();
 									clearInterval(np);
 									this.$router.push("/Login");
+									resetRouter();//路由重置
 								},3000)
 							}else{
 								this.$message.error(data.msg);

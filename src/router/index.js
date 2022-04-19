@@ -7,55 +7,53 @@ VueRouter.prototype.push = function push(location) {
 	return originalPush.call(this, location).catch(err => err)
 }
 
-const router = new VueRouter({
-	mode: 'hash',
-	base: process.env.BASE_URL,
-	routes: [{
-			path: '/',
-			redirect: '/Home'
+//静态路由
+export const constantRoutes=[{
+		path: '/',
+		redirect: '/Home'
+	},
+	{
+		name: 'Login',
+		path: '/Login',
+		meta: {
+			title: '业务大厅登录'
 		},
-		{
-			name: 'Login',
-			path: '/Login',
-			meta: {
-				title: '业务大厅登录'
-			},
-			component: () => import('@/views/Login')
+		component: () => import('@/views/Login')
+	},
+	{
+		name: 'Home',
+		path: '/Home',
+		meta: {
+			title: '业务大厅'
 		},
-		{
-			name: 'Home',
-			path: '/Home',
-			meta: {
-				title: '业务大厅'
+		component: () => import('@/views/HomePage'),
+		children: [{
+				name: 'UserInfo',
+				path: 'userinfo',
+				meta: {
+					headName: ['客户信息', '/', '完善认证信息'],
+					title: '业务大厅'
+				},
+				component: () => import('@/views/userInfo/UserInfo')
 			},
-			component: () => import('@/views/HomePage'),
-			children: [{
-					name: 'UserInfo',
-					path: 'userinfo',
-					meta: {
-						headName: ['客户信息', '/', '完善认证信息'],
-						title: '业务大厅'
-					},
-					component: () => import('@/views/userInfo/UserInfo')
+			{
+				name: 'PdChange',
+				path: 'password',
+				meta: {
+					headName: ['密码更改', '/', ' 密码录入'],
+					title: '业务大厅'
 				},
-				{
-					name: 'PdChange',
-					path: 'password',
-					meta: {
-						headName: ['密码更改', '/', ' 密码录入'],
-						title: '业务大厅'
-					},
-					component: () => import('@/views/passwordChange/PdChange')
-				},
-				{
-					name: 'pdfView',
-					path: 'serviceList',
-					component: () => import('@/views/serviceList/PdfView')
-				}
-			]
-		}
-	]
-})
+				component: () => import('@/views/passwordChange/PdChange')
+			},
+			{
+				name: 'pdfView',
+				path: 'serviceList',
+				component: () => import('@/views/serviceList/PdfView')
+			}
+		]
+	}
+]
+
 
 
 // 异步挂载的路由
@@ -120,10 +118,24 @@ export const errorRouter = [
 	}
 ]
 
+const createRouter = () =>new VueRouter ({
+  mode: 'hash',
+  base: process.env.BASE_URL,
+  routes: constantRoutes
+})
+
+const router = createRouter();
+
 //路由守卫后置钩子
 router.afterEach((to,from)=>{
 	//修改标题名称
 	document.title = to.meta.title || "业务大厅"; //如果没有标题名，默认显示“ 业务大厅 ”
 })
+
+//重置路由
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
 
 export default router

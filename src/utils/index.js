@@ -1,7 +1,6 @@
-import router from '@/router'
+import router,{resetRouter,errorRouter,asyncRouter} from '@/router'
 import {Message} from 'element-ui';
 import {baseUrl} from '@/request/api'
-import {errorRouter,asyncRouter} from '@/router'
 import store from '@/store'
 import JSZip from "jszip";
 import {saveAs} from 'file-saver';
@@ -68,22 +67,25 @@ export function fileShowPath(file, suffix) {
 		return '';
 	}
 }
-
+//Generator函数，重置路由后添加路由，防止重复添加造成路由污染
+export function* dynamicRoute(){
+	yield resetRouter();
+	yield addAsyncRouter();
+}
 
 /* 登录后和当前页面刷新权限验证时候 动态路由添加*/
 export function addAsyncRouter() {
-
+	
 	//从vuex中获取过滤后的路由表
 	let setRoutes = store.state.permissionRoutes;
-
+	
 	//添加导航路由
 	router.addRoute(setRoutes);
-
+	
 	//加载 错误提示页面 的路由
 	errorRouter.forEach((p) => {
 		let removeRoute = router.addRoute(p);
 	})
-
 }
 
 /**Start

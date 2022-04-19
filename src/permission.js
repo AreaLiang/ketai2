@@ -37,11 +37,7 @@ router.beforeEach(async (to, from, next) => {
 					await store.dispatch('authorityNav', token).then(() => {
 						/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
 						addAsyncRouter();
-						next({
-							...to,
-							replace: true
-						}); //放行
-
+						next({...to,replace: true}); //放行
 					});
 				}
 			} else {

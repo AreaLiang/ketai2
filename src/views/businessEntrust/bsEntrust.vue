@@ -1,5 +1,5 @@
 <template>
-	<div class="businessEntrust">
+	<div class="businessEntrust" v-loading="loading">
 		<!-- 主题内容顶部 -->
 		<PageHeader :breadcrumbItem="$route.meta.headName">
 			<el-button type="primary" @click="addEntrust()">新建业务委托</el-button>
@@ -102,6 +102,7 @@
 				tableData: [],
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
+				loading: true
 			}
 		},
 		computed: {
@@ -159,6 +160,7 @@
 			},
 			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
 			PaginationClick(page, pageSize) {
+				this.loading=true;
 				NProgress.start() //开启进度条
 				bsEntrustmentApi({
 					page: page,
@@ -170,7 +172,8 @@
 					}
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
 					NProgress.done(); //结束进度条
-				});
+					this.loading=false;
+				}).catch(()=> this.loading=false);
 			},
 			//点击下载证书事件
 			DownloadCertificate() {

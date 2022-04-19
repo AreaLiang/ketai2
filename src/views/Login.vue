@@ -112,16 +112,16 @@
 
 <script>
 	import {checkRegister,getPhoneCode,registerfun} from "@/utils/login"
-	import { addAsyncRouter} from "@/utils"
+	import { addAsyncRouter,dynamicRoute} from "@/utils"
 	import Qs from 'qs'
 	import {loginApi,captchaApi} from "@/request/api"
-	import {errorRouter} from '@/router'
+	import {errorRouter,resetRouter} from '@/router'
 	export default {
 		name: 'Login',
 		data() {
 			return {
 				userInfo: {
-					account: 'test002',
+					account: 'test001',
 					password: '123456',
 					passwordAgain: '',
 					connectName: '',
@@ -185,13 +185,14 @@
 							
 							//导航的权限控制
 							await this.$store.commit('AuthorityNav',status);
-							
+						
 							/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
-							await addAsyncRouter();
+							var addRoute = dynamicRoute();
+							await addRoute.next();//第一步重置路由
 							
 							//转跳到用户信息页面
 							await this.$router.replace('/Home/userinfo');
-							
+							await addRoute.next();//第一步添加路由
 							
 						} else {
 							this.$message.error('账号或密码不正确');
@@ -268,7 +269,8 @@
 			//更改注册验证码图片
 			changeCaptcha() {
 				this.captchaUrl = captchaApi({});
-			}
+			},
+			
 		}
 	}
 </script>

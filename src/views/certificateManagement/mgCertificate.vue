@@ -4,7 +4,7 @@
 		<PageHeader :breadcrumbItem="$route.meta.headName">
 			<el-button type="primary" @click="BatchDownload()">批量下载</el-button>
 		</PageHeader>
-		<div class="mg-certificate-box">
+		<div class="mg-certificate-box" v-loading="loading">
 			<template>
 				<el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%"
 					:header-cell-style="{textAlign:'center'}"
@@ -67,12 +67,14 @@
 				tableData: [],
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
-				multipleSelection: []
+				multipleSelection: [],
+				loading: true
 			}
 		},
 		methods: {
 			//获取证书列表数据
 			certificateData(page) {
+				this.loading= true;
 				mgCertificateApi({
 					page: page,
 					size: this.pageSize,
@@ -91,7 +93,8 @@
 							type: 'warning'
 						})
 					}
-				});
+					this.loading=false;
+				}).catch(()=> this.loading=false);
 			},
 			//已经选中行的事件
 			handleSelectionChange(val) {
