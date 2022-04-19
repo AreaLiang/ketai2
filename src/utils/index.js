@@ -1,15 +1,12 @@
 import router from '@/router'
-import {
-	Message
-} from 'element-ui';
-import {
-	baseUrl
-} from '@/request/api'
-import {
-	errorRouter,
-	asyncRouter
-} from '@/router'
+import {Message} from 'element-ui';
+import {baseUrl} from '@/request/api'
+import {errorRouter,asyncRouter} from '@/router'
 import store from '@/store'
+import JSZip from "jszip";
+import {saveAs} from 'file-saver';
+import axios from 'axios'
+
 /**
  * 删除浏览器缓存
  * @param {String} name [缓存的名称]
@@ -90,7 +87,7 @@ export function addAsyncRouter() {
 }
 
 /**Start
- * 下载pdf文件
+ * 下载单个pdf文件
  * @param {String} url [文件链接]
  * @param {String} name [文件名字]
  */
@@ -128,7 +125,13 @@ function downloadExportFile(blob, tagFileName) {
 	downloadElement.download = tagFileName
 	//下载后文件名
 	document.body.appendChild(downloadElement)
-	downloadElement.click() //点击下载
+	// 判断是否是 IE
+	if (navigator.msSaveOrOpenBlob) {
+		navigator.msSaveOrOpenBlob(blob, tagFileName)
+	} else {
+		downloadElement.click()
+	}
+	// downloadElement.click() //点击下载
 	document.body.removeChild(downloadElement) //下载完成移除元素
 	if (typeof blob != 'string') {
 		window.URL.revokeObjectURL(href) //释放掉blob对象
@@ -136,55 +139,55 @@ function downloadExportFile(blob, tagFileName) {
 }
 /*End*/
 
-export async function unZipHandle(arr) {
-	// arr为需要解压的数组
-	let zip = new JSZip();
- 	let promises = []; // 存放解压的文件
- 	let that = this;
- 	// 这里用await就是为了改成同步，需要等数据处理完才进行下一步
- 	await arr.forEach((item) => {
-        let promise = that
-          .getUrlBuffer(item)
-          .then((pdf) => {
-            // getUrlBuffer这里是把url解压转化成文件
-            for (let key in pdf.files) {
-              // 判断是否是目录
-              if (!pdf.files[key].dir) {
-                if (/\.(pdf)$/.test(pdf.files[key].name)) {
-                // 这里判断是pdf文件，其他文件的话，换个格式
-                  return pdf
-                    .file(pdf.files[key].name)
-                    .async("ArrayBuffer")
-                    .then((data) => {
-						// 把文件转化为buffer
-                      // this.arrayBufferToBlob(data);这个是因为pdf需要展示，所以我这边把buffer转化成blob文件会得到个url，方便用来展示。后面会补充这个方法
-                      // return出buffer生成的文件
-                      return zip.file(pdf.files[key].name, data, {
-                        binary: true,
-                      });
-                    });
-                }
-              }
-            }
-            // zip.file("测试", pdf, { binary: true });
-          });
-          // 将循环得到的所有promise存到一个数组里面
-        promises.push(promise);
-      });
-      Promise.all(promises) // this.policyNo
-        .then((res) => {
-        	// 这里就简单了，当所有promise执行完之后，打包下载
-          zip
-            .generateAsync({
-              type: "blob",
-            })
-            .then((content) => {
-            	// zipName这个是压缩包名称，可以自己定义
-               FileSaver.saveAs(content, zipName);
-            });
-        });
+/**Start
+ * 批量下载pdf文件并打包成一个zip文件
+ * @param {Array} arr [多个pdf文件路径的数组]
+ */
+export function BatchPdfDownload(arr) {
+	const zip = new JSZip()
+	const cache = {}
+	const promises = []
+	arr.forEach(item => {
+		const promise = getFile(item).then(data => {
+			const arr_name = item.split('/') // 下载文件, 并存成ArrayBuffer对象
+			const file_name = arr_name[arr_name.length - 1] // 获取文件名
+			// .folder("name")这个是把文件放在一个文件夹，不需要可以删去
+			zip.folder("证书文件夹").file(file_name, data, {
+				binary: true
+			}) // 逐个添加文件
+			cache[file_name] = data
+			console.log(cache)
+		})
+		promises.push(promise)
+	})
+	Promise.all(promises).then(() => {
+		zip.generateAsync({
+			type: 'blob'
+		}).then(content => {
+			console.log(content)
+			// 生成二进制流
+			saveAs(content, '证书文件.zip') // 利用file-saver保存文件  自定义文件名
+		})
+	})
 }
 
+function getFile(url) {
+	return new Promise((resolve, reject) => {
+		let obj = {
+			method: 'get',
+			url,
+			// responseType: 'blob'
+			responseType: 'arraybuffer'
+		}
+		axios(obj).then(data => {
+			resolve(data.data)
+		})
+		.catch(error => {
+			reject(error.toString())
+		})
+	})
+}
+/*End*/
 
 /**
  * 用于ElementUI 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用
