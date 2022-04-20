@@ -11,13 +11,14 @@
 							<el-col :span="8">
 								<p class='mes white' :class="{
 										normal:certStatus,
-										danger:userdata.statusCn=='已禁用'?true:false
+										danger:userdata.statusCn=='已禁用'?true:false,
+										waring:userdata.statusCn=='认证中'?true:false,
 									}">
 									{{userdata.statusCn}}
 								</p>
 							</el-col>
-							<el-col :span="16" v-if="!certStatus">
-								<p class='mes red'>请耐心等待工作人员认证</p>
+							<el-col :span="16" v-if="!remarkBox">
+								<p class='mes red'>{{userdata.remark}}</p>
 							</el-col>
 						</el-row>
 					</div>
@@ -136,6 +137,7 @@
 		data() {
 			return {
 				certStatus: false,
+				remarkBox:false,
 				bs_dialogImageUrl: '', //放大照片的链接
 				bs_dialogVisible: false, //放大查看照片的会话框
 				bs_disabled: true, //是否显示上传照片中的放大、删除操作按钮
@@ -289,10 +291,16 @@
 			}
 
 			//是否已认证 状态赋值
-			if (this.isCertification == "正常" ||this.isCertification == "已禁用") {
+			if (this.isCertification == "正常" || this.isCertification == "已禁用" || this.isCertification == "认证中") {
 				this.certStatus = true; //返回 true，禁用所有修改信息功能
 				this.bs_disabled = false;//隐藏上传营业执照证件的删除按钮
 				this.sc_disabled = false;//隐藏上传安全员执照证件的删除按钮
+				
+				if(this.isCertification=="认证中"){
+					this.remarkBox!=this.certStatus;
+				}else{
+					this.remarkBox=this.certStatus;
+				}
 				console.log(this.isCertification + ",状态下 ：", this.userdata);
 			} else if (this.isCertification == "未认证") {
 				console.log(this.isCertification + ",状态下 ：", this.userdata);
@@ -309,18 +317,23 @@
 <style lang="less">
 	.userinfo-box {
 
-		.head-tip .mes {
-			background: #da9628;
-			padding: 2px 0;
-
-		}
-
-		.head-tip .normal {
-			background: #27a9e3;
-		}
-		
-		.head-tip .danger {
-			background: red;
+		.head-tip {
+			.mes {
+				background: #da9628;
+				padding: 2px 0;
+			}
+			.normal {
+				background: #27a9e3;
+				padding: 2px 0;
+			}
+			.waring{
+				background: #da9628;
+				padding: 2px 0;
+			}
+			.danger {
+				background: red;
+				padding: 2px 0;
+			}
 		}
 
 		.red {
@@ -348,5 +361,14 @@
 			overflow: hidden;
 			line-height: 40px;
 		}
+		
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+		  -webkit-appearance: none;
+		}
+		input[type='number'] {
+		  -moz-appearance: textfield;
+		}
+
 	}
 </style>

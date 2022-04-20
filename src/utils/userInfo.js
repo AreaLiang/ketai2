@@ -5,14 +5,24 @@
  */
 export function userformInfo(data,status) {
 	let ruleForm=new userInfoObj(data);//初始化数据
-	
+		
 	if(status==1){//已经认证
 		//业务范围 转义成中文的数组
-		ruleForm.business=changeProfessionArray(ruleForm.business);
+		let changeData=changeProfessionArray(ruleForm.business);
+		
+		var re=/^[\u4E00-\u9FA5]+$/;//判断是否为中文
+		if(!re.test(ruleForm.business[0])){//认证中出现的情况，单独处理
+			changeData=JSON.parse(ruleForm.business);
+		}
+		
+		ruleForm.business=changeData;
 	}else if(status==0){//非认证
-		ruleForm.business=JSON.parse(ruleForm.business);
+		if(isJSON(ruleForm.business)){//如果不是JSON格式情况
+			ruleForm.business=JSON.parse(ruleForm.business);
+		}else{//如果是字符串以逗号分割为格式，如 陶瓷,水泥,印染
+			ruleForm.business=ruleForm.business.split(',');
+		}
 	}
-
 	return ruleForm;
 }
 

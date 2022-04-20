@@ -201,7 +201,7 @@ function getFile(url) {
  */
 export const formValidation = {
 	//判断只能输入1开头第二位数字是3456789中一个，后面九位数随便填，总共十一位电话号码。
-	phone: (rule, value, callback) => {
+	mobile: (rule, value, callback) => {
 		var patrn = /^1[3456789]\d{9}$/;
 		if (patrn.test(value) == false) {
 			return callback(new Error('请输入正确的11位手机号码！'));
@@ -209,4 +209,15 @@ export const formValidation = {
 			return callback();
 		}
 	},
+	//座机号正则，需要加区号
+	phone: (rule, value, callback) => {
+		var patrn = /^\d{3}-\d{7,8}|\d{4}-\d{7,8}$/;
+		if (patrn.test(value) == false) {
+			return callback(new Error('格式不正确！如：0111-8137664'));
+		} else {
+			return callback();
+		}
+	},
 }
+
+

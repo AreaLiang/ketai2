@@ -10,7 +10,7 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="联系人" prop="contact">
-						<el-input v-model.trim="ruleForm.contact"></el-input>
+						<el-input v-model.trim="ruleForm.contact" ></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -19,8 +19,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="联系电话(座机)" prop="phone">
-						<el-input v-model.number="ruleForm.phone"></el-input>
+					<el-form-item label="联系电话(座机)" prop="phone" >
+						<el-input v-model="ruleForm.phone" ></el-input>
 					</el-form-item>
 				</el-col>
 
@@ -101,7 +101,7 @@
 							trigger: 'blur'
 						},
 						{
-							validator: formValidation.phone,
+							validator: formValidation.mobile,
 							trigger: 'blur'
 						}
 					],
@@ -135,6 +135,10 @@
 						required: true,
 						message: '请填写公司电话',
 						trigger: 'blur'
+					},
+					{
+						validator: formValidation.phone,
+						trigger: 'blur'
 					}],	
 					safetyOfficer: [{
 						required: true,
@@ -144,6 +148,10 @@
 					safetyMobile: [{
 						required: true,
 						message: '请输入安全员手机号',
+						trigger: 'blur'
+					},
+					{
+						validator: formValidation.mobile,
 						trigger: 'blur'
 					}]
 				},
@@ -167,7 +175,7 @@
 		mounted() {
 			this.$nextTick(function() {
 					this.certStatus = this.status;
-					if(this.status){//根据后台返回的状态码做判断，因为业务范围返回格式不一样，所以需要做判断。
+					if(this.status){//根据后台返回的状态码做判断，因为业务范围返回格式不一样，所以需要做判断,1是已经认证，0是非认证。
 						this.ruleForm=userformInfo(this.userdata,1);
 					}else{
 						this.ruleForm=userformInfo(this.userdata,0);
