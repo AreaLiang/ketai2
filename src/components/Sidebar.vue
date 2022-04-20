@@ -62,7 +62,7 @@
 				}, {
 					name: '业务委托表格下载',
 					icon: 'el-icon-download',
-					address: '/Home/serviceList14',
+					address: '/Home/entrustTb',
 					isAuthorize: true
 				}],
 				infoWarning: false ,//未认证警告提示

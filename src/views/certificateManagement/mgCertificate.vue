@@ -12,14 +12,14 @@
 					<el-table-column type="selection" width="55"></el-table-column>
 					<el-table-column prop="created" label="提交时间">
 					</el-table-column>
-					<el-table-column prop="reportNo" label="证件编号">
+					<el-table-column prop="reportNo" label="记录编号">
 					</el-table-column>
 					<el-table-column prop="subject.name" label="项目名称" width="120">
 					</el-table-column>
-					<el-table-column prop="checkTypeValue" label="证件类型" >
+					<el-table-column prop="checkTypeValue" label="鉴定类型" >
 					</el-table-column>
-					<el-table-column prop="subject.remark" label="备注">
-					</el-table-column>
+				<!-- 	<el-table-column prop="subject.remark" label="备注">
+					</el-table-column> -->
 					<el-table-column prop="tableData" label="状态" width="80">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">

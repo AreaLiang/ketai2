@@ -114,8 +114,10 @@
 	import {checkRegister,getPhoneCode,registerfun} from "@/utils/login"
 	import { addAsyncRouter,dynamicRoute} from "@/utils"
 	import Qs from 'qs'
+	import NProgress from 'nprogress' // 引入头部进度条
 	import {loginApi,captchaApi} from "@/request/api"
 	import {errorRouter,resetRouter} from '@/router'
+	
 	export default {
 		name: 'Login',
 		data() {
@@ -163,7 +165,7 @@
 			login() {
 				let account = this.userInfo.account; //获取用户输入的账号
 				let passWord = this.userInfo.password; //获取用户输入的密码
-			
+				NProgress.start() //开启进度条
 				if (account != '' && passWord != '') {
 					//调用login接口，成功后返回数据
 					loginApi({
@@ -197,6 +199,7 @@
 						} else {
 							this.$message.error('账号或密码不正确');
 						}
+						NProgress.done();
 					}, (error) => error);
 				} else {
 					this.$message.error('账号或密码不能为空');

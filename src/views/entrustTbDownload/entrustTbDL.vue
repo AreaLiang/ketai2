@@ -1,6 +1,7 @@
 <template>
 	<div class="">
-		<h3>666</h3>
+		<!-- <iframe class="pdf-show" src="http://www.zhaoqing.gov.cn/attachment/0/150/150924/2688824" width="500" height="500"></iframe> -->
+		<el-button type="success" plain @click="downloadTb()">点击下载表格</el-button>
 	</div>
 </template>
 
@@ -13,8 +14,13 @@
 
 			}
 		},
-		components: {
-
+		methods:{
+			downloadTb(){
+				window.open('http://www.zhaoqing.gov.cn/attachment/0/150/150924/2688824.doc');
+			}
+		},
+		mounted(){
+			window.open('http://www.zhaoqing.gov.cn/attachment/0/150/150924/2688824.doc');
 		}
 	}
 </script>
