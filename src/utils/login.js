@@ -9,7 +9,7 @@ import {
 	ckUserName,
 	ckPhone,
 	ckServeRange,
-	ckPhoneCode
+	ckNull
 } from '@/utils/checkInfo'
 
 //创建一个异步 登录函数
@@ -52,56 +52,31 @@ function checkRegister(obj, objInfo) {
 		agreesCheck,
 		checkList,
 		phoneCode,
-		captcha
+		captcha,
 	} = objInfo;
 
-	let isUserId = ckUserId(account);
-	let isPassword = ckPassword(password);
-	let isAgainPd = ckAgainPd(password, passwordAgain);
-	let isUserName = ckUserName(connectName);
-	let isPhone = ckPhone(connectPhone);
-	let isServeRange = ckServeRange(checkList);
-	let isCaptcha =ckCaptcha(captcha);
-	let isPhoneCode = ckPhoneCode(phoneCode);
+	let checkInfoList=[];//验证结果返回的集合，把需要验证的结果添加进去即可
 	
-	console.log("isPhoneCode",isPhoneCode, objInfo);
-
-	if (isUserId.status) {
-		if (isPassword.status) {
-			if (isAgainPd.status) {
-				if (isUserName.status) {
-					if (isPhone.status) {
-						if (isServeRange.status) {
-							if (isPhoneCode.status) {
-								if (agreesCheck) {
-									//检验成功
-									return true
-								} else {
-									obj.$message.error("请勾选同意协议")
-								}
-							} else {
-								obj.$message.error(isPhoneCode.mes)
-							}
-
-						} else {
-							obj.$message.error(isServeRange.mes)
-						}
-					} else {
-						obj.$message.error(isPhone.mes)
-					}
-				} else {
-					obj.$message.error(isUserName.mes)
-				}
-			} else {
-				obj.$message.error(isAgainPd.mes)
+	checkInfoList.push(ckUserId(account));
+	checkInfoList.push(ckPassword(password));
+	checkInfoList.push(ckAgainPd(password, passwordAgain));
+	checkInfoList.push(ckUserName(connectName));
+	checkInfoList.push(ckPhone(connectPhone));
+	checkInfoList.push(ckServeRange(checkList));
+	checkInfoList.push(ckNull(captcha,'请输入验证码'));
+	checkInfoList.push(ckNull(phoneCode,'请获取手机验证码'));
+	checkInfoList.push(ckNull(agreesCheck,'请勾选同意协议'));
+	
+	for(let i=0;i<checkInfoList.length;i++){
+		if(checkInfoList[i].status){//如果验证全部都通过则进行下一步
+			if(i==checkInfoList.length-1){//判断是否已经遍历完成
+				return true;
 			}
-		} else {
-			obj.$message.error(isPassword.mes)
+		}else{
+			obj.$message.error(checkInfoList[i].mes);
+			return false;
 		}
-	} else {
-		obj.$message.error(isUserId.mes)
 	}
-
 }
 
 //创建一个异步获取手机验证码的方法

@@ -115,26 +115,18 @@ export function ckServeRange(value) {
 	}
 }
 
-//判断 手机验证码是否为空
-export function ckPhoneCode(value) {
-	if (value.length>0) {
+/**
+ * 检查信息是否为空
+ * @param {String} value [用户输入的信息]
+ * @param {String} mes [不符合规则提示的信息]
+ */
+ export function ckNull(value,mes){
+	if (value) {
 		return success
 	} else {
 		return {
 			"status": false,
-			"mes": '请获取手机验证码'
+			"mes": mes
 		};
 	}
-}
-//判断 手机验证码是否为空
-export function ckCaptcha(value) {
-	if (value.length>0) {
-		return success
-	} else {
-		return {
-			"status": false,
-			"mes": '请输入验证码'
-		};
-	}
-}
-
+ }
