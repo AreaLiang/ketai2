@@ -175,11 +175,7 @@
 		mounted() {
 			this.$nextTick(function() {
 					this.certStatus = this.status;
-					if(this.status){//根据后台返回的状态码做判断，因为业务范围返回格式不一样，所以需要做判断,1是已经认证，0是非认证。
-						this.ruleForm=userformInfo(this.userdata,1);
-					}else{
-						this.ruleForm=userformInfo(this.userdata,0);
-					}
+					this.ruleForm=userformInfo(this.userdata);//业务范围转中文格式数组
 				}
 			)
 		}

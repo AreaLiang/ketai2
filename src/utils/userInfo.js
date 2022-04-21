@@ -1,28 +1,22 @@
 /**
  * 客户信息表单所需要的对象内容
- * @param {Array} data [后台返回的用户信息]
- * @param {Number} status [因为后台返回来的业务范围数据格式不一样，1是已经认证，0是非认证]
- */
-export function userformInfo(data,status) {
+ * @param {Array} data [后台返回的用户信息] */
+export function userformInfo(data) {
 	let ruleForm=new userInfoObj(data);//初始化数据
-		
-	if(status==1){//已经认证
-		//业务范围 转义成中文的数组
-		let changeData=changeProfessionArray(ruleForm.business);
-		
-		var re=/^[\u4E00-\u9FA5]+$/;//判断是否为中文
-		if(!re.test(ruleForm.business[0])){//认证中出现的情况，单独处理
-			changeData=JSON.parse(ruleForm.business);
-		}
-		
-		ruleForm.business=changeData;
-	}else if(status==0){//非认证
-		if(isJSON(ruleForm.business)){//如果不是JSON格式情况
-			ruleForm.business=JSON.parse(ruleForm.business);
-		}else{//如果是字符串以逗号分割为格式，如 陶瓷,水泥,印染
-			ruleForm.business=ruleForm.business.split(',');
-		}
+	var re=/^[\u4E00-\u9FA5]+$/;//判断是否为中文
+	let changeData;
+
+	//业务范围 转义成中文的数组
+	if(isJSON(ruleForm.business)){//如果是JSON的字符串格式
+		 changeData=changeProfessionArray(ruleForm.business);//格式为 'xxx':false，既可以使用该方法
+		 if(!re.test(changeData[0])){//如果不是上述格式则直接转化JSON格式
+			 changeData=JSON.parse(ruleForm.business);
+		 }
+	}else{
+		changeData=ruleForm.business.split(',');//如果是字符串以逗号分割为格式，如 陶瓷,水泥,印染
 	}
+	ruleForm.business=changeData;
+	
 	return ruleForm;
 }
 

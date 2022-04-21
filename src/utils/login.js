@@ -51,7 +51,8 @@ function checkRegister(obj, objInfo) {
 		connectPhone,
 		agreesCheck,
 		checkList,
-		phoneCode
+		phoneCode,
+		captcha
 	} = objInfo;
 
 	let isUserId = ckUserId(account);
@@ -60,7 +61,10 @@ function checkRegister(obj, objInfo) {
 	let isUserName = ckUserName(connectName);
 	let isPhone = ckPhone(connectPhone);
 	let isServeRange = ckServeRange(checkList);
+	let isCaptcha =ckCaptcha(captcha);
 	let isPhoneCode = ckPhoneCode(phoneCode);
+	
+	console.log("isPhoneCode",isPhoneCode, objInfo);
 
 	if (isUserId.status) {
 		if (isPassword.status) {
@@ -68,7 +72,7 @@ function checkRegister(obj, objInfo) {
 				if (isUserName.status) {
 					if (isPhone.status) {
 						if (isServeRange.status) {
-							if (isPhoneCode) {
+							if (isPhoneCode.status) {
 								if (agreesCheck) {
 									//检验成功
 									return true
@@ -76,7 +80,7 @@ function checkRegister(obj, objInfo) {
 									obj.$message.error("请勾选同意协议")
 								}
 							} else {
-								obj.$message.error(isServeRange.mes)
+								obj.$message.error(isPhoneCode.mes)
 							}
 
 						} else {

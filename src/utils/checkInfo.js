@@ -126,3 +126,15 @@ export function ckPhoneCode(value) {
 		};
 	}
 }
+//判断 手机验证码是否为空
+export function ckCaptcha(value) {
+	if (value.length>0) {
+		return success
+	} else {
+		return {
+			"status": false,
+			"mes": '请输入验证码'
+		};
+	}
+}
+

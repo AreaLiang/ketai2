@@ -250,6 +250,7 @@
 						console.log(data);
 						if (data.code == '20000') {
 							this.$message.success('注册成功');
+							this.isRegister=false;
 							this.reset();
 						} else {
 							this.$message.error(data.msg);

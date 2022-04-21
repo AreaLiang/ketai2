@@ -1,6 +1,6 @@
 <template>
 	<div class="">
-		<el-button type="success" plain @click="downloadTb()">点击下载表格</el-button>
+		<el-button type="success" plain @click="downloadTb()">点击再次下载表格</el-button>
 	</div>
 </template>
 

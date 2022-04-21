@@ -111,7 +111,7 @@
 						trigger: 'blur',
 					},
 					{
-						validator: formValidation.phone,
+						validator: formValidation.mobile,
 						trigger: 'blur'
 					}]
 				},

@@ -54,7 +54,7 @@
 				<div class="grid-content bg-purple-light">
 					<div class="bs-license">
 						<p>请上传营业执照文件</p>
-						<el-upload action="#" list-type="picture-card" :limit="1" ref='bsUpload' :disabled="certStatus"
+						<el-upload action="#" list-type="picture-card" :limit="1" ref='bsUpload' accept=".jpg,.jepg,.png" :disabled="certStatus"
 							:http-request="bsLicenseUpload" :before-upload="beforeUpload" :file-list="bsList">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
@@ -79,7 +79,7 @@
 
 					<div class="sc-license">
 						<p>请上传安全员执照文件</p>
-						<el-upload action="#" list-type="picture-card" :limit="1" ref='scUpload' :disabled="certStatus"
+						<el-upload action="#" list-type="picture-card" :limit="1" ref='scUpload' accept=".jpg,.jepg,.png" :disabled="certStatus"
 							:http-request="scLicenseUpload" :before-upload="beforeUpload" :file-list="scList">
 							<i slot="default" class="el-icon-plus"></i>
 							<div slot="file" slot-scope="{file}">
@@ -226,16 +226,13 @@
 			},
 			//文件放大查看功能
 			handlePictureCardPreview(file, name) {
-				let ishasLicense = file.url.indexOf('file');
-				if(ishasLicense>0){//判断是否有执照文件
-					// bs 是营业执照 标识，sc 是安全员执照 标识
-					if (name == 'bs') {
-						this.bs_dialogImageUrl = file.url;
-						this.bs_dialogVisible = true;
-					} else if (name == 'sc') {
-						this.sc_dialogImageUrl = file.url;
-						this.sc_dialogVisible = true;
-					}
+				// bs 是营业执照 标识，sc 是安全员执照 标识
+				if (name == 'bs') {
+					this.bs_dialogImageUrl = file.url;
+					this.bs_dialogVisible = true;
+				} else if (name == 'sc') {
+					this.sc_dialogImageUrl = file.url;
+					this.sc_dialogVisible = true;
 				}
 			},
 			//上传营业执照
