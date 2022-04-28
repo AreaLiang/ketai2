@@ -23,6 +23,7 @@
 								<span>登录密码</span>
 							</template>
 						</el-input>
+					
 					</div>
 					<template v-if="isRegister">
 						<div class="input-item" :class="{register:isRegister}">
@@ -111,11 +112,11 @@
 </template>
 
 <script>
-	import {checkRegister,getPhoneCode,registerfun} from "@/utils/login"
+	import {checkRegister,registerfun} from "@/utils/login"
 	import { addAsyncRouter,dynamicRoute} from "@/utils"
 	import Qs from 'qs'
 	import NProgress from 'nprogress' // 引入头部进度条
-	import {loginApi,captchaApi} from "@/request/api"
+	import {loginApi,captchaApi,phoneCodeApi} from "@/request/api"
 	import {errorRouter,resetRouter} from '@/router'
 	
 	export default {
@@ -215,8 +216,10 @@
 				if (captcha != '' && connectPhone != '') { //如果都不为空的时候，发送请求验证
 					if (this.isSendCode == false) {
 						this.isSendCode = true;
-
-						getPhoneCode(connectPhone, captcha).then((data) => {
+							phoneCodeApi({
+								phone: connectPhone,
+								code: captcha,
+							}).then((data) => {
 							console.log(data)
 							if (data.code == "20000") {
 								this.$message.success("验证码发送成功");
@@ -273,8 +276,10 @@
 			//更改注册验证码图片
 			changeCaptcha() {
 				this.captchaUrl = captchaApi({});
-			},
-			
+			}
+		},
+		mounted(){
+		
 		}
 	}
 </script>

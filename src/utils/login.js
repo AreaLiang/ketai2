@@ -79,18 +79,6 @@ function checkRegister(obj, objInfo) {
 	}
 }
 
-//创建一个异步获取手机验证码的方法
-function getPhoneCode(phone, code) {
-	return new Promise((resolve, reject) => {
-		phoneCodeApi({
-			phone: phone,
-			code: code
-		}).then((response) => {
-			resolve(response)
-		}).catch((error) => reject(error))
-	});
-}
-
 /* 创建一个异步的 注册函数,
  *** 传入需要注册的所有信息，作为一个对象传入
  *** objInfo => 用户输入的数据对象
@@ -129,6 +117,5 @@ function registerfun(objInfo) {
 export {
 	loginfun,
 	checkRegister,
-	getPhoneCode,
 	registerfun
 }
