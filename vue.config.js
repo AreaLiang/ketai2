@@ -8,12 +8,12 @@ module.exports = {
 	publicPath: './',
 	// 输出文件目录
 	outputDir: 'dist',
-	assetsDir:'static',
+	assetsDir: 'static',
 	lintOnSave: false,
 	devServer: {
 		proxy: {
 			'/api': {
-				target: 'http://localhost:5000',//跨域端口
+				target: 'http://localhost:5000', //跨域端口
 				pathRewrite: {
 					'^/api': ''
 				}

@@ -5,25 +5,25 @@
 </template>
 
 <script>
-	
+	import {downFile} from '@/utils'
 	export default {
-		name: 'entrustTbDL',//业务委托表格下载
+		name: 'entrustTbDL', //业务委托表格下载
 		data() {
 			return {
 
 			}
 		},
-		methods:{
-			downloadTb(){
-				window.open('http://customer.gdketai.com/file/wordDocument/wtb.doc');
+		methods: {
+			downloadTb() {
+				downFile('/file/wtb.doc');
 			}
 		},
-		mounted(){
-			window.open('http://customer.gdketai.com/file/wordDocument/wtb.doc');
+		mounted() {
+			downFile('/file/wtb.doc');
 		}
 	}
 </script>
 
 <style scoped lang="less">
-	
+
 </style>

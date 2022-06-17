@@ -158,7 +158,6 @@ export function BatchPdfDownload(arr) {
 				binary: true
 			}) // 逐个添加文件
 			cache[file_name] = data
-			console.log(cache)
 		})
 		promises.push(promise)
 	})
@@ -166,7 +165,6 @@ export function BatchPdfDownload(arr) {
 		zip.generateAsync({
 			type: 'blob'
 		}).then(content => {
-			console.log(content)
 			// 生成二进制流
 			saveAs(content, '证书文件.zip') // 利用file-saver保存文件  自定义文件名
 		})
@@ -190,6 +188,26 @@ function getFile(url) {
 	})
 }
 /*End*/
+
+/**
+ * 点击下载文件事件
+ * @param {string} src [本地文件路径，放在public目录的静态文件]
+ */
+export function downFile(src){
+	let prefixUrl = `${process.env.BASE_URL}`+src;
+	let link = document.createElement("a");
+	//创建一个a标签
+	link.style.display = "none";
+	//将a标签隐藏
+	link.href = prefixUrl;
+	//给a标签添加下载链接  "域名+接口"  safe是一个动态的域名  后面的接口替换成你自己的下载接口
+	link.setAttribute("download", name);
+	// 此处注意，要给a标签添加一个download属性，属性值就是文件名称 否则下载出来的文件是没有属性的，空白白
+	document.body.appendChild(link);
+	//将上面创建的a标签加入到body的尾部
+	link.click();
+}
+
 
 /**
  * 用于ElementUI 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用
