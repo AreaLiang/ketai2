@@ -114,7 +114,6 @@
 <script>
 	import {checkRegister,registerfun} from "@/utils/login"
 	import { addAsyncRouter,dynamicRoute} from "@/utils"
-	import Qs from 'qs'
 	import NProgress from 'nprogress' // 引入头部进度条
 	import {loginApi,captchaApi,phoneCodeApi} from "@/request/api"
 	import {errorRouter,resetRouter} from '@/router'

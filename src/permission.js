@@ -11,6 +11,7 @@ import {
 import {
 	errorRouter
 } from './router'
+import { Message } from 'element-ui'
 
 NProgress.configure({
 	showSpinner: false
@@ -21,7 +22,7 @@ router.beforeEach(async (to, from, next) => {
 
 	let data = store.state.userInfo;
 
-	let userInfo = JSON.parse(JSON.stringify(data)); //去除隐形属性
+	let userInfo = JSON.parse(JSON.stringify(data)); //深拷贝，去除隐形属性
 
 	//用户权限判断
 	if (to.path == "/Login") {
@@ -30,15 +31,21 @@ router.beforeEach(async (to, from, next) => {
 		NProgress.done();
 	} else {
 		(async () => {
-			let token = await sessionStorage.getItem('token'); //获取缓存中的token
+			let token = sessionStorage.getItem('token'); //获取缓存中的token
 			if (token) {
 				if (JSON.stringify(data) == "[]") {
 					//发送token去后端验证用户信息
-					await store.dispatch('authorityNav', token).then(() => {
+					const isPass=await store.dispatch('authorityNav', token);
+					if(isPass){
 						/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
 						addAsyncRouter();
 						next({...to,replace: true}); //放行
-					});
+					}else {
+						Message.warning("token失效，请重新登录")
+						setTimeout(()=>{
+							router.push('/Login');
+						},1000)
+					}
 				}
 			} else {
 				router.push('/Login');

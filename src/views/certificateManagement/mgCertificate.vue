@@ -85,13 +85,6 @@
 						console.log("getData", getData);
 						this.tableData = JSON.parse(JSON.stringify(getData)); //初始化数据
 						this.dataTotal = data.data.totalElements; //一共多少条数据
-
-					} else {
-						this.$confirm('加载数据失败，请重新刷或者联系客服', '提示', {
-							confirmButtonText: '确定',
-							cancelButtonText: '取消',
-							type: 'warning'
-						})
 					}
 					this.loading=false;
 				}).catch(()=> this.loading=false);

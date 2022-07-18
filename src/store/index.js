@@ -8,16 +8,14 @@ import {ckUserInfoApi} from "@/request/api"
 const actions = {
 	// 用户权限控制
 	authorityNav(context, token) {
-		return new Promise((resolve, reject) => {
-			//发送请求查询用户信息
-			ckUserInfoApi(token).then((data) => {
-				if (data.code == "20000") {
-					context.commit('AuthorityNav', data.data.statusCn);
-					context.commit('UserInfo',data);
-				}
-				resolve();
-			})
-		});
+		 //发送请求查询用户信息
+		return ckUserInfoApi(token).then((data) => {
+			if (data.code == "20000") {
+				context.commit('AuthorityNav', data.data.statusCn);
+				context.commit('UserInfo',data);
+				return true
+			}else return false
+		})
 	}
 }
 const mutations = {

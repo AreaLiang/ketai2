@@ -12,32 +12,6 @@ import {
 	ckNull
 } from '@/utils/checkInfo'
 
-//创建一个异步 登录函数
-function loginfun(account, passWord) {
-	return new Promise((resolve, reject) => {
-
-		let url = loginApi().url; //获取后台接口的api
-		let method = loginApi().method;
-
-		axios({
-			method: method,
-			url: url,
-			data: {
-				loginname: account,
-				password: passWord
-			},
-			transformRequest: [function(data, headers) {
-				// 对 data 进行任意转换处理
-				var res = Qs.stringify(data)
-				return res;
-			}],
-		}).then((response) => {
-			resolve(response.data)
-		}).catch((error) => reject(error))
-	
-	})
-}
-
 /* 用户注册输入信息验证,
  *** 传入需要注册的所有信息，作为一个对象传入
  *** obj => elementUI 需要用到的this对象,传入this即可 ,objInfo => 用户输入的数据对象
@@ -115,7 +89,6 @@ function registerfun(objInfo) {
 
 
 export {
-	loginfun,
 	checkRegister,
 	registerfun
 }

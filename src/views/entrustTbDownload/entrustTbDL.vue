@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import {downFile} from '@/utils'
+	import {downFile,throttle} from '@/utils'
 	export default {
 		name: 'entrustTbDL', //业务委托表格下载
 		data() {
@@ -15,11 +15,12 @@
 		},
 		methods: {
 			downloadTb() {
-				downFile('/file/wtb.doc');
+				const downFun=()=>{downFile('/file/wtb.doc')};
+				throttle(downFun);//节流函数
 			}
 		},
 		mounted() {
-			downFile('/file/wtb.doc');
+			downFile('/file/wtb.doc')
 		}
 	}
 </script>

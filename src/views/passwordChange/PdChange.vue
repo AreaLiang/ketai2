@@ -29,7 +29,7 @@
 <script>
 	import PageHeader from '@/components/PageHeader'
 	import NProgress from 'nprogress' // 引入头部进度条
-	import { removeSessionStorage } from "@/utils"
+	import { removeSessionStorage ,throttle} from "@/utils"
 	import {pdChangeApi} from "@/request/api"
 	import {resetRouter} from '@/router'
 	export default {
@@ -84,42 +84,46 @@
 		},
 		methods: {
 			changeFun(formName) {
+				
 				this.$refs[formName].validate((valid) => {
 					let {ogPass,newPass}=this.passlist;
 					
 					if (valid) {
-						//调用修改密码接口
-						pdChangeApi({
-							oldpwd: ogPass,
-							pwd: newPass
-						}).then((data) => {
-							if(data.code=="20000"){
-								this.$message.success("修改成功,3秒后将重新登录");
-								NProgress.start() //开启进度条
-								//进度条 的进度设置
-								let time=0;
-								let np=setInterval(()=>{
-									time=time+0.2;
-									NProgress.set(0.3+time);
-								},1000)
-								
-								//修改成功后3秒自动专题登陆页面
-								setTimeout(()=>{
-									removeSessionStorage('token');//删除缓存
-									NProgress.done();
-									clearInterval(np);
-									this.$router.push("/Login");
-									resetRouter();//路由重置
-								},3000)
-							}else{
-								this.$message.error(data.msg);
-								
-								//清空表单
-								this.$refs[formName].resetFields()
-							}
-						}).catch((e) => "未知异常错误，请联系客服");
+						const pdChangeFun=()=>{
+							//调用修改密码接口
+							pdChangeApi({
+								oldpwd: ogPass,
+								pwd: newPass
+							}).then((data) => {
+								if(data.code=="20000"){
+									this.$message.success("修改成功,3秒后将重新登录");
+									NProgress.start() //开启进度条
+									//进度条 的进度设置
+									let time=0;
+									let np=setInterval(()=>{
+										time=time+0.2;
+										NProgress.set(0.3+time);
+									},1000)
+									
+									//修改成功后3秒自动专题登陆页面
+									setTimeout(()=>{
+										removeSessionStorage('token');//删除缓存
+										NProgress.done();
+										clearInterval(np);
+										this.$router.push("/Login");
+										resetRouter();//路由重置
+									},3000)
+								}else{
+									this.$message.error(data.msg);
+									
+									//清空表单
+									this.$refs[formName].resetFields()
+								}
+							}).catch((e) => "未知异常错误，请联系客服");
+						}
+						
+						throttle(pdChangeFun);//节流函数
 					}
-					
 				});
 			}
 		}

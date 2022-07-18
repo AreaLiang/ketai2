@@ -36,7 +36,6 @@
 
 <script>
 	import formUserInfo from "./formUserInfo"
-	import QS from 'qs'
 	import {uploadCertFileApi,cgUserInfoApi} from "@/request/api"
 	import {getBase64,isImgFormat} from "@/utils"
 	import {mapGetters,mapState} from "vuex"
