@@ -101,11 +101,18 @@ export function isImgFormat(file) {
  * @param {String} suffix [文件后缀]
  */
 export function fileShowPath(file, suffix) {
+	
 	if (file) {
+	
+		if(file.lastIndexOf('.')>0){
+			file=file.substring(0,file.lastIndexOf('.'))+".";
+		}
+		
 		let fileUrl = file + suffix; //文件路径
-
+		
 		let reg = new RegExp("hall"); //匹配服务端的 hall字符串，准备替换
 		let newUrl = baseUrl.replace(reg, fileUrl);
+		
 		return newUrl;
 	} else {
 		return '';

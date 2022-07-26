@@ -5,12 +5,12 @@
 			<el-row :gutter="20">
 				<el-col :span="12">
 					<el-form-item label="客户名称" prop="name" >
-						<el-input v-model.trim="ruleForm.name" :disabled="dialogFormVisible"></el-input>
+						<el-input v-model.trim="ruleForm.name" maxlength="20" show-word-limit :disabled="dialogFormVisible"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="联系人" prop="contact">
-						<el-input v-model.trim="ruleForm.contact" ></el-input>
+						<el-input v-model.trim="ruleForm.contact" maxlength="6"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -31,7 +31,7 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="公司地址" prop="address">
-						<el-input v-model.trim="ruleForm.address"></el-input>
+						<el-input v-model.trim="ruleForm.address"  maxlength="30"></el-input>
 					</el-form-item>
 				</el-col>
 
@@ -51,12 +51,12 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="安全管理员" prop="safetyOfficer">
-						<el-input v-model.trim="ruleForm.safetyOfficer"></el-input>
+						<el-input v-model.trim="ruleForm.safetyOfficer"  maxlength="6"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="安全员手机号" prop="safetyMobile">
-						<el-input v-model.number="ruleForm.safetyMobile"></el-input>
+						<el-input v-model.number="ruleForm.safetyMobile" type="number" ></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>

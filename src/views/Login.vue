@@ -9,7 +9,7 @@
 				</el-header>
 				<el-main>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入公司全称" v-model.trim="userInfo.account">
+						<el-input placeholder="请输入公司全称" maxlength="20" show-word-limit v-model.trim="userInfo.account">
 							<template slot="prepend">
 								<i class="el-icon-user-solid" v-show="!isRegister"></i>
 								<span>客户名称</span>
@@ -17,7 +17,7 @@
 						</el-input>
 					</div>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入登录密码" v-model.trim="userInfo.password" type="password">
+						<el-input placeholder="请输入登录密码" maxlength="16" v-model.trim="userInfo.password" type="password">
 							<template slot="prepend">
 								<i class="iconfont icon-lock" v-show="!isRegister"></i>
 								<span>登录密码</span>
@@ -27,14 +27,14 @@
 					</div>
 					<template v-if="isRegister">
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请再次输入登录密码" v-model.trim="userInfo.passwordAgain" type="password">
+							<el-input placeholder="请再次输入登录密码" maxlength="16"  v-model.trim="userInfo.passwordAgain" type="password">
 								<template slot="prepend">
 									<span>确认密码</span>
 								</template>
 							</el-input>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入联系人姓名" v-model.trim="userInfo.connectName">
+							<el-input placeholder="请输入联系人姓名" maxlength="6" show-word-limit v-model.trim="userInfo.connectName">
 								<template slot="prepend">
 									<span>联系人</span>
 								</template>
@@ -66,14 +66,14 @@
 							</div>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input placeholder="请输入验证码" v-model.trim="userInfo.captcha">
+							<el-input placeholder="请输入验证码" maxlength="5" v-model.trim="userInfo.captcha">
 								<template slot="prepend">
 									<img :src="captchaUrl" @click="changeCaptcha()" class="captcha" alt="">
 								</template>
 							</el-input>
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
-							<el-input type="number" placeholder="手机验证码" v-model.trim="userInfo.phoneCode"
+							<el-input type="number" placeholder="手机验证码"  v-model.trim="userInfo.phoneCode"
 								class="phoneCode no-number">
 								<template slot="append">
 									<el-button @click="phoneCode()" :disabled="isSendCode">{{sendCodeText}}</el-button>
@@ -88,8 +88,7 @@
 				</div>
 				<el-footer>
 					<div class="sub-btn">
-						<el-checkbox v-show="isRegister" v-model="userInfo.agreesCheck">同意 <a
-								href="http://customer.gdketai.com/file/pdfDocument/zcb.pdf">客户注册协议</a></el-checkbox>
+						<el-checkbox v-show="isRegister" v-model="userInfo.agreesCheck">同意 <a href="/file/zcb.pdf" target="_blank">客户注册协议</a></el-checkbox>
 						<span class="hotline">客服热线：0758-2777310</span>
 						<div class="op-div">
 							<el-button type="success" v-show="!isRegister" style="background-color: #49afcd;border-color: #49afcd;"  @click="login()">登录</el-button>
@@ -123,8 +122,8 @@
 		data() {
 			return {
 				userInfo: {
-					account: 'test001',
-					password: '123456',
+					account: '',
+					password: '',
 					passwordAgain: '',
 					connectName: '',
 					connectPhone: '',
@@ -147,7 +146,7 @@
 			},
 			isSendCode: function(val) {
 				if (val) {
-					let time = 10; //限制多少秒后可以重新发送手机验证码
+					let time = 60; //限制多少秒后可以重新发送手机验证码
 					let timeRange = setInterval(() => {
 						time--;
 						this.sendCodeText = "已经发送 " + time + " S";
@@ -183,7 +182,7 @@
 							
 							// 存储数据 存入vuex 
 							await this.$store.commit('Login', data);
-							await sessionStorage.setItem('token', token);
+							sessionStorage.setItem('token', token);
 							
 							//导航的权限控制
 							await this.$store.commit('AuthorityNav',status);
@@ -325,6 +324,9 @@
 		.op-div {
 			display: inline-block;
 			margin-left: 20px;
+		}
+		.el-input__inner{
+			line-height: 1px !important;
 		}
 	}
 

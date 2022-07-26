@@ -47,6 +47,7 @@
 					if(data.code=="20000"){
 						this.tempFile=data.data.tempFile;
 						this.imgUrl=fileShowPath(data.data.tempFile,'');
+					
 					}else{
 						this.$message.error("上传失败");
 					}

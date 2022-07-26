@@ -34,7 +34,7 @@
 							<el-col :span="12" v-if="!certStatus">
 								<span>
 									<el-checkbox v-model="agreeServe" label="同意" name="type"></el-checkbox><a
-										href="#">认证协议</a>
+										href="/file/rzb.pdf" target="_blank">认证协议</a>
 								</span>
 							</el-col>
 							<el-col :span="certStatus ? 24:12">
@@ -313,7 +313,9 @@
 
 <style lang="less">
 	.userinfo-box {
-
+		.el-input__inner{
+			line-height: 1px !important;
+		}
 		.head-tip {
 			.mes {
 				background: #da9628;

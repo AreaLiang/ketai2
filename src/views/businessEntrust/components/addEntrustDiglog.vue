@@ -137,9 +137,9 @@
 					
 						let jsonData = JSON.parse(JSON.stringify(this.rowData));
 						
-						if(jsonData.rawData.orderFile){//如果证件的路径不为空
+						if(jsonData.rawData.orderFilePdf){//如果证件的路径不为空
 							this.$nextTick(() => {//如果已经上传了委托文件，则赋值路径显示文件内容
-								this.wordUrl = fileShowPath(jsonData.rawData.orderFile,'.pdf');
+								this.wordUrl = fileShowPath(jsonData.rawData.orderFilePdf,'pdf');
 							})
 						}
 						//解构赋值
@@ -235,11 +235,11 @@
 
 				//调用接口上传证件
 				uploadEntrustOrderApi(params).then((data) => {
-					console.log(data.data.wordFile)
+					
 					if (data.code == "20000") {
 						this.loading = false; //关闭 加载图标
 						this.wordFile = data.data.wordFile;
-						this.wordUrl = fileShowPath(data.data.wordFile,'.pdf');
+						this.wordUrl = fileShowPath(data.data.wordFile,'pdf');
 					} else {
 						this.loading = false;
 						this.$message.error('上传失败!');
