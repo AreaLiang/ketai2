@@ -141,6 +141,7 @@
 				dialog.dialogFormVisible = true;
 				dialog.operateType = 0;
 				dialog.rowData = data;
+				
 			},
 			//重新提交委托单
 			submitAgain(currentRow){

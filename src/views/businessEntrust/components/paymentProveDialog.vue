@@ -1,19 +1,21 @@
 <template>
 	<div class="payment-prove">
 		<el-dialog :visible.sync="dialogFormVisible" :modal-append-to-body="false" custom-class="paymentProveDialog">
-			<div class="paymentProvePic">
-				<img :src="imgUrl" alt="">
-			</div>
-			<div class="uploadbox" v-if="!isUploadPay">
-				<el-upload  class="upload-payment-prove" action="#"
-					:limit="1" accept=".jpg,.jpeg,.png" :before-upload="beforePaymentProve"
-					:http-request="uploadPaymentProve" style="margin: 10px 0;">
-					<el-button slot="trigger" size="small" type="primary">上传支付证明</el-button>
-				</el-upload>
-			</div>
-			<div slot="footer" v-if="!isUploadPay" class="dialog-footer">
-			    <el-button @click="dialogFormVisible = false">取 消</el-button>
-			    <el-button type="primary" @click="submitPaymentProve()">提 交</el-button>
+			<div v-loading="loading">
+				<div class="paymentProvePic">
+					<img :src="imgUrl" alt="">
+				</div>
+				<div class="uploadbox" v-if="!isUploadPay">
+					<el-upload ref="uploadPaymentProve"  class="upload-payment-prove" action="#"
+						 accept=".jpg,.jpeg,.png" :before-upload="beforePaymentProve"
+						:http-request="uploadPaymentProve" :file-list="fileList" style="margin: 10px 0;">
+						<el-button slot="trigger" size="small" type="primary">上传支付证明</el-button>
+					</el-upload>
+				</div>
+				<div slot="footer" v-if="!isUploadPay" class="dialog-footer">
+				    <el-button @click="dialogFormVisible = false">取 消</el-button>
+				    <el-button type="primary" @click="submitPaymentProve()">提 交</el-button>
+				</div>
 			</div>
 		</el-dialog>
 	</div>
@@ -31,7 +33,9 @@
 				imgUrl:"",
 				data:'',
 				payFile:'',
-				isUploadPay:false
+				isUploadPay:false,
+				fileList:[],
+				loading:false
 			}
 		},
 		methods: {
@@ -52,9 +56,11 @@
 			},
 			//提交支付证明
 			submitPaymentProve(){
+				
 				let rowData={...this.data};
 				if(this.payFile){//如果已经上传文件
-				console.log(rowData.id,this.payFile)
+					this.loading=true;
+				
 					modifyPayFileApi({
 						id:rowData.id,
 						payFile:this.payFile
@@ -66,14 +72,21 @@
 						}else{
 							this.$message.error("上传失败");
 						}
-					})
+						this.loading=false;
+					}).catch(e=>this.loading=false)
 				}else{
 					this.$message.warning("请上传验收单");
 				}
 			},
 			//上传前，校验是否为照片格式
 			beforePaymentProve(file){
+				this.loading=true;
+				let uploadFiles=this.$refs['uploadPaymentProve'].uploadFiles;
+				if(uploadFiles.length>1){
+					uploadFiles.splice(0, 1); //删除上一个照片
+				}
 				isImgFormat(file);//调用公共校验方法
+				this.loading=false;
 			}
 		},
 		mounted(){
@@ -81,6 +94,8 @@
 				let res={...data.rawData};
 				this.data=res;
 				this.imgUrl='';//清空支付证明链接
+				this.fileList=[];//清除upload的默认地址
+				
 				if(res.payFile){
 					this.isUploadPay=true;
 					this.payFile=res.payFile;
@@ -123,6 +138,10 @@
 		}
 		.paymentProveDialog{
 			width: 70%;
+		}
+		.el-upload-list--text{
+			height: 30px;
+			overflow: hidden;
 		}
 	}
 </style>

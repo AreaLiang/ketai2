@@ -68,7 +68,8 @@
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
 				multipleSelection: [],
-				loading: true
+				loading: true,
+				host:''//服务端的端口号
 			}
 		},
 		methods: {
@@ -82,6 +83,7 @@
 					console.log(data);
 					if (data.code == "Ok") {
 						let getData = data.data.content;
+						this.host=data.url;//赋值端口号，用于证书管理下载链接的拼接
 						console.log("getData", getData);
 						this.tableData = JSON.parse(JSON.stringify(getData)); //初始化数据
 						this.dataTotal = data.data.totalElements; //一共多少条数据
@@ -92,26 +94,32 @@
 			//已经选中行的事件
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
-				console.log(val)
+				
 			},
 			//批量下载事件
 			BatchDownload(arr) {
-				let selectionUrl = JSON.parse(JSON.stringify(this.multipleSelection));
-				let urlList = [];//多个pdf文件链接的数组
-				selectionUrl.forEach((p) => {
-					urlList.push(p.reportFile);
-				});
-				if(urlList.length>0){//如果没有勾选多个文件
-					//文件压缩打包
-					BatchPdfDownload(urlList);
-				}else{
-					this.$message.warning("还没勾选要下载的证书文件");
-				}
+				if(this.host){
+					let selectionUrl = JSON.parse(JSON.stringify(this.multipleSelection));
+					let urlList = [];//多个pdf文件链接的数组
+					selectionUrl.forEach((p) => {
+						urlList.push(this.host+p.reportFile);
+					});
+					if(urlList.length>0){//如果没有勾选多个文件
+						//文件压缩打包
+						BatchPdfDownload(urlList);
+					}else{
+						this.$message.warning("还没勾选要下载的证书文件");
+					}
+				}else throw new Error('http返回已经更改，检测this.host')
 			},
 			//下载事件
 			downLoadLertificate(val) {
-				//单个PDF文件下载事件
-				fileLinkToStreamDownload(val.reportFile, val.recordFile);
+				if(this.host){
+					let link=this.host+val.reportFile;
+					//单个PDF文件下载事件
+					fileLinkToStreamDownload(link, val.recordFile);
+				}else throw new Error('http返回已经更改，检测this.host')
+				
 			},
 
 		},

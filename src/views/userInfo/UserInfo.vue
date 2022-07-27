@@ -129,7 +129,7 @@
 	import diglogUserInfoCg from "./components/diglogUserInfoCg"
 	import {mapGetters,mapState} from "vuex"
 	import {uploadCertFileApi,modifyRegistApi} from "@/request/api"
-	import {isImgFormat,fileShowPath} from "@/utils"
+	import {isImgFormat,fileShowPath,throttle} from "@/utils"
 	import { userInfoObj } from "@/utils/userInfo"
 
 	export default {
@@ -168,41 +168,46 @@
 		methods: {
 			//表单提交
 			submitForm() {
-				let uerInfoComponent = this.$refs['modifyUerInfo']; //声明 表单组件
-
-				uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
-					if (valid) { //如果表单验证通过
-						if (this.agreeServe) { //如果已勾选 认证协议
-							//获取用户输入的数据
-							let postData=new userInfoObj(uerInfoComponent.ruleForm);
-							postData.business=JSON.stringify(postData.business);
-							
-							//整理认证接口的数据
-							let formData = {
-								id: this.userdata.id,
-								certificate: this.bs_certFile,
-								safetyCertificate: this.sc_certFile,
-							}
-							//合并对象，如果键名相同，第二个参数覆盖第一个
-							formData=Object.assign(formData,postData);
-							
-							//提交认证接口
-							modifyRegistApi(formData).then((data) => {
-								console.log(data)
-								if (data.code == "20000") {
-									let token = sessionStorage.getItem('token');
-									this.$store.dispatch('authorityNav', token);
-									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
-									this.agreeServe=false;
-								} else {
-									this.$message.error("认证失败");
+				const userFormSubmit=()=>{
+					let uerInfoComponent = this.$refs['modifyUerInfo']; //声明 表单组件
+					
+					uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
+						if (valid) { //如果表单验证通过
+							if (this.agreeServe) { //如果已勾选 认证协议
+								//获取用户输入的数据
+								let postData=new userInfoObj(uerInfoComponent.ruleForm);
+								postData.business=JSON.stringify(postData.business);
+								
+								//整理认证接口的数据
+								let formData = {
+									id: this.userdata.id,
+									certificate: this.bs_certFile,
+									safetyCertificate: this.sc_certFile,
 								}
-							});
-						} else {
-							this.$message.warning("请勾选同意认证协议");
+								//合并对象，如果键名相同，第二个参数覆盖第一个
+								formData=Object.assign(formData,postData);
+								
+								//提交认证接口
+								modifyRegistApi(formData).then((data) => {
+									console.log(data)
+									if (data.code == "20000") {
+										let token = sessionStorage.getItem('token');
+										this.$store.dispatch('authorityNav', token);
+										this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
+										this.agreeServe=false;
+									} else {
+										this.$message.error("认证失败");
+										this.$router.go(0);
+									}
+								});
+							} else {
+								this.$message.warning("请勾选同意认证协议");
+							}
 						}
-					}
-				});
+					});
+				}
+				
+				throttle(userFormSubmit,2000);//节流函数，防止多次点击
 			},
 			//信息更改 按钮事件
 			// changeUserInfoBtn() {

@@ -39,24 +39,24 @@
 							</el-col>
 							<el-col :span="12">
 								<el-form-item label="联系手机号" :label-width="formLabelWidth" prop="mobile">
-									<el-input v-model="addEntrustForm.mobile" autocomplete="off"></el-input>
+									<el-input v-model="addEntrustForm.mobile" type="number" autocomplete="off"></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
 
 						<el-row>
 							<el-col :span="24">
-								<el-form-item label="备注" :label-width="formLabelWidth">
-									<el-input type="textarea" v-model="addEntrustForm.remark" :rows="8"></el-input>
+								<el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+									<el-input type="textarea" v-model="addEntrustForm.remark" :rows="8" ></el-input>
 								</el-form-item>
 							</el-col>
 						</el-row>
 
 						<el-row>
 							<el-col :span="24">
-								<el-upload class="upload-UserInfoCg" ref="uploadUserInfoCg" action="#" :limit="1"
+								<el-upload class="upload-UserInfoCg" ref="uploadUserInfoCg" action="#" 
 									accept=".doc,.docx" :before-upload="beforeLicenseUpload"
-									:http-request="uploadLicense" style="margin: 10px 0;">
+									:http-request="uploadLicense" :file-list="fileList" style="margin: 25px 0;">
 									<el-button slot="trigger" size="small" type="primary">委托文件</el-button>
 								</el-upload>
 							</el-col>
@@ -113,14 +113,16 @@
 					{
 						validator: formValidation.mobile,
 						trigger: 'blur'
-					}]
+					}],
+					remark:[{max: 120, message: '长度不能超过120个字符', trigger: 'blur' }]
 				},
 				formLabelWidth: '120px',
 				wordFile: '',
 				ispdf: false,
 				loading: false,
 				wordUrl: '',
-				rowData: {}
+				rowData: {},
+				fileList:[]
 			}
 		},
 		watch: {
@@ -136,10 +138,15 @@
 					} else if (this.operateType == 0) { //修改业务委托 表单信息
 					
 						let jsonData = JSON.parse(JSON.stringify(this.rowData));
-						
+						console.log(jsonData)
 						if(jsonData.rawData.orderFilePdf){//如果证件的路径不为空
 							this.$nextTick(() => {//如果已经上传了委托文件，则赋值路径显示文件内容
+								this.fileList =[];
+							
 								this.wordUrl = fileShowPath(jsonData.rawData.orderFilePdf,'pdf');
+								this.wordFile = fileShowPath(jsonData.rawData.orderFilePdf,'pdf');
+								
+								this.fileList.push({name:jsonData.rawData.orderFilePdf,url:this.wordFile});
 							})
 						}
 						//解构赋值
@@ -172,6 +179,7 @@
 			addEntrust() {
 				this.$refs['addEntrustForm'].validate((valid) => {
 					if (valid) { //校验是否信息为空
+			
 						if (this.wordFile != '') {//校验是否上传委托文件
 							let postData=new entrustObj(this.addEntrustForm);//委托单需要的信息
 							
@@ -215,7 +223,11 @@
 				const isPDF = file.type === 'application/pdf';
 				const isDOCX = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 				const isDOC = file.type === 'application/msword';
-
+				let uploadFiles=this.$refs['uploadUserInfoCg'].uploadFiles;
+				if(uploadFiles.length>1){
+					uploadFiles.splice(0, 1); //删除照片
+				}
+			
 				if (isDOCX || isDOC) {
 					this.ispdf = false;
 				}else if(isPDF){
@@ -237,9 +249,11 @@
 				uploadEntrustOrderApi(params).then((data) => {
 					
 					if (data.code == "20000") {
+					
 						this.loading = false; //关闭 加载图标
 						this.wordFile = data.data.wordFile;
 						this.wordUrl = fileShowPath(data.data.wordFile,'pdf');
+						
 					} else {
 						this.loading = false;
 						this.$message.error('上传失败!');
@@ -280,6 +294,22 @@
 
 <style lang="less">
 	.entrustDiglog {
+		.el-upload-list__item {
+		  transition: none ;
+		}
+		.el-input__inner{
+			line-height: 1px !important;
+		}
+		input::-webkit-inner-spin-button {
+		  -webkit-appearance: none !important;
+		}
+		input::-webkit-outer-spin-button {
+		  -webkit-appearance: none !important;
+		}
+		input[type="number"] {
+		  -moz-appearance: textfield;
+		}
+	
 		.el-form-item {
 			text-align: left;
 			margin-bottom: 0;
@@ -291,6 +321,10 @@
 
 		.entrust-diglog {
 			width: 75%;
+			.el-upload-list--text{
+				overflow: hidden;
+				height: 30px;
+			}
 		}
 
 		.pdfShow {
