@@ -122,8 +122,8 @@
 		data() {
 			return {
 				userInfo: {
-					account: 'test001',
-					password: '123456',
+					account: '',
+					password: '',
 					passwordAgain: '',
 					connectName: '',
 					connectPhone: '',

@@ -33,8 +33,8 @@
 
 						<el-row :gutter="30">
 							<el-col :span="12">
-								<el-form-item label="联系人 " :label-width="formLabelWidth" prop="contact">
-									<el-input v-model="addEntrustForm.contact" autocomplete="off"></el-input>
+								<el-form-item label="联系人" :label-width="formLabelWidth" prop="contact">
+									<el-input v-model.trim="addEntrustForm.contact" maxlength="6" autocomplete="off"></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span="12">

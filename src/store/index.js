@@ -27,7 +27,7 @@ const mutations = {
 	//保存用户的信息
 	UserInfo(state, value) {
 		state.userInfo = value.data;
-		console.log("我是vxu的UserInfo:",value.data)
+		console.log("我是vxu的UserInfo:",value.data);
 	},
 	// 用户权限控制
 	AuthorityNav(state, useStatus) {
