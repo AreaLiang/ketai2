@@ -16,7 +16,7 @@
 					</el-table-column>
 					<el-table-column prop="subject.name" label="项目名称" width="120">
 					</el-table-column>
-					<el-table-column prop="checkTypeValue" label="鉴定类型" >
+					<el-table-column prop="checkTypeValueName" label="鉴定类型" >
 					</el-table-column>
 				<!-- 	<el-table-column prop="subject.remark" label="备注">
 					</el-table-column> -->
