@@ -1,6 +1,6 @@
 <template>
 	<div class="entrustDiglog">
-		<el-dialog title="业务委托单" :visible.sync="dialogFormVisible" :modal-append-to-body="false"
+		<el-dialog title="业务委托单" :visible.sync="dialogFormVisible" :close-on-click-modal="false" :modal-append-to-body="false"
 			custom-class="entrust-diglog">
 			<el-row :gutter="30" v-loading="loading">
 				<el-col :md="12" :lg="10">
@@ -65,12 +65,12 @@
 				</el-col>
 
 				<el-col :md="12" :lg="14">
-					<div class="pdfShow">
+					<div class="pdfShow" >
 						<iframe class="pdf-show" :src="wordUrl" width="100%" height="460"></iframe>
 					</div>
 				</el-col>
 			</el-row>
-			<div slot="footer" class="dialog-footer">
+			<div slot="footer" class="dialog-footer" v-loading="loading">
 				<el-button type="primary" @click="addEntrust()">提交委托单</el-button>
 			</div>
 		</el-dialog>
@@ -81,7 +81,7 @@
 	import {addEntrustOrderApi,uploadEntrustOrderApi,modifyEntrustOrderApi} from "@/request/api"
 	import {mapState} from 'vuex'
 	import {baseUrl} from '@/request/api'
-	import {fileShowPath,formValidation} from '@/utils'
+	import {fileShowPath,formValidation,throttle} from '@/utils'
 	import {entrustObj} from '@/utils/bsEntrust'
 
 	export default {
@@ -181,6 +181,7 @@
 					if (valid) { //校验是否信息为空
 			
 						if (this.wordFile != '') {//校验是否上传委托文件
+							this.loading=true;
 							let postData=new entrustObj(this.addEntrustForm);//委托单需要的信息
 							
 							if (!this.ispdf) { //判断是否pdf文件，如果是修改参数传值
@@ -190,14 +191,21 @@
 							}
 						
 							if (this.operateType == 1) {//新建委托
-								addEntrustOrderApi(postData).then((data) => {
-									this.afterSubmit(data, "新建成功", "新建失败")
-								});
+								const addEntrustOrder=()=>{
+									addEntrustOrderApi(postData).then((data) => {
+										this.afterSubmit(data, "新建成功", "新建失败");
+									}).finally(()=>{this.loading=false});
+								}
+								
+								throttle(addEntrustOrder,3000)//节流函数
 							} else if (this.operateType == 0) {//修改委托
 								postData.id = this.rowData.rawData.id;
-								modifyEntrustOrderApi(postData).then((data) => {
-									this.afterSubmit(data, "修改成功", "修改失败")
-								});
+								const modifyEntrustOrder=()=>{
+									modifyEntrustOrderApi(postData).then((data) => {
+										this.afterSubmit(data, "修改成功", "修改失败");
+									}).finally(()=>{this.loading=false});
+								}
+								throttle(modifyEntrustOrder,3000)//节流函数
 							}
 
 						} else {

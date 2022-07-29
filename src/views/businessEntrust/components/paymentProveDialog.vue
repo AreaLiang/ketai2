@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import { isImgFormat,fileShowPath } from "@/utils"
+	import { isImgFormat,fileShowPath ,throttle} from "@/utils"
 	import {baseUrl,modifyPayFileApi,uploadTempFileApi} from '@/request/api'
 	
 	export default{
@@ -59,21 +59,23 @@
 				
 				let rowData={...this.data};
 				if(this.payFile){//如果已经上传文件
-					this.loading=true;
-				
-					modifyPayFileApi({
-						id:rowData.id,
-						payFile:this.payFile
-					}).then((data)=>{
-						if(data.code=="20000"){
-							this.$message.success("上传成功");
-							this.dialogFormVisible = false;
-							this.$bus.$emit('pageNumber',1);
-						}else{
-							this.$message.error("上传失败");
-						}
-						this.loading=false;
-					}).catch(e=>this.loading=false)
+					const modifyPayFile = ()=>{
+						this.loading=true;
+						modifyPayFileApi({
+							id:rowData.id,
+							payFile:this.payFile
+						}).then((data)=>{
+							if(data.code=="20000"){
+								this.$message.success("上传成功");
+								this.dialogFormVisible = false;
+								this.$bus.$emit('pageNumber',this.currentPage);
+							}else{
+								this.$message.error("上传失败");
+							}
+						}).finally(()=>{this.loading=false});
+					}
+					
+					throttle(modifyPayFile,2000);
 				}else{
 					this.$message.warning("请上传验收单");
 				}
@@ -104,6 +106,12 @@
 					this.isUploadPay=false;
 				}
 			})
+		},
+		props:{
+			currentPage: {
+				type: Number,
+				default: 1
+			}
 		}
 	}
 </script>

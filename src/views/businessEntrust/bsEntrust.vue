@@ -63,7 +63,7 @@
 			</template>
 			<div class="pagination-box">
 				<!-- 分页功能 -->
-				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" />
+				<Pagination :dataTotal="dataTotal" :pageSize="pageSize"  :currentPage="currentPage"/>
 			</div>
 		</div>
 
@@ -71,13 +71,13 @@
 		<addEntrustDiglog ref="addEntrustDiglog" />
 
 		<!-- 委托文件查看 弹出框 -->
-		<entrustFileDialog ref="entrustFileDialog" />
+		<entrustFileDialog ref="entrustFileDialog"/>
 
 		<!-- 上传验收单/完工验收单 弹出框 -->
-		<acceptanceDialog ref="acceptanceDialog" />
+		<acceptanceDialog ref="acceptanceDialog" :currentPage="currentPage" />
 
 		<!-- 支付证明/上传支付证明 弹出框 -->
-		<paymentProveDialog ref="paymentProveDialog" />
+		<paymentProveDialog ref="paymentProveDialog" :currentPage="currentPage" />
 
 	</div>
 </template>
@@ -102,7 +102,8 @@
 				tableData: [],
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
-				loading: true
+				loading: true,
+				currentPage:1
 			}
 		},
 		computed: {
@@ -184,7 +185,8 @@
 		mounted() {
 			this.PaginationClick(0, this.pageSize); //进来默认渲染第一页，后端数据第一页的页码为 0
 			//绑定事件，页码发生改变时候重新发送请求显示数据
-			this.$bus.$on('pageNumber', (page) => {
+			this.$bus.$on('pageNumber', (page = 1) => {
+				this.currentPage=page;//保存当前页码，用于某些交换后刷新当页
 				this.PaginationClick(page - 1, this.pageSize);
 			})
 		},

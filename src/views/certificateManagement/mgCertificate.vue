@@ -132,7 +132,7 @@
 			this.certificateData(0);
 			//绑定分页点击事件
 			this.$bus.$on('pageNumber', (page) => {
-				this.certificateData(page);
+				this.certificateData(page-1);
 			})
 		},
 		beforeDestroy() {

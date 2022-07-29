@@ -23,7 +23,7 @@
 </template>
 
 <script>
-	import {isImgFormat,fileShowPath} from "@/utils"
+	import {isImgFormat,fileShowPath,throttle} from "@/utils"
 	import { uploadTempFileApi ,modifyCheckFileApi} from "@/request/api"
 	export default{
 		name:'acceptanceDialog',//完工验收单
@@ -67,18 +67,21 @@
 			subAcceptanceOrder(){
 				let rowData={...this.data};
 				if(this.tempFile){//如果已经上传文件
-					modifyCheckFileApi({
-						id:rowData.id,
-						checkFile:this.tempFile
-					}).then((data)=>{
-						if(data.code=="20000"){
-							this.$message.success("上传成功");
-							this.dialogFormVisible = false;//关闭dialog
-							this.$bus.$emit('pageNumber',1);//刷新页面
-						}else{
-							this.$message.error("上传失败");
-						}
-					})
+					const submitCheckFile=()=>{
+						modifyCheckFileApi({
+							id:rowData.id,
+							checkFile:this.tempFile
+						}).then((data)=>{
+							if(data.code=="20000"){
+								this.$message.success("上传成功");
+								this.dialogFormVisible = false;//关闭dialog
+								this.$bus.$emit('pageNumber',this.currentPage);//刷新页面
+							}else{
+								this.$message.error("上传失败");
+							}
+						})
+					}
+					throttle(submitCheckFile,2000)//节流函数
 				}else{
 					this.$message.warning("请上传验收单");
 				}
@@ -95,6 +98,12 @@
 					this.fileList.push({name:this.imgUrl,url:this.imgUrl});
 				}
 			})
+		},
+		props:{
+			currentPage: {
+				type: Number,
+				default: 1
+			}
 		}
 	}
 </script>
