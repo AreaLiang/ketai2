@@ -142,7 +142,6 @@
 				},
 				formLabelWidth: '120px',
 				wordFile: '',
-				ispdf: false,
 				loading: false,
 				wordUrl: '',
 				rowData: {},
@@ -160,6 +159,7 @@
 					let userData = JSON.parse(JSON.stringify(this.userdata));
 					
 					this.addEntrustForm = Object.assign(this.addEntrustForm, userData, this.rowData);
+				
 					if(!this.rowData.remark){//如果点解新建委托，则没有数据，说明是新建委托单
 						this.addEntrustForm.remark='';
 					}
@@ -171,10 +171,10 @@
 								this.fileList = [];
 								let orderFilePdf = jsonData.rawData.orderFilePdf;
 								this.wordUrl = fileShowPath(orderFilePdf, 'pdf');
-								this.wordFile = fileShowPath(orderFilePdf, 'pdf');
+								this.wordFile = orderFilePdf;
 								this.fileList.push({
 									name: orderFilePdf,
-									url: this.wordFile
+									url: fileShowPath(orderFilePdf, 'pdf')
 								});
 							})
 						}
@@ -207,13 +207,7 @@
 							this.loading = true;
 							let postData = new entrustObj(this.addEntrustForm); //委托单需要的信息
 
-							if (!this.ispdf) { //判断是否pdf文件，如果是修改参数传值
-								postData.wordFile = this.wordFile;
-								postData.orderFile = '';
-							} else {
-								postData.orderFile = this.wordFile;
-								postData.wordFile = '';
-							}
+							postData.wordFile=this.wordFile;
 							
 							//执行提交业务委托的 事件接口
 							this.$emit('subEntrust', {
@@ -227,18 +221,7 @@
 					} else false
 				});
 			},
-			/*  向后台提交数据后，页面更新和提示操作，
-			 *** data:后台返回的数据，success:成功后提示信息,error：失败后提示信息 
-			 * */
-			afterSubmit(data, success, error) {
-				if (data.code == "20000") {
-					this.$message.success(success);
-					this.dialogFormVisible = false;
-					this.$bus.$emit('pageNumber', 1);
-				} else {
-					this.$message.error(error);
-				}
-			},
+			
 			//上传证件文件前，对文件类型做判断
 			beforeLicenseUpload(file) {
 				const isPDF = file.type === 'application/pdf';
@@ -249,19 +232,17 @@
 					uploadFiles.splice(0, 1); //删除照片
 				}
 
-				if (isDOCX || isDOC) {
-					this.ispdf = false;
-				} else if (isPDF) {
-					this.ispdf = true;
-				} else {
+				if(isPDF || isDOCX || isDOC){
+					return true
+				}else{
 					this.$message.error('只能是文档格式或者PDF格式!');
+					return false
 				}
-				return isPDF || isDOCX || isDOC
 			},
 			//上传委托文件
 			uploadLicense(res) {
 				this.loading = true; //加载图标开启
-
+				
 				//转换formdata格式
 				let params = new FormData();
 				params.append('file', res.file);
@@ -270,11 +251,10 @@
 				uploadEntrustOrderApi(params).then((data) => {
 
 					if (data.code == "20000") {
-
 						this.loading = false; //关闭 加载图标
 						this.wordFile = data.data.wordFile;
 						this.wordUrl = fileShowPath(data.data.wordFile, 'pdf');
-						console.log(this.wordUrl)
+					
 					} else {
 						this.loading = false;
 						this.$message.error('上传失败!');

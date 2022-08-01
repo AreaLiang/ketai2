@@ -71,7 +71,7 @@
 		<addEntrustDiglog ref="addEntrustDiglog"  @subEntrust='subAddEntrust' />
 		
 		<!-- 委托单编辑 弹出框 -->
-		<editEntrustDiglog ref="editEntrustDiglog" @subEntrust='subModifyEntrust' :isCreatedOrder="true"/>
+		<editEntrustDiglog ref="editEntrustDiglog" @subEntrust='subModifyEntrust' :isCreatedOrder="true" />
 
 		<!-- 委托文件查看 弹出框 -->
 		<entrustFileDialog ref="entrustFileDialog"/>
@@ -146,8 +146,8 @@
 				
 				const addEntrustOrder=()=>{
 					addEntrustOrderApi(postData).then((data) => {
-						obj.afterSubmit(data, "新建成功", "新建失败");
-					}).finally(()=>{this.loading=false});
+						this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");
+					}).finally(()=>{obj.loading=false});
 				}
 				throttle(addEntrustOrder,3000)//节流函数
 			},
@@ -161,15 +161,14 @@
 			subModifyEntrust(res){
 				let {obj,postData}=res;
 				postData.id = obj.rowData.rawData.id;
-				console.log("postdata:",postData)
 				
 				const modifyEntrustOrder=()=>{
 					modifyEntrustOrderApi(postData).then((data) => {
-						console.log("成功返回",data)
-						obj.afterSubmit(data, "修改成功", "修改失败");
+						this.afterSubmit('editEntrustDiglog',data, "修改成功", "修改失败");
 					}).finally(()=>{obj.loading=false});
 				}
 				throttle(modifyEntrustOrder,3000)//节流函数
+				
 			},
 			//重新提交委托单
 			submitAgain(currentRow){
@@ -177,11 +176,11 @@
 				
 				let postData=new entrustObj(data);//委托单需要的信息
 				postData.id=data.rawData.id;//添加id的属性
-				console.log("postData,2",postData)
+			
 				modifyEntrustOrderApi(postData).then((data) => {
 					if (data.code == "20000") {
 						this.$message.success("提交成功");
-						this.$bus.$emit('pageNumber', 1);
+						this.$bus.$emit('pageNumber', this.currentPage);
 					} else {
 						this.$message.error("提交失败");
 					}
@@ -207,7 +206,20 @@
 			//点击下载证书事件
 			DownloadCertificate() {
 				this.$router.push('/Home/mgCertificate');
-			}
+			},
+			/*  向后台提交数据后，页面更新和提示操作，
+			 *** objName 组件的ref名称 ,data:后台返回的数据，success:成功后提示信息,error：失败后提示信息 
+			 * */
+			afterSubmit( objName, data, success, error) {
+				let obj = this.$refs[objName];
+				if (data.code == "20000") {
+					this.$message.success(success);
+					obj.dialogFormVisible = false;
+					this.$bus.$emit('pageNumber', this.currentPage);
+				} else {
+					this.$message.error(error);
+				}
+			},
 		},
 		mounted() {
 			this.PaginationClick(0, this.pageSize); //进来默认渲染第一页，后端数据第一页的页码为 0
