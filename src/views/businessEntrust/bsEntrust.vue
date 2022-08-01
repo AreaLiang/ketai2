@@ -68,7 +68,10 @@
 		</div>
 
 		<!-- 新建业务委托 弹出框 -->
-		<addEntrustDiglog ref="addEntrustDiglog" />
+		<addEntrustDiglog ref="addEntrustDiglog"  @subEntrust='subAddEntrust' />
+		
+		<!-- 委托单编辑 弹出框 -->
+		<editEntrustDiglog ref="editEntrustDiglog" @subEntrust='subModifyEntrust' :isCreatedOrder="true"/>
 
 		<!-- 委托文件查看 弹出框 -->
 		<entrustFileDialog ref="entrustFileDialog"/>
@@ -85,13 +88,14 @@
 <script>
 	import PageHeader from "@/components/PageHeader"
 	import Pagination from "@/components/Pagination"
-	import addEntrustDiglog from "./components/addEntrustDiglog"
+	import addEntrustDiglog from "./components/bsEntrustmentDiglog"
+	import editEntrustDiglog from "./components/bsEntrustmentDiglog"
 	import entrustFileDialog from "./components/entrustFileDialog"
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
 
-	import {bsEntrustmentApi,modifyEntrustOrderApi} from "@/request/api"
-	import {timestamp} from '@/utils'
+	import {bsEntrustmentApi,modifyEntrustOrderApi,addEntrustOrderApi} from "@/request/api"
+	import {timestamp,throttle} from '@/utils'
 	import {cgBsEntrustData,entrustObj} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
@@ -119,7 +123,8 @@
 			addEntrustDiglog,
 			entrustFileDialog,
 			acceptanceDialog,
-			paymentProveDialog
+			paymentProveDialog,
+			editEntrustDiglog
 		},
 		methods: {
 			/* 打开弹出层 
@@ -134,15 +139,37 @@
 			addEntrust() {
 				let dialog = this.$refs.addEntrustDiglog;
 				dialog.dialogFormVisible = true;
-				dialog.operateType = 1;
 			},
-			//委托单编辑
-			modifyEntrust(data) {
-				let dialog = this.$refs.addEntrustDiglog;
-				dialog.dialogFormVisible = true;
-				dialog.operateType = 0;
-				dialog.rowData = data;
+			//提交 新建业务委托
+			subAddEntrust(res){
+				let {obj,postData}=res;
 				
+				const addEntrustOrder=()=>{
+					addEntrustOrderApi(postData).then((data) => {
+						obj.afterSubmit(data, "新建成功", "新建失败");
+					}).finally(()=>{this.loading=false});
+				}
+				throttle(addEntrustOrder,3000)//节流函数
+			},
+			//打开 委托单编辑
+			modifyEntrust(data) {
+				let dialog = this.$refs.editEntrustDiglog;
+				dialog.dialogFormVisible = true;
+				dialog.rowData = data;
+			},
+			//提交 委托单编辑
+			subModifyEntrust(res){
+				let {obj,postData}=res;
+				postData.id = obj.rowData.rawData.id;
+				console.log("postdata:",postData)
+				
+				const modifyEntrustOrder=()=>{
+					modifyEntrustOrderApi(postData).then((data) => {
+						console.log("成功返回",data)
+						obj.afterSubmit(data, "修改成功", "修改失败");
+					}).finally(()=>{obj.loading=false});
+				}
+				throttle(modifyEntrustOrder,3000)//节流函数
 			},
 			//重新提交委托单
 			submitAgain(currentRow){
@@ -150,7 +177,7 @@
 				
 				let postData=new entrustObj(data);//委托单需要的信息
 				postData.id=data.rawData.id;//添加id的属性
-				
+				console.log("postData,2",postData)
 				modifyEntrustOrderApi(postData).then((data) => {
 					if (data.code == "20000") {
 						this.$message.success("提交成功");
