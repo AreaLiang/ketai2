@@ -143,7 +143,7 @@
 			//提交 新建业务委托
 			subAddEntrust(res){
 				let {obj,postData}=res;
-				
+				console.log(postData)
 				const addEntrustOrder=()=>{
 					addEntrustOrderApi(postData).then((data) => {
 						this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");

@@ -44,7 +44,11 @@
 				if(uploadFiles.length>1){
 					uploadFiles.splice(0, 1); //删除上一个照片
 				}
-				isImgFormat(file);//调用公共校验方法
+				if(!isImgFormat(file)){
+					this.tempFile='';
+					this.imgUrl='';
+					return false;
+				}
 			},
 			//完工验收单上传
 			uploadAcceptanceOrder(res){

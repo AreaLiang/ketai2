@@ -56,7 +56,6 @@
 			},
 			//提交支付证明
 			submitPaymentProve(){
-				
 				let rowData={...this.data};
 				if(this.payFile){//如果已经上传文件
 					const modifyPayFile = ()=>{
@@ -87,9 +86,13 @@
 				if(uploadFiles.length>1){
 					uploadFiles.splice(0, 1); //删除上一个照片
 				}
-				return isImgFormat(file);//调用公共校验方法
 				
 				this.loading=false;
+				if(!isImgFormat(file)){//如果格式不符合，清空iframe显示和upload 上传链接
+					this.imgUrl='';
+					this.payFile='';
+				}
+				return isImgFormat(file);//调用公共校验方法
 			}
 		},
 		mounted(){
@@ -121,7 +124,7 @@
 	.payment-prove{
 		.paymentProvePic{
 			width: 100%;
-			height: 450px;
+			height: 600px;
 			overflow: auto;
 			img{
 				width: 100%;
@@ -147,6 +150,7 @@
 		}
 		.paymentProveDialog{
 			width: 70%;
+			margin-top: 8vh !important;
 		}
 		.el-upload-list--text{
 			height: 30px;

@@ -7,13 +7,13 @@
 			<el-col :span='10'>
 				<el-form :model="passlist" ref="pdForm" label-width="80px" :rules="rules">
 					<el-form-item label="原始密码" prop="ogPass">
-						<el-input type="password" v-model.trim="passlist.ogPass"></el-input>
+						<el-input type="password" v-model.trim="passlist.ogPass" clearable></el-input>
 					</el-form-item>
 					<el-form-item label="新密码" prop="newPass">
-						<el-input type="password" v-model.trim="passlist.newPass"></el-input>
+						<el-input type="password" v-model.trim="passlist.newPass" clearable></el-input>
 					</el-form-item>
 					<el-form-item label="确认密码" prop="checkPass">
-						<el-input type="password" v-model.trim="passlist.checkPass"></el-input>
+						<el-input type="password" v-model.trim="passlist.checkPass" clearable></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -130,7 +130,7 @@
 									this.$message.error(data.msg);
 
 									//清空表单
-									this.$refs[formName].resetFields()
+									// this.$refs[formName].resetFields()
 								}
 							}).catch((e) => "未知异常错误，请联系客服");
 						}

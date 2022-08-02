@@ -59,7 +59,7 @@
 							<el-row>
 								<el-col :span="24">
 									<el-upload class="upload-UserInfoCg" ref="uploadUserInfoCg" action="#"
-										accept=".doc,.docx" :before-upload="beforeLicenseUpload"
+										accept=".doc,.docx,.pdf,.xls,.xlsx" :before-upload="beforeLicenseUpload"
 										:http-request="uploadLicense" :file-list="fileList" style="margin: 25px 0;">
 										<el-button slot="trigger" size="small" type="primary">委托文件</el-button>
 									</el-upload>
@@ -108,7 +108,6 @@
 		data() {
 			return {
 				dialogFormVisible: false,
-				operateType: 1, //弹窗类型，1为新建委托，0为 修改委托、编辑委托
 				addEntrustForm: {
 					name: '',
 					address: '',
@@ -141,11 +140,11 @@
 					}]
 				},
 				formLabelWidth: '120px',
-				wordFile: '',
+				wordFile: '',//传给后台的文件路径
 				loading: false,
-				wordUrl: '',
-				rowData: {},
-				fileList: []
+				wordUrl: '',//iframe显示文档的路径
+				rowData: {},//点击修改业务委托传入的当行数据
+				fileList: []//默认显示上传文件的名字和路径
 			}
 		},
 		watch: {
@@ -227,15 +226,21 @@
 				const isPDF = file.type === 'application/pdf';
 				const isDOCX = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 				const isDOC = file.type === 'application/msword';
+				const isXls = file.type === 'application/vnd.ms-excel';
+				const isXlsx = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+				console.log(file.name)
+			
 				let uploadFiles = this.$refs['uploadUserInfoCg'].uploadFiles;
 				if (uploadFiles.length > 1) {
 					uploadFiles.splice(0, 1); //删除照片
 				}
 
-				if(isPDF || isDOCX || isDOC){
+				if(isPDF || isDOCX || isDOC || isXls || isXlsx){
 					return true
 				}else{
 					this.$message.error('只能是文档格式或者PDF格式!');
+					this.wordFile='';
+					this.wordUrl='';
 					return false
 				}
 			},
