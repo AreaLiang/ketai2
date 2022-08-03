@@ -111,9 +111,9 @@
 			}
 		},
 		computed: {
-			statusMeg(){//状态框，指针指中时候提示信息，如果有则显示
+			statusMeg(){//状态框，鼠标指中时候 提示信息退回
 				return (currentRow)=> {
-					if(currentRow.status=="DaiFuKuan" && currentRow.reason) return false
+					if(currentRow.status=="DaiFuKuan" && currentRow.reason || currentRow.status== "ShouLiShiBai") return false
 					else return true
 				}
 			}
@@ -128,7 +128,7 @@
 			editEntrustDiglog
 		},
 		filters:{
-			isPassPayment(val){
+			isPassPayment(val){//如果没有上传过或者 退回的支付证明需要重新上传
 				if(val.payFile){
 					if(val.reason && val.status !='DaiHeDui') return '上传支付证明' 
 					else return '支付证明'
@@ -136,7 +136,7 @@
 					return '上传支付证明'
 				}
 			},
-			failPaymentColor(val){
+			failPaymentColor(val){//支付证明被退回时候，按钮显示的颜色
 				if(val.rawData.reason && val.rawData.status== "DaiFuKuan"){
 					return 'danger'
 				}else return val.statusBtnColor
