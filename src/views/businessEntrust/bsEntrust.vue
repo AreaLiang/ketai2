@@ -19,8 +19,8 @@
 					<el-table-column prop="statusCn" label="状态" width="100">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">
-								<el-tooltip class="item" effect="dark" :content="scope.row.rawData.reason" :disabled="statusMeg(scope.row)" placement="top-start">
-								    <el-tag :type="scope.row.statusBtnColor" :effect="scope.row.statusBtnStyle"
+								<el-tooltip class="item" effect="dark" :content="scope.row.rawData.reason" :disabled="statusMeg(scope.row.rawData)" placement="top-start">
+								    <el-tag :type="scope.row | failPaymentColor" :effect="scope.row.statusBtnStyle"
 								      	size="medium">{{ scope.row.statusCn }}</el-tag>
 								</el-tooltip>
 							</div>
@@ -47,7 +47,7 @@
 
 							<el-button type="primary" v-if="scope.row.opBtnList.paymentProveBtn"
 								@click="openDialog('paymentProveDialog',scope.row)" size="small">
-								{{scope.row.rawData.payFile ? "支付证明" : "上传支付证明"}}
+								{{scope.row.rawData | isPassPayment}}
 							</el-button>
 
 							<el-button type="primary" v-if="scope.row.opBtnList.downCertBtn" size="small"
@@ -113,7 +113,8 @@
 		computed: {
 			statusMeg(){//状态框，指针指中时候提示信息，如果有则显示
 				return (currentRow)=> {
-					return currentRow.rawData.reason ? false:true
+					if(currentRow.status=="DaiFuKuan" && currentRow.reason) return false
+					else return true
 				}
 			}
 		},
@@ -125,6 +126,21 @@
 			acceptanceDialog,
 			paymentProveDialog,
 			editEntrustDiglog
+		},
+		filters:{
+			isPassPayment(val){
+				if(val.payFile){
+					if(val.reason && val.status !='DaiHeDui') return '上传支付证明' 
+					else return '支付证明'
+				}else{
+					return '上传支付证明'
+				}
+			},
+			failPaymentColor(val){
+				if(val.rawData.reason && val.rawData.status== "DaiFuKuan"){
+					return 'danger'
+				}else return val.statusBtnColor
+			}
 		},
 		methods: {
 			/* 打开弹出层 
@@ -199,6 +215,7 @@
 						this.dataTotal = data.totalElements;
 					}
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
+						
 					NProgress.done(); //结束进度条
 					this.loading=false;
 				}).catch(()=> this.loading=false);
@@ -228,6 +245,7 @@
 				this.currentPage=page;//保存当前页码，用于某些交换后刷新当页
 				this.PaginationClick(page - 1, this.pageSize);
 			})
+		
 		},
 		beforeDestroy() {
 			this.$bus.$off('currentRowData');// 解绑

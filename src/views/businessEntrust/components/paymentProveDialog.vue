@@ -5,14 +5,14 @@
 				<div class="paymentProvePic">
 					<img :src="imgUrl" alt="">
 				</div>
-				<div class="uploadbox" v-if="!isUploadPay">
+				<div class="uploadbox" v-if="isPassPayment(data.status)">
 					<el-upload ref="uploadPaymentProve"  class="upload-payment-prove" action="#"
 						 accept=".jpg,.jpeg,.png" :before-upload="beforePaymentProve"
 						:http-request="uploadPaymentProve" :file-list="fileList" style="margin: 10px 0;">
 						<el-button slot="trigger" size="small" type="primary">上传支付证明</el-button>
 					</el-upload>
 				</div>
-				<div slot="footer" v-if="!isUploadPay" class="dialog-footer">
+				<div slot="footer" v-if="isPassPayment(data.status)" class="dialog-footer">
 				    <el-button @click="dialogFormVisible = false">取 消</el-button>
 				    <el-button type="primary" @click="submitPaymentProve()">提 交</el-button>
 				</div>
@@ -35,7 +35,7 @@
 				payFile:'',
 				isUploadPay:false,
 				fileList:[],
-				loading:false
+				loading:false,
 			}
 		},
 		methods: {
@@ -53,6 +53,10 @@
 						this.$message.error("上传失败");
 					}
 				})
+			},
+			isPassPayment(val){//判断是否已经通过付款审核或已经上传过付款证据
+				if(val == "DaiFuKuan") return true
+				else return false
 			},
 			//提交支付证明
 			submitPaymentProve(){

@@ -2,18 +2,17 @@
 	<div class="password-change">
 		<!-- 主题内容顶部 -->
 		<PageHeader :breadcrumbItem="$route.meta.headName" />
-
 		<div class="password-box">
 			<el-col :span='10'>
 				<el-form :model="passlist" ref="pdForm" label-width="80px" :rules="rules">
 					<el-form-item label="原始密码" prop="ogPass">
-						<el-input type="password" v-model.trim="passlist.ogPass" clearable></el-input>
+						<el-input type="password" v-model.trim="passlist.ogPass"  maxlength="16" clearable></el-input>
 					</el-form-item>
 					<el-form-item label="新密码" prop="newPass">
-						<el-input type="password" v-model.trim="passlist.newPass" clearable></el-input>
+						<el-input type="password" v-model.trim="passlist.newPass"  maxlength="16" clearable></el-input>
 					</el-form-item>
 					<el-form-item label="确认密码" prop="checkPass">
-						<el-input type="password" v-model.trim="passlist.checkPass" clearable></el-input>
+						<el-input type="password" v-model.trim="passlist.checkPass"  maxlength="16" clearable></el-input>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -46,12 +45,12 @@
 				if (value === '') {
 					callback(new Error('请输入密码'));
 				} else {
-					if(value.length >= 6 && value.length <= 18){
+					if(value.length >= 6 && value.length <= 16){
 						if (this.passlist.checkPass !== '') {
 							this.$refs.pdForm.validateField('checkPass');
 						}
 						callback();
-					}else callback(new Error('请输入6到18位的字符'));
+					}else callback(new Error('请输入6到16位的字符'));
 					
 				}
 			};
