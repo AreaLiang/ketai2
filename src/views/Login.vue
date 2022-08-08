@@ -9,7 +9,7 @@
 				</el-header>
 				<el-main>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入公司全称" maxlength="20" show-word-limit v-model.trim="userInfo.account">
+						<el-input placeholder="请输入公司全称" maxlength="20" show-word-limit v-model.trim="userInfo.account" v-focus>
 							<template slot="prepend">
 								<i class="el-icon-user-solid" v-show="!isRegister"></i>
 								<span>客户名称</span>
@@ -23,7 +23,6 @@
 								<span>登录密码</span>
 							</template>
 						</el-input>
-					
 					</div>
 					<template v-if="isRegister">
 						<div class="input-item" :class="{register:isRegister}">

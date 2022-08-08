@@ -19,7 +19,10 @@ Vue.prototype.axios=axios
 import store from './store'
 
 //用户登录权限管理文件
-import './permission.js' 
+import './permission.js'
+
+//引入 自定义指令
+import './utils/customDirective'
 
 Vue.config.productionTip = false
 
