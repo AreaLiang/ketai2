@@ -40,11 +40,6 @@ router.beforeEach(async (to, from, next) => {
 						/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
 						addAsyncRouter();
 						next({...to,replace: true}); //放行
-					}else {
-						Message.warning("token失效，请重新登录")
-						setTimeout(()=>{
-							router.push('/Login');
-						},1000)
 					}
 				}
 			} else {

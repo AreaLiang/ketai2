@@ -188,20 +188,21 @@
 						
 							/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
 							var addRoute = dynamicRoute();
-							await addRoute.next();//第一步重置路由
+							addRoute.next();//第一步重置路由
 							
 							//转跳到用户信息页面
 							await this.$router.replace('/Home/userinfo');
-							await addRoute.next();//第一步添加路由
+							addRoute.next();//第二步添加路由
 							
 						} else {
 							this.$message.error('账号或密码不正确');
 						}
-						NProgress.done();
+						
 					}, (error) => error);
 				} else {
 					this.$message.error('账号或密码不能为空');
 				}
+				NProgress.done();
 			},
 			//获取手机验证码
 			phoneCode() {

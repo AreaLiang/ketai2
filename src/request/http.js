@@ -2,6 +2,7 @@ import axios from 'axios'; // 引入axios
 import QS from 'qs'; // 引入qs模块，用来序列化post类型的数据
 import store from '@/store';
 import router from "@/router"
+import {Message} from "element-ui"
 
 axios.defaults.timeout = 15000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
@@ -23,14 +24,13 @@ axios.interceptors.request.use(
 	config => {
 		// 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
 		// 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
-		
+
 		const token = sessionStorage.getItem('token');
-		
-		if(token){
+
+		if (token) {
 			// token && (config.headers.Authorization = `Bearer ${token}`);
 			token && (config.headers.Authorization = token);
-			
-		}else{
+		} else {
 			router.push('/Login');
 		}
 		return config;
@@ -39,6 +39,22 @@ axios.interceptors.request.use(
 		return Promise.error(error);
 	}
 )
+
+axios.interceptors.response.use( 
+	response=> {
+		if(response.data.code==20002){//判断token是否过期
+			Message.warning("token失效，请重新登录");
+			sessionStorage.removeItem('token');
+			setTimeout(()=>{
+				router.push('/Login');
+			},1000)
+		}else return response
+	}, function(error) {
+		return Promise.reject(error)
+	}
+)
+
+
 
 /**
  * get方法，对应get请求

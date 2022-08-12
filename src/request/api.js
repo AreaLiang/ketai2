@@ -2,7 +2,7 @@ import { get, post ,formDatapost} from './http'
 
 export const baseUrl='http://192.168.0.103:9092/hall';
 
-// export const baseUrlApi=p => baseUrl;
+// export const baseUrl='/api/hall';
 
 //登录和注册页面
 export const loginApi = p => post(baseUrl+'/login', p);//登录Api
