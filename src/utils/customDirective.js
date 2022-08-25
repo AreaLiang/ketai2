@@ -21,7 +21,7 @@ Vue.directive('throttle', {
 					cbFun = null;
 				}, time)
 			} else {
-				Message.error("提交过快")
+				Message.warning("提交过快")
 				event && event.stopImmediatePropagation();
 			}
 		}, true)

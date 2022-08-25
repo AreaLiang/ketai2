@@ -45,7 +45,6 @@
 				params.append('file', res.file);
 				//调用上传支付证明接口
 				uploadTempFileApi(params).then((data) => {
-					console.log("支付证明",data)
 					if(data.code=="20000"){
 						this.payFile=data.data.tempFile;
 						this.imgUrl=fileShowPath(data.data.tempFile,'');

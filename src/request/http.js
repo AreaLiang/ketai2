@@ -40,20 +40,20 @@ axios.interceptors.request.use(
 	}
 )
 
-axios.interceptors.response.use( 
-	response=> {
-		if(response.data.code==20002){//判断token是否过期
-			Message.warning("token失效，请重新登录");
-			sessionStorage.removeItem('token');
-			setTimeout(()=>{
-				router.push('/Login');
-			},1000)
-		}else return response
-	}, function(error) {
-		return Promise.reject(error)
-	}
-)
-
+// axios.interceptors.response.use( 
+// 	response=> {
+// 		console.log(response.data)
+// 		if(response.data.code==20002){//判断token是否过期
+// 			Message.warning(response.data.msg);
+// 			sessionStorage.removeItem('token');
+// 			setTimeout(()=>{
+// 				router.push('/Login');
+// 			},1000)
+// 		}else return response
+// 	}, function(error) {
+// 		return Promise.reject(error)
+// 	}
+// )
 
 
 /**

@@ -3,7 +3,7 @@
 		<!-- <a href="https://www.gjtool.cn/pdfh5/git.pdf">打开</a> -->
 		<!-- <pdf  ref="pdf" v-for="i in numPages" :key="i" :src="url" :page="i">
 		</pdf> -->
-		<iframe class="pdf-show" src="http://customer.gdketai.com/file/pdfDocument/ywb.pdf?a=0.24627813053882908" width="500" height="500"></iframe>
+		<iframe class="pdf-show" src="/file/ywb.pdf" width="500" height="500"></iframe>
 	</div>
 </template>
 
@@ -16,13 +16,6 @@
 				url: 'https://www.gjtool.cn/pdfh5/git.pdf',
 				numPages: null, // pdf 总页数
 			}
-		},
-		mounted() {
-			// this.getNumPages();
-			
-		},
-		components: {
-			// pdf
 		},
 		methods: {
 			// getNumPages() {

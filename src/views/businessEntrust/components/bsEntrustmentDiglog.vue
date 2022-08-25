@@ -228,7 +228,6 @@
 				const isDOC = file.type === 'application/msword';
 				const isXls = file.type === 'application/vnd.ms-excel';
 				const isXlsx = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-				console.log(file.name)
 			
 				let uploadFiles = this.$refs['uploadUserInfoCg'].uploadFiles;
 				if (uploadFiles.length > 1) {
@@ -254,7 +253,6 @@
 
 				//调用接口上传证件
 				uploadEntrustOrderApi(params).then((data) => {
-
 					if (data.code == "20000") {
 						this.loading = false; //关闭 加载图标
 						this.wordFile = data.data.wordFile;
@@ -262,7 +260,7 @@
 					
 					} else {
 						this.loading = false;
-						this.$message.error('上传失败!');
+						this.$message.error(data.msg);
 					}
 				})
 			}

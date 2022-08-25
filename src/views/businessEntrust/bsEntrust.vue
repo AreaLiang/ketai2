@@ -28,6 +28,8 @@
 					</el-table-column>
 					<el-table-column prop="receiver" label="受理业务员" width="120">
 					</el-table-column>
+					<el-table-column prop="id" title="id" label="单号" width="200">
+					</el-table-column>
 					<el-table-column label="操作" width="350">
 						<template slot-scope="scope">
 							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small"
@@ -44,7 +46,8 @@
 								@click="openDialog('acceptanceDialog',scope.row)">
 								{{scope.row.rawData.checkFile ? "完工验收单" : "上传验收单"}}
 							</el-button>
-
+							
+							<!-- 支付证明 -->
 							<el-button type="primary" v-if="scope.row.opBtnList.paymentProveBtn"
 								@click="openDialog('paymentProveDialog',scope.row)" size="small">
 								{{scope.row.rawData | isPassPayment}}
@@ -130,7 +133,7 @@
 		filters:{
 			isPassPayment(val){//如果没有上传过或者 退回的支付证明需要重新上传
 				if(val.payFile){
-					if(val.reason && val.status !='DaiHeDui') return '上传支付证明' 
+					if(val.reason && val.status =='DaiFuKuan') return '上传支付证明' 
 					else return '支付证明'
 				}else{
 					return '上传支付证明'
@@ -159,7 +162,7 @@
 			//提交 新建业务委托
 			subAddEntrust(res){
 				let {obj,postData}=res;
-				console.log(postData)
+			
 				const addEntrustOrder=()=>{
 					addEntrustOrderApi(postData).then((data) => {
 						this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");

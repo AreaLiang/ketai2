@@ -12,7 +12,7 @@
 			<el-popover placement="bottom" width="100" trigger="click">
 				<el-button slot="reference">
 					<i class="el-icon-user-solid"></i>
-					<span>{{userInfo.name}}</span>
+					<span class="user-name" :title="userInfo.name">{{userInfo.name}}</span>
 					<i class="el-icon-caret-bottom"></i>
 				</el-button>
 				<slot>
@@ -64,6 +64,7 @@
 					});
 				}
 			}
+			
 		}
 	}
 </script>
@@ -81,7 +82,6 @@
 		overflow: hidden;
 
 		.img-box {
-			width: 80%;
 			height: 100%;
 			position: relative;
 			overflow: hidden;
@@ -105,7 +105,7 @@
 			}
 
 			a:nth-child(2) {
-				width: 540px;
+				width: 520px;
 			}
 		}
 
@@ -115,16 +115,27 @@
 			line-height: 73.5px;
 			padding: 0 15px;
 			color: @headText;
-			max-width: 210px;
-
+			max-width: 230px;
+			margin-right: 10px;
+			
+			.user-name{
+				max-width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: inline-block;
+				vertical-align: middle;
+			}
 			i {
 				padding: 0 2px;
+				vertical-align: middle;
 			}
 
 			.el-button {
 				border: 0;
 				background: @headColor;
 				color: @headText;
+				width: 100%;
+				text-align: right;
 			}
 
 			// .exitbox{
@@ -135,6 +146,15 @@
 			// 	box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
 			// 	color: black;
 			// }
+		}
+	}
+	
+	@media screen and (max-width:1450px){
+		.home-head .img-box a:nth-child(1) {
+		    width: 240px;
+		}
+		.home-head .img-box a:nth-child(2) {
+		    width: 450px;
 		}
 	}
 </style>

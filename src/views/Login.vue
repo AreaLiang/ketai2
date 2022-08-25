@@ -9,7 +9,7 @@
 				</el-header>
 				<el-main>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入公司全称" maxlength="20" show-word-limit v-model.trim="userInfo.account" v-focus>
+						<el-input placeholder="请输入公司全称" maxlength="32" show-word-limit v-model.trim="userInfo.account" v-focus>
 							<template slot="prepend">
 								<i class="el-icon-user-solid" v-show="!isRegister"></i>
 								<span>客户名称</span>
@@ -17,7 +17,7 @@
 						</el-input>
 					</div>
 					<div class="input-item" :class="{register:isRegister}">
-						<el-input placeholder="请输入登录密码" maxlength="16" v-model.trim="userInfo.password" type="password">
+						<el-input placeholder="请输入登录密码" maxlength="16" v-model.trim="userInfo.password" type="password" @keyup.enter.native="keyupLogin">
 							<template slot="prepend">
 								<i class="iconfont icon-lock" v-show="!isRegister"></i>
 								<span>登录密码</span>
@@ -90,13 +90,14 @@
 						<el-checkbox v-show="isRegister" v-model="userInfo.agreesCheck">同意 <a href="/file/zcb.pdf" target="_blank">客户注册协议</a></el-checkbox>
 						<span class="hotline">客服热线：0758-2777310</span>
 						<div class="op-div">
-							<el-button type="success" v-show="!isRegister" style="background-color: #49afcd;border-color: #49afcd;"  @click="login()">登录</el-button>
-							<el-button type="success" v-show="!isRegister" @click='goRegister()'>我要注册</el-button>
+							<el-button type="success" v-show="!isRegister" style="background-color: #49afcd;border-color: #49afcd;"  @click="login()" v-throttle>登录</el-button>
+							<el-button type="success" v-show="!isRegister" @click='goRegister()' >我要注册</el-button>
 
 							<el-button type="success" v-show="isRegister"
-								style="background-color: #49afcd;border-color: #49afcd;" @click="register()">注册
+								style="background-color: #49afcd;border-color: #49afcd;" @click="register()" v-throttle>注册
 							</el-button>
 							<el-button type="success" v-show="isRegister" @click='isRegister=!isRegister'>返回</el-button>
+							
 						</div>
 					</div>
 				</el-footer>
@@ -145,7 +146,7 @@
 			},
 			isSendCode: function(val) {
 				if (val) {
-					let time = 60; //限制多少秒后可以重新发送手机验证码
+					let time = 30; //限制多少秒后可以重新发送手机验证码
 					let timeRange = setInterval(() => {
 						time--;
 						this.sendCodeText = "已经发送 " + time + " S";
@@ -204,6 +205,9 @@
 				}
 				NProgress.done();
 			},
+			keyupLogin(){//enter 回车按键登录
+				if(!this.isRegister) this.login();
+			},
 			//获取手机验证码
 			phoneCode() {
 				let {
@@ -218,7 +222,7 @@
 								phone: connectPhone,
 								code: captcha,
 							}).then((data) => {
-							console.log(data)
+							
 							if (data.code == "20000") {
 								this.$message.success("验证码发送成功");
 							} else {
@@ -226,7 +230,7 @@
 								this.userInfo.captcha = ''; //验证码输入错误后，验证码输入框重置
 								this.$message.warning(data.msg);
 							}
-						})
+						});
 					} else {
 						this.$message.error('验证码已发送，请勿重复发送');
 					}
@@ -275,9 +279,6 @@
 			changeCaptcha() {
 				this.captchaUrl = captchaApi({});
 			}
-		},
-		mounted(){
-		
 		}
 	}
 </script>

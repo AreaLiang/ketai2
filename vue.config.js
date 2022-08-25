@@ -10,14 +10,14 @@ module.exports = {
 	outputDir: 'dist',
 	assetsDir: 'static',
 	lintOnSave: false,
-	devServer: {
-		proxy: {
-			'/api': {
-				target: 'http://localhost:5000', //跨域端口
-				pathRewrite: {
-					'^/api': ''
-				}
-			}
-		}
-	}
+	// devServer: {
+	// 	proxy: {
+	// 		'/api': {
+	// 			target: 'http://localhost:5000', //跨域端口
+	// 			pathRewrite: {
+	// 				'^/api': ''
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

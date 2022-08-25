@@ -21,7 +21,8 @@ export function cgBsEntrustData(data) {
 			statusBtnColor: statusItemShow(item.status).color,//标签颜色
 			statusBtnStyle:statusItemShow(item.status).effect,//标签样式
 			opBtnList: statusItemShow(item.status).opBtnList,
-			rawData: getData[index]
+			rawData: getData[index],
+			id:item.id
 		}
 
 	})
