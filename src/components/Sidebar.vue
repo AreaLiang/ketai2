@@ -9,13 +9,28 @@
 						<i :class="p.icon"></i>
 						<span slot="title">{{p.name}}</span>
 					</el-menu-item>
-
+					
+					<!-- 专属业务经理 -->
+					<div class="nav-info dedicated-manager-info" v-if="businessManager">
+						<el-container>
+							<el-header><i class="el-icon-postcard"></i>专属业务经理信息</el-header>
+							<el-main>
+								<p :title="businessManager.name">姓名：{{businessManager.name}}</p>
+								<p :title="businessManager.mobile">手机：{{businessManager.mobile}}</p>
+								<p :title="businessManager.email">邮箱：{{businessManager.email}}</p>
+							</el-main>
+						</el-container>
+					</div>
+					
+					<!-- 服务宗旨 -->
 					<div class="nav-info service-purposes">
 						<el-container>
 							<el-header><i class="el-icon-postcard"></i>我们的服务宗旨</el-header>
 							<el-main>高效，准确，公正，科学</el-main>
 						</el-container>
 					</div>
+					
+					<!-- 认证警告信息 -->
 					<div class="nav-info" v-if="infoWarning">
 						<el-container>
 							<el-header class="warncolor">您的信息尚未被认证</el-header>
@@ -29,7 +44,7 @@
 </template>
 
 <script>
-	import {mapGetters} from 'vuex'
+	import {mapGetters,mapState} from 'vuex'
 	export default {
 		name: 'Sidebar',
 		data() {
@@ -75,7 +90,10 @@
 			}
 		},
 		computed: {
-			...mapGetters(["isCertification"])//获取身份信息
+			...mapGetters(["isCertification"]),//获取身份信息
+			...mapState({
+				businessManager:state=> state.userInfo.businessManager
+			})
 		},
 		methods: {
 			//获取用户所点击的导航地址
@@ -125,6 +143,22 @@
 
 		.el-menu-item {
 			border-bottom: 1px solid #dddddd;
+		}
+		
+		.dedicated-manager-info{
+			p{
+				margin: 5px 0;
+				width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			.el-header{
+				border-top: 1px solid #f1ab07;
+			}
+		}
+		.el-main{
+			padding: 10px 15px;
 		}
 	}
 

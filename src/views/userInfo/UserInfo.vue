@@ -269,12 +269,47 @@
 			//上传前，校验是否为照片格式
 			beforeUpload(file) {
 				isImgFormat(file); //调用公共校验方法
+			},
+			//状态管理，不同状态控制要显示什么内容
+			statusManagement(status){
+				console.log(this.isCertification + ",状态下 ：", JSON.parse(JSON.stringify(this.userdata)));
+				const fun={
+					publicFun:()=>{//公共方法
+						this.certStatus = true; //返回 true，禁用所有修改信息功能
+						this.bs_disabled = false;//隐藏上传营业执照证件的删除按钮
+						this.sc_disabled = false;//隐藏上传安全员执照证件的删除按钮
+					},
+					zhengchang:()=>{//正常 状态
+						fun.publicFun();
+						this.remarkBox=this.certStatus;//状态显示的右边 信息提示
+					},
+					yijingyong:()=>{//已禁用
+						fun.publicFun();
+						this.remarkBox=this.certStatus;
+					},
+					renzhengzhong:()=>{//认证中
+						fun.publicFun();
+						this.remarkBox= !this.certStatus;
+					},
+					weirenzheng:()=>{//未认证
+						this.certStatus = false;
+					},
+					renzhengshibai:()=>{//认证失败
+						this.certStatus = false;
+					}
+				}
+				//map函数 不同状态 分配 对应的方法
+				let enums =new Map([
+					["正常",fun.zhengchang],
+					["已禁用",fun.yijingyong],
+					["认证中",fun.renzhengzhong],
+					["未认证",fun.weirenzheng],
+					["认证失败",fun.renzhengshibai]
+				]);
+				
+				let targetFun=enums.get(status);
+				targetFun();
 			}
-		},
-		components: {
-			PageHeader,
-			formUserInfo,
-			diglogUserInfoCg
 		},
 		mounted() {
 			this.bs_certFile = this.userdata.certificate || "";//营业执照路径
@@ -291,28 +326,15 @@
 					url: fileShowPath(this.sc_certFile, '')
 				}]
 			}
-
-			//是否已认证 状态赋值
-			if (this.isCertification == "正常" || this.isCertification == "已禁用" || this.isCertification == "认证中") {
-				this.certStatus = true; //返回 true，禁用所有修改信息功能
-				this.bs_disabled = false;//隐藏上传营业执照证件的删除按钮
-				this.sc_disabled = false;//隐藏上传安全员执照证件的删除按钮
-				
-				if(this.isCertification=="认证中"){
-					this.remarkBox!=this.certStatus;
-				}else{
-					this.remarkBox=this.certStatus;
-				}
-				console.log(this.isCertification + ",状态下 ：", this.userdata);
-			} else if (this.isCertification == "未认证") {
-				console.log(this.isCertification + ",状态下 ：", this.userdata);
-				this.certStatus = false;
-			} else if (this.isCertification == "认证失败") {
-				this.certStatus = false;
-			}
 			
-		
-		}
+			//状态管理，不同状态下控制显示的界面信息
+			this.statusManagement(this.isCertification);
+		},
+		components: {
+			PageHeader,
+			formUserInfo,
+			diglogUserInfoCg
+		},
 	}
 </script>
 

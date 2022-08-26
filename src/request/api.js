@@ -1,7 +1,7 @@
 import { get, post ,formDatapost} from './http'
 
-export const baseUrl='http://192.168.0.103:9092/hall';
-
+// export const baseUrl='http://192.168.0.103:9092/hall';
+export const baseUrl='http://ywdt.gdketai.com/api/hall';
 // export const baseUrl='/api/hall';
 
 //登录和注册页面

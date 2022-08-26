@@ -14,7 +14,7 @@
 					</el-table-column>
 					<el-table-column prop="mobile" label="联系人手机号">
 					</el-table-column>
-					<el-table-column prop="remark" label="备注">
+					<el-table-column prop="remark" label="备注" >
 					</el-table-column>
 					<el-table-column prop="statusCn" label="状态" width="100">
 						<template slot-scope="scope">

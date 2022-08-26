@@ -73,7 +73,7 @@
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
 							<el-input type="number" placeholder="手机验证码"  v-model.trim="userInfo.phoneCode"
-								class="phoneCode no-number">
+								class="phoneCode no-number" v-throttle>
 								<template slot="append">
 									<el-button @click="phoneCode()" :disabled="isSendCode">{{sendCodeText}}</el-button>
 								</template>
@@ -143,21 +143,21 @@
 				if (val) {
 					this.changeCaptcha();
 				}
-			},
-			isSendCode: function(val) {
-				if (val) {
-					let time = 30; //限制多少秒后可以重新发送手机验证码
-					let timeRange = setInterval(() => {
-						time--;
-						this.sendCodeText = "已经发送 " + time + " S";
-						if (time <= 0) {
-							this.sendCodeText = '获取手机验证码';
-							this.isSendCode = false;
-							clearInterval(timeRange);
-						}
-					}, 1000);
-				}
 			}
+			// isSendCode: function(val) {
+			// 	if (val) {
+			// 		let time = 30; //限制多少秒后可以重新发送手机验证码
+			// 		let timeRange = setInterval(() => {
+			// 			time--;
+			// 			this.sendCodeText = "已经发送 " + time + " S";
+			// 			if (time <= 0) {
+			// 				this.sendCodeText = '获取手机验证码';
+			// 				this.isSendCode = false;
+			// 				clearInterval(timeRange);
+			// 			}
+			// 		}, 1000);
+			// 	}
+			// }
 		},
 		methods: {
 			//用户登录
@@ -208,6 +208,19 @@
 			keyupLogin(){//enter 回车按键登录
 				if(!this.isRegister) this.login();
 			},
+			// 限制验证发送和秒数显示
+			sendCodeLimit(){
+				let time = 30; //限制多少秒后可以重新发送手机验证码
+				let timeRange = setInterval(() => {
+					time--;
+					this.sendCodeText = "已经发送 " + time + " S";
+					if (time <= 0) {
+						this.sendCodeText = '获取手机验证码';
+						this.isSendCode = false;
+						clearInterval(timeRange);
+					}
+				}, 1000);
+			},
 			//获取手机验证码
 			phoneCode() {
 				let {
@@ -217,7 +230,6 @@
 
 				if (captcha != '' && connectPhone != '') { //如果都不为空的时候，发送请求验证
 					if (this.isSendCode == false) {
-						this.isSendCode = true;
 							phoneCodeApi({
 								phone: connectPhone,
 								code: captcha,
@@ -225,6 +237,8 @@
 							
 							if (data.code == "20000") {
 								this.$message.success("验证码发送成功");
+								this.isSendCode = true;
+								this.sendCodeLimit();
 							} else {
 								this.changeCaptcha(); //验证码输入错误后，验证码更换
 								this.userInfo.captcha = ''; //验证码输入错误后，验证码输入框重置
