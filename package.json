@@ -31,6 +31,7 @@
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "image-webpack-loader": "^8.1.0",
     "less": "^3.13.1",
     "less-loader": "^6.0.0",
     "vue-template-compiler": "^2.6.10"
