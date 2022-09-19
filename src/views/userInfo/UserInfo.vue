@@ -175,21 +175,20 @@
 						if (valid) { //如果表单验证通过
 							if (this.agreeServe) { //如果已勾选 认证协议
 								//获取用户输入的数据
-								let postData=new userInfoObj(uerInfoComponent.ruleForm);
+								let postData=new userInfoObj(uerInfoComponent.ruleForm); 
 								postData.business=JSON.stringify(postData.business);
 								
 								//整理认证接口的数据
 								let formData = {
 									id: this.userdata.id,
-									certificate: this.bs_certFile,
-									safetyCertificate: this.sc_certFile,
+									certificate: this.bs_certFile, //营业执照文件
+									safetyCertificate: this.sc_certFile, //安全员执照文件
 								}
 								//合并对象，如果键名相同，第二个参数覆盖第一个
 								formData=Object.assign(formData,postData);
 								
 								//提交认证接口
 								modifyRegistApi(formData).then((data) => {
-									console.log(data)
 									if (data.code == "20000") {
 										let token = sessionStorage.getItem('token');
 										this.$store.dispatch('authorityNav', token);

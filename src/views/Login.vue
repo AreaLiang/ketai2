@@ -104,7 +104,7 @@
 			</el-container>
 
 			<div class="copyright">
-				<span>版权所有: 广东数智信息科技有限公司</span>
+				<span>版权所有: {{companyName}}</span>
 			</div>
 		</div>
 	</div>
@@ -135,7 +135,8 @@
 				captchaUrl: '', //验证码图片地址
 				isRegister: false, //是否显示注册界面
 				sendCodeText: '获取手机验证码', //获取手机验证码文字显示
-				isSendCode: false //是否已经发送验证码
+				isSendCode: false ,//是否已经发送验证码
+				companyName:global_companyName //公司名称 ，在vue.config.js设置
 			}
 		},
 		watch: {

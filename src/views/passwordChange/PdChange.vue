@@ -41,7 +41,7 @@
 	export default {
 		name: 'PdChange',
 		data() {
-			var validatePass = (rule, value, callback) => {
+			var validatePass = (rule, value, callback) => {//原密码检验规则
 				if (value === '') {
 					callback(new Error('请输入密码'));
 				} else {
@@ -54,7 +54,7 @@
 					
 				}
 			};
-			var validatePass2 = (rule, value, callback) => {
+			var validatePass2 = (rule, value, callback) => {//二次密码校验规则
 				if (value === '') {
 					callback(new Error('请再次输入密码'));
 				} else if (value !== this.passlist.newPass) {

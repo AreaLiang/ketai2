@@ -58,8 +58,8 @@
 				//调用完工单上传接口
 				uploadTempFileApi(params).then((data) => {
 					if(data.code=="20000"){
-						this.tempFile=data.data.tempFile;
-						this.imgUrl=fileShowPath(data.data.tempFile,'');
+						this.tempFile=data.data.tempFile;// 赋值验工单的文件路径
+						this.imgUrl=fileShowPath(data.data.tempFile,'');//上传后 右侧显示验工单的文件
 					
 					}else{
 						this.$message.error("上传失败");
@@ -92,13 +92,14 @@
 			}
 		},
 		mounted(){
-			this.$bus.$on("currentRowData",(data)=>{
+			this.$bus.$on("currentRowData",(data)=>{//当前行操作，返回当前操作行的数据
 				let res={...data.rawData};
 				this.fileList=[];//清除upload的默认地址
 				this.data=res;
-				this.tempFile=res.checkFile;
-				this.imgUrl=fileShowPath(res.checkFile,'');
-				if(this.imgUrl){
+				
+				this.tempFile=res.checkFile; //赋值 验工单的文件路径
+				this.imgUrl=fileShowPath(res.checkFile,'');//右边验工单文件的 显示路径
+				if(this.imgUrl){//如果已经上传过，则显示已经上传的文件名
 					this.fileList.push({name:this.imgUrl,url:this.imgUrl});
 				}
 			})

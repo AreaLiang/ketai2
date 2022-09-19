@@ -153,10 +153,11 @@
 					this.$nextTick(() => {
 						this.$refs['uploadUserInfoCg'].clearFiles(); //清空上传文件的列表
 						this.$refs['addEntrustForm'].clearValidate(); //移除表单验证结果
-						this.wordUrl = '';
+						this.wordUrl = '';//iframe 设置空显示
 					});
 					let userData = JSON.parse(JSON.stringify(this.userdata));
 					
+					//整合默认数据
 					this.addEntrustForm = Object.assign(this.addEntrustForm, userData, this.rowData);
 				
 					if(!this.rowData.remark){//如果点解新建委托，则没有数据，说明是新建委托单
@@ -168,10 +169,10 @@
 						if (jsonData.rawData.orderFilePdf) { //如果证件的路径不为空
 							this.$nextTick(() => { //如果已经上传了委托文件，则赋值路径显示文件内容
 								this.fileList = [];
-								let orderFilePdf = jsonData.rawData.orderFilePdf;
-								this.wordUrl = fileShowPath(orderFilePdf, 'pdf');
-								this.wordFile = orderFilePdf;
-								this.fileList.push({
+								let orderFilePdf = jsonData.rawData.orderFilePdf;//获取 委托单文件路径
+								this.wordUrl = fileShowPath(orderFilePdf, 'pdf'); //转换为可以iframe 显示的pdf文件路径
+								this.wordFile = orderFilePdf;//传给后台的文件路径
+								this.fileList.push({//显示上传文件的名称
 									name: orderFilePdf,
 									url: fileShowPath(orderFilePdf, 'pdf')
 								});

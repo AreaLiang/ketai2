@@ -16,23 +16,19 @@ export const constantRoutes=[{
 		name: 'Login',
 		path: '/Login',
 		meta: {
-			title: '广东科泰计量检测科技有限公司登录界面'
+			title: `${global_companyName}登录界面` //修改单个页面的标题
 		},
 		component: () => import('@/views/Login')
 	},
 	{
 		name: 'Home',
 		path: '/Home',
-		meta: {
-			title: '广东科泰计量检测科技有限公司'
-		},
 		component: () => import('@/views/HomePage'),
 		children: [{
 				name: 'UserInfo',
 				path: 'userinfo',
 				meta: {
 					headName: ['客户信息', '/', '完善认证信息'],
-					title: '广东科泰计量检测科技有限公司'
 				},
 				component: () => import('@/views/userInfo/UserInfo')
 			},
@@ -41,7 +37,6 @@ export const constantRoutes=[{
 				path: 'password',
 				meta: {
 					headName: ['密码更改', '/', ' 密码录入'],
-					title: '广东科泰计量检测科技有限公司'
 				},
 				component: () => import('@/views/passwordChange/PdChange')
 			},
@@ -67,7 +62,6 @@ export const asyncRouter = [{
 		meta: {
 			isAuthority: "正常",
 			headName: ['委托单管理', '/', ' 详细业务'],
-			title: '广东科泰计量检测科技有限公司'
 		},
 		component: () => import('@/views/businessEntrust/bsEntrust')
 	}, {
@@ -76,7 +70,6 @@ export const asyncRouter = [{
 		meta: {
 			isAuthority: "正常",
 			headName: ['证书管理', '/', ' 详情'],
-			title: '广东科泰计量检测科技有限公司'
 		},
 		component: () => import('@/views/certificateManagement/mgCertificate')
 	}, {
@@ -84,7 +77,6 @@ export const asyncRouter = [{
 		path: 'entrustTb',
 		meta: {
 			isAuthority: "正常",
-			title: '广东科泰计量检测科技有限公司'
 		},
 		component: () => import('@/views/entrustTbDownload/entrustTbDL')
 	}]
@@ -129,7 +121,7 @@ const router = createRouter();
 //路由守卫后置钩子
 router.afterEach((to,from)=>{
 	//修改标题名称
-	document.title = to.meta.title || "广东科泰计量检测科技有限公司"; //如果没有标题名，默认显示“ 广东科泰计量检测科技有限公司 ”
+	document.title = to.meta.title || global_companyName; //如果没有标题名，默认显示“global_companyName 中的 广东科泰计量检测科技有限公司 ，在vue.config.js设置”
 })
 
 //重置路由

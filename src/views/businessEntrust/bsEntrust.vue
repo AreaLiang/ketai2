@@ -165,7 +165,7 @@
 			
 				const addEntrustOrder=()=>{
 					addEntrustOrderApi(postData).then((data) => {
-						this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");
+						this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");//提交后提示信息
 					}).finally(()=>{obj.loading=false});
 				}
 				throttle(addEntrustOrder,3000)//节流函数
@@ -183,7 +183,7 @@
 				
 				const modifyEntrustOrder=()=>{
 					modifyEntrustOrderApi(postData).then((data) => {
-						this.afterSubmit('editEntrustDiglog',data, "修改成功", "修改失败");
+						this.afterSubmit('editEntrustDiglog',data, "修改成功", "修改失败");//提交后提示信息
 					}).finally(()=>{obj.loading=false});
 				}
 				throttle(modifyEntrustOrder,3000)//节流函数
@@ -199,7 +199,7 @@
 				modifyEntrustOrderApi(postData).then((data) => {
 					if (data.code == "20000") {
 						this.$message.success("提交成功");
-						this.$bus.$emit('pageNumber', this.currentPage);
+						this.$bus.$emit('pageNumber', this.currentPage); //刷新当前页
 					} else {
 						this.$message.error("提交失败");
 					}
@@ -215,7 +215,7 @@
 				}).then((res) => {
 					let data = res.data;
 					if (res.code == "20000") {
-						this.dataTotal = data.totalElements;
+						this.dataTotal = data.totalElements; //所有数据的 数量
 					}
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
 						

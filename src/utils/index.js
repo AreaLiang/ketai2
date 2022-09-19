@@ -99,12 +99,13 @@ export function isImgFormat(file) {
  * 委托文件、委托单返回的路径
  * @param {String} file [传入后台返回的路径字符串]
  * @param {String} suffix [文件后缀]
+ * * @param {Boolean} handleSuffix [是否处理文件后缀，默认处理]
  */
-export function fileShowPath(file, suffix) {
+export function fileShowPath(file, suffix , handleSuffix=true) {
 	
 	if (file) {
 	
-		if(file.lastIndexOf('.')>0){
+		if(file.lastIndexOf('.')>0 && handleSuffix){
 			file=file.substring(0,file.lastIndexOf('.'))+".";
 		}
 		
