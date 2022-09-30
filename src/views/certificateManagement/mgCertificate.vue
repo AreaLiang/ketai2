@@ -10,17 +10,23 @@
 					:header-cell-style="{textAlign:'center'}"
 					:cell-style="{textAlign:'center'}">
 					<el-table-column type="selection" width="55"></el-table-column>
-					<el-table-column prop="created" label="提交时间">
+					<el-table-column prop="approveDate" label="提交时间">
+						<template slot-scope="scope">
+							<span>{{ scope.row.approveDate | changeTimestamp}}</span>
+						</template>
 					</el-table-column>
 					<el-table-column prop="reportNo" label="记录编号">
 					</el-table-column>
-					<el-table-column prop="subject.name" label="项目名称" width="120">
+					<el-table-column prop="applianceName" label="项目名称" >
 					</el-table-column>
 					<el-table-column prop="checkTypeValueName" label="鉴定类型" >
+						<template slot-scope="scope">
+							<span>{{ scope.row.checkType | checkTypeList}}</span>
+						</template>
 					</el-table-column>
 				<!-- 	<el-table-column prop="subject.remark" label="备注">
 					</el-table-column> -->
-					<el-table-column prop="tableData" label="状态" width="80">
+					<!-- <el-table-column prop="tableData" label="状态" width="80">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">
 								<el-tag size="medium">
@@ -37,8 +43,8 @@
 								</el-tag>
 							</div>
 						</template>
-					</el-table-column>
-					<el-table-column label="操作" width="100">
+					</el-table-column> -->
+					<el-table-column label="操作" width="120">
 						<template slot-scope="scope">
 							<el-button type="primary" @click="downLoadLertificate(scope.row)" size="small">下载</el-button>
 						</template>
@@ -57,8 +63,8 @@
 	import PageHeader from "@/components/PageHeader"
 	import Pagination from "@/components/Pagination"
 	import {mgCertificateApi} from "@/request/api"
-	import {fileLinkToStreamDownload,BatchPdfDownload} from "@/utils"
-
+	import {fileLinkToStreamDownload,BatchPdfDownload,timestampToTime} from "@/utils"
+	import TypeList from '@/utils/typeList'
 
 	export default {
 		name: 'mgCertificate', //证书管理
@@ -69,7 +75,24 @@
 				pageSize: 8, //每页显示多少条数据
 				multipleSelection: [],
 				loading: true,
-				host:''//服务端的端口号
+			}
+		},
+		filters:{
+			checkTypeList(val){//鉴定类型
+				let typeCh="";//中文含义
+				if(TypeList.checkTypeList){
+					TypeList.checkTypeList.some((p)=>{//匹配该数组 相同的id，符合则停止匹配，并赋值 中文含义返回
+						if(p.id==val){
+							typeCh=p.name;
+							return true
+						}else false
+					});
+				}
+				return typeCh;
+			},
+			//时间戳变日期
+			changeTimestamp(timestamp){
+				return timestampToTime(timestamp)
 			}
 		},
 		methods: {
@@ -82,9 +105,7 @@
 				}).then((data) => {
 					console.log(data);
 					if (data.code == "Ok") {
-						let getData = data.data.content;
-						this.host=data.url;//赋值端口号，用于证书管理下载链接的拼接
-						console.log("getData", getData);
+						let getData = data.data;
 						this.tableData = JSON.parse(JSON.stringify(getData)); //初始化数据
 						this.dataTotal = data.data.totalElements; //一共多少条数据
 					}
@@ -98,28 +119,24 @@
 			},
 			//批量下载事件
 			BatchDownload(arr) {
-				if(this.host){
-					let selectionUrl = JSON.parse(JSON.stringify(this.multipleSelection));
-					let urlList = [];//多个pdf文件链接的数组
-					selectionUrl.forEach((p) => {
-						urlList.push(this.host+p.reportFile);
-					});
-					if(urlList.length>0){//如果没有勾选多个文件
-						//文件压缩打包
-						BatchPdfDownload(urlList);
-					}else{
-						this.$message.warning("还没勾选要下载的证书文件");
-					}
-				}else throw new Error('http返回已经更改，检测this.host')
+				let selectionUrl = _.cloneDeep(this.multipleSelection);
+
+				let urlList = [];//多个pdf文件链接的数组
+				selectionUrl.forEach((p) => {
+					urlList.push(p.reportUrl);
+				});
+				if(urlList.length>0){//如果没有勾选多个文件
+					//文件压缩打包
+					BatchPdfDownload(urlList);
+				}else{
+					this.$message.warning("还没勾选要下载的证书文件");
+				}
 			},
 			//下载事件
 			downLoadLertificate(val) {
-				if(this.host){
-					let link=this.host+val.reportFile;
-					//单个PDF文件下载事件
-					fileLinkToStreamDownload(link, val.recordFile);
-				}else throw new Error('http返回已经更改，检测this.host')
-				
+				let link=val.reportUrl;//需要下载的文件链接
+				//单个PDF文件下载事件
+				fileLinkToStreamDownload(link, val.reportNo);
 			},
 
 		},

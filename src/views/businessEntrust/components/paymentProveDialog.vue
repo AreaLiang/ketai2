@@ -23,7 +23,7 @@
 
 <script>
 	import { isImgFormat,fileShowPath ,throttle} from "@/utils"
-	import {baseUrl,modifyPayFileApi,uploadTempFileApi} from '@/request/api'
+	import {modifyPayFileApi,uploadTempFileApi} from '@/request/api'
 	
 	export default{
 		name:'paymentProveDialog',//支付证明
@@ -45,9 +45,9 @@
 				params.append('file', res.file);
 				//调用上传支付证明接口
 				uploadTempFileApi(params).then((data) => {
-					if(data.code=="20000"){
+					if(data.code=="Ok" ){
 						this.payFile=data.data.tempFile;
-						this.imgUrl=fileShowPath(data.data.tempFile,'');
+						this.imgUrl=fileShowPath(data.data.tempFile,'',false);
 					}else{
 						this.$message.error("上传失败");
 					}
@@ -58,30 +58,27 @@
 				else return false
 			},
 			//提交支付证明
-			submitPaymentProve(){
+			submitPaymentProve:throttle(function(){//节流函数
 				let rowData={...this.data};
 				if(this.payFile){//如果已经上传文件
-					const modifyPayFile = ()=>{
-						this.loading=true;
-						modifyPayFileApi({
-							id:rowData.id,
-							payFile:this.payFile
-						}).then((data)=>{
-							if(data.code=="20000"){
-								this.$message.success("上传成功");
-								this.dialogFormVisible = false;
-								this.$bus.$emit('pageNumber',this.currentPage);
-							}else{
-								this.$message.error("上传失败");
-							}
-						}).finally(()=>{this.loading=false});
-					}
-					
-					throttle(modifyPayFile,2000);
+					this.loading=true;
+				
+					modifyPayFileApi({
+						id:rowData.id,
+						payFile:this.payFile
+					}).then((data)=>{
+						if(data.code=="Ok" ){
+							this.$message.success("上传成功");
+							this.dialogFormVisible = false;
+							this.$bus.$emit('pageNumber',this.currentPage);
+						}else{
+							this.$message.error("上传失败");
+						}
+					}).finally(()=>{this.loading=false});
 				}else{
 					this.$message.warning("请上传验收单");
 				}
-			},
+			}),
 			//上传前，校验是否为照片格式
 			beforePaymentProve(file){
 				this.loading=true;
@@ -100,7 +97,8 @@
 		},
 		mounted(){
 			this.$bus.$on("currentRowData",(data)=>{
-				let res={...data.rawData};
+				let res={...data};
+				
 				this.data=res;
 				this.imgUrl='';//清空支付证明链接
 				this.fileList=[];//清除upload的默认地址
@@ -108,7 +106,7 @@
 				if(res.payFile){
 					this.isUploadPay=true;
 					this.payFile=res.payFile;
-					this.imgUrl=fileShowPath(res.payFile,'');
+					this.imgUrl=fileShowPath(res.payFile,'',false);
 				}else{
 					this.isUploadPay=false;
 				}

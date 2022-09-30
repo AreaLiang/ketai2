@@ -26,10 +26,10 @@ export function removeSessionStorage(name, isGoLoigin) {
  * @param {Number} interval [豪秒数，规定在一个单位时间内，只能触发一次函数]
  * @param {Object} options [leading表示首次是否触发,trailing 是否只需要有一个定时器]
  */
-let lastTime = 0;
+
 export function throttle (fn , interval = 1000,options = {leading: true,trailing: false}) {
 	const {leading,trailing} = options
-	
+	let lastTime = 0;
 	let timer = null;
 	// 时间触发时，真正执行的函数
 	const _throttle = function() {
@@ -61,7 +61,7 @@ export function throttle (fn , interval = 1000,options = {leading: true,trailing
 			}, remainTime);
 		}
 	}
-	return _throttle()
+	return _throttle
 }
 
 //图片转换成base 64格式方法
@@ -110,10 +110,9 @@ export function fileShowPath(file, suffix , handleSuffix=true) {
 		}
 		
 		let fileUrl = file + suffix; //文件路径
-		
-		let reg = new RegExp("hall"); //匹配服务端的 hall字符串，准备替换
-		let newUrl = baseUrl.replace(reg, fileUrl);
-		
+		// let reg = new RegExp("hall"); //匹配服务端的 hall字符串，准备替换
+		// let newUrl = baseUrl.replace(reg, fileUrl);
+		let newUrl=baseUrl+fileUrl;
 		return newUrl;
 	} else {
 		return '';
@@ -260,6 +259,23 @@ export function downFile(src){
 	link.click();
 }
 
+/**
+ * 时间戳转换日期
+ * @param {string} timestamp [10位或者13位的 时间戳]
+ */
+export function timestampToTime(timestamp) {
+	if(timestamp.length<13){
+		timestamp=timestamp * 1000;
+	}
+	var date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+	var Y = date.getFullYear() + '-';
+	var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+	var D = date.getDate() + ' ';
+	var h = date.getHours() + ':';
+	var m = date.getMinutes() + ':';
+	var s = date.getSeconds();
+	return Y + M + D + h + m + s;
+}
 
 /**
  * 用于ElementUI 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用

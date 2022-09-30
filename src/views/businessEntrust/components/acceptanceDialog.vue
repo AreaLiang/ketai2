@@ -57,10 +57,9 @@
 				this.loading=true;
 				//调用完工单上传接口
 				uploadTempFileApi(params).then((data) => {
-					if(data.code=="20000"){
+					if(data.code=="Ok" ){
 						this.tempFile=data.data.tempFile;// 赋值验工单的文件路径
-						this.imgUrl=fileShowPath(data.data.tempFile,'');//上传后 右侧显示验工单的文件
-					
+						this.imgUrl=fileShowPath(data.data.tempFile,'',false);//上传后 右侧显示验工单的文件
 					}else{
 						this.$message.error("上传失败");
 					}
@@ -68,37 +67,34 @@
 				}).catch(e=> this.loading=false)
 			},
 			//提交验收单信息
-			subAcceptanceOrder(){
+			subAcceptanceOrder:throttle(function(){//节流函数
 				let rowData={...this.data};
 				if(this.tempFile){//如果已经上传文件
-					const submitCheckFile=()=>{
-						modifyCheckFileApi({
-							id:rowData.id,
-							checkFile:this.tempFile
-						}).then((data)=>{
-							if(data.code=="20000"){
-								this.$message.success("上传成功");
-								this.dialogFormVisible = false;//关闭dialog
-								this.$bus.$emit('pageNumber',this.currentPage);//刷新页面
-							}else{
-								this.$message.error("上传失败");
-							}
-						})
-					}
-					throttle(submitCheckFile,2000)//节流函数
+					modifyCheckFileApi({
+						id:rowData.id,
+						checkFile:this.tempFile
+					}).then((data)=>{
+						if(data.code=="Ok" ){
+							this.$message.success("上传成功");
+							this.dialogFormVisible = false;//关闭dialog
+							this.$bus.$emit('pageNumber',this.currentPage);//刷新页面
+						}else{
+							this.$message.error("上传失败");
+						}
+					})
 				}else{
 					this.$message.warning("请上传验收单");
 				}
-			}
+			})
 		},
 		mounted(){
 			this.$bus.$on("currentRowData",(data)=>{//当前行操作，返回当前操作行的数据
-				let res={...data.rawData};
+				let res={...data};
 				this.fileList=[];//清除upload的默认地址
 				this.data=res;
 				
 				this.tempFile=res.checkFile; //赋值 验工单的文件路径
-				this.imgUrl=fileShowPath(res.checkFile,'');//右边验工单文件的 显示路径
+				this.imgUrl=fileShowPath(res.checkFile,'',false);//右边验工单文件的 显示路径
 				if(this.imgUrl){//如果已经上传过，则显示已经上传的文件名
 					this.fileList.push({name:this.imgUrl,url:this.imgUrl});
 				}

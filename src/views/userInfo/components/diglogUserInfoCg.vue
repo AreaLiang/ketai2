@@ -112,7 +112,7 @@
 					console.log("修改信息：", data)
 					
 					cgUserInfoApi(data).then((data) => {
-						if (data.code == "20000") {
+						if (data.code == "Ok" ) {
 							this.$message.success("修改成功");
 							this.dialogFormVisible=false;
 						} else {

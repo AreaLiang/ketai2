@@ -21,8 +21,8 @@
 			this.$bus.$on("currentRowData",(data)=>{
 				let jsonData=JSON.parse(JSON.stringify(data));//转换成JSON格式
 				
-				if(jsonData.rawData.orderFilePdf){
-					this.wordUrl=fileShowPath(jsonData.rawData.orderFilePdf,'pdf');
+				if(jsonData.orderFilePdf){
+					this.wordUrl=fileShowPath(jsonData.orderFilePdf,'pdf');
 				}
 			})
 		}

@@ -167,47 +167,43 @@
 		},
 		methods: {
 			//表单提交
-			submitForm() {
-				const userFormSubmit=()=>{
-					let uerInfoComponent = this.$refs['modifyUerInfo']; //声明 表单组件
-					
-					uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
-						if (valid) { //如果表单验证通过
-							if (this.agreeServe) { //如果已勾选 认证协议
-								//获取用户输入的数据
-								let postData=new userInfoObj(uerInfoComponent.ruleForm); 
-								postData.business=JSON.stringify(postData.business);
-								
-								//整理认证接口的数据
-								let formData = {
-									id: this.userdata.id,
-									certificate: this.bs_certFile, //营业执照文件
-									safetyCertificate: this.sc_certFile, //安全员执照文件
-								}
-								//合并对象，如果键名相同，第二个参数覆盖第一个
-								formData=Object.assign(formData,postData);
-								
-								//提交认证接口
-								modifyRegistApi(formData).then((data) => {
-									if (data.code == "20000") {
-										let token = sessionStorage.getItem('token');
-										this.$store.dispatch('authorityNav', token);
-										this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
-										this.agreeServe=false;
-									} else {
-										this.$message.error("认证失败");
-										this.$router.go(0);
-									}
-								});
-							} else {
-								this.$message.warning("请勾选同意认证协议");
-							}
-						}
-					});
-				}
+			submitForm:throttle(function(){
+				let uerInfoComponent = this.$refs['modifyUerInfo']; //声明 表单组件
 				
-				throttle(userFormSubmit,2000);//节流函数，防止多次点击
-			},
+				uerInfoComponent.$refs['ruleForm'].validate((valid) => { //触发验证效果
+					if (valid) { //如果表单验证通过
+						if (this.agreeServe) { //如果已勾选 认证协议
+							//获取用户输入的数据
+							let postData=new userInfoObj(uerInfoComponent.ruleForm); 
+							postData.business=JSON.stringify(postData.business);
+							
+							//整理认证接口的数据
+							let formData = {
+								id: this.userdata.id,
+								certificate: this.bs_certFile, //营业执照文件
+								safetyCertificate: this.sc_certFile, //安全员执照文件
+							}
+							//合并对象，如果键名相同，第二个参数覆盖第一个
+							formData=Object.assign(formData,postData);
+							
+							//提交认证接口
+							modifyRegistApi(formData).then((data) => {
+								if (data.code == "Ok" ) {
+									let token = sessionStorage.getItem('token');
+									this.$store.dispatch('authorityNav', token);
+									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
+									this.agreeServe=false;
+								} else {
+									this.$message.error("认证失败");
+									this.$router.go(0);
+								}
+							});
+						} else {
+							this.$message.warning("请勾选同意认证协议");
+						}
+					}
+				});
+			},3000),
 			//信息更改 按钮事件
 			// changeUserInfoBtn() {
 			// 	this.$refs["diglogUserInfoCg"].dialogFormVisible = true;
@@ -245,7 +241,7 @@
 				params.append('file', res.file);
 
 				uploadCertFileApi(params).then((data) => {
-					if (data.code == "20000") {
+					if (data.code == "Ok" ) {
 						this.bs_certFile = data.data.certFile; //保存后台返回的 营业执照地址
 					} else {
 						this.$message.error("营业执照上传失败");
@@ -258,7 +254,7 @@
 				params.append('file', res.file);
 
 				uploadCertFileApi(params).then((data) => {
-					if (data.code == "20000") {
+					if (data.code == "Ok" ) {
 						this.sc_certFile = data.data.certFile; //保存后台返回的 营业执照地址
 					} else {
 						this.$message.error("安全员执照上传失败");

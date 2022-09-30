@@ -115,7 +115,6 @@
 	import { addAsyncRouter,dynamicRoute} from "@/utils"
 	import NProgress from 'nprogress' // 引入头部进度条
 	import {loginApi,captchaApi,phoneCodeApi} from "@/request/api"
-	import {errorRouter,resetRouter} from '@/router'
 	
 	export default {
 		name: 'Login',
@@ -175,7 +174,7 @@
 						data = {...data};
 						let code = data.code; //获取状态吗
 						//后台数据和用户输入的信息做比较
-						if (code == "20000") {
+						if (code == "Ok" ) {
 							console.log("登录成功：", {...data});
 							
 							let token = data.data.token;
@@ -236,7 +235,7 @@
 								code: captcha,
 							}).then((data) => {
 							
-							if (data.code == "20000") {
+							if (data.code == "Ok" ) {
 								this.$message.success("验证码发送成功");
 								this.isSendCode = true;
 								this.sendCodeLimit();
@@ -268,7 +267,7 @@
 				if (isPassd) {
 					registerfun(this.userInfo).then((data) => {
 						console.log(data);
-						if (data.code == '20000') {
+						if (data.code == "Ok") {
 							this.$message.success('注册成功');
 							this.isRegister=false;
 							this.reset();

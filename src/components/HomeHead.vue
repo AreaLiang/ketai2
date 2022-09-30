@@ -50,7 +50,7 @@
 					this.hasExited=false;
 					NProgress.start() //开启进度条
 					signoutApi({}).then((data)=>{
-						if (data.code=="20000") {
+						if (data.code=="Ok" ) {
 							this.$message.success("退出成功");
 							setTimeout(()=> {
 								resetRouter();//重置路由

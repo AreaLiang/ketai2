@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import {
-	Message
+	Message, Upload
 } from 'element-ui';
 
 /**
@@ -38,3 +38,4 @@ Vue.directive('focus', {
     el.children[1].focus()
   }
 })
+

@@ -4,7 +4,7 @@
 			:modal-append-to-body="false" custom-class="entrust-diglog">
 			<div v-loading="loading">
 				<el-row :gutter="30">
-					<el-col :md="12" :lg="10">
+					<el-col :md="12" :lg="11">
 						<el-form :model="addEntrustForm" label-position="top" ref="addEntrustForm" :rules="rules">
 							<el-row :gutter="30">
 								<el-col :span="12">
@@ -51,26 +51,55 @@
 							<el-row>
 								<el-col :span="24">
 									<el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
-										<el-input type="textarea" v-model="addEntrustForm.remark" :rows="8"></el-input>
+										<el-input type="textarea" v-model="addEntrustForm.remark" :rows="5"></el-input>
 									</el-form-item>
 								</el-col>
 							</el-row>
-
+							
+							<!-- 委托单信息 -->
 							<el-row>
-								<el-col :span="24">
-									<el-upload class="upload-UserInfoCg" ref="uploadUserInfoCg" action="#"
-										accept=".doc,.docx,.pdf,.xls,.xlsx" :before-upload="beforeLicenseUpload"
-										:http-request="uploadLicense" :file-list="fileList" style="margin: 25px 0;">
-										<el-button slot="trigger" size="small" type="primary">委托文件</el-button>
-									</el-upload>
-								</el-col>
+								<div class="marginTop">
+									<el-table :data="tableData" height="250" border="" style="width: 100%"
+									:header-cell-style="{textAlign:'center'}" 
+									:cell-style="{textAlign:'center'}">
+										<el-table-column type="index" width="50" label="序号">
+										</el-table-column>
+										<el-table-column label="器具名称" >
+											<template slot-scope="scope">
+												<el-input v-model="scope.row.value" placeholder="请输入器具名称"></el-input>
+											</template>
+										</el-table-column>
+										<el-table-column label="数量" width="160">
+											<template slot-scope="scope">
+												<el-input-number size="mini" v-model="scope.row.number" :min="1" :max="10000"></el-input-number>
+											</template>
+										</el-table-column>
+										<el-table-column label="操作" width="80">
+											<template slot-scope="scope">
+												<el-button size="mini" type="danger" @click="handleDelete(scope.$index)">删除</el-button>
+											</template>
+										</el-table-column>
+									</el-table>	
+								</div>
+							</el-row>
+							
+							<!-- 操作按钮组 -->
+							<el-row>
+								<div class="marginTop">
+									<el-col :span="24">
+										<el-button type="primary" @click="downLoadPdf">下载</el-button>
+										<el-button type="primary" @click="cleanTableInfo">清空</el-button>
+										<el-button type="primary" @click="previewPdf">预览</el-button>
+										<el-button type="primary" @click="addInfoRow">+</el-button>
+									</el-col>
+								</div>
 							</el-row>
 						</el-form>
 					</el-col>
 
-					<el-col :md="12" :lg="14">
+					<el-col :md="12" :lg="13">
 						<div class="pdfShow">
-							<iframe class="pdf-show" :src="wordUrl" width="100%" height="460"></iframe>
+							<iframe class="pdf-show" :src="wordUrl" width="100%" height="660"></iframe>
 						</div>
 					</el-col>
 				</el-row>
@@ -84,30 +113,25 @@
 
 <script>
 	import {
-		addEntrustOrderApi,
-		uploadEntrustOrderApi,
-		modifyEntrustOrderApi
-	} from "@/request/api"
-	import {
-		mapState
-	} from 'vuex'
-	import {
+		previewApi,
 		baseUrl
-	} from '@/request/api'
-	import {
-		fileShowPath,
-		formValidation,
-		throttle
-	} from '@/utils'
-	import {
-		entrustObj
-	} from '@/utils/bsEntrust'
+	} from "@/request/api"
+	import {mapState} from 'vuex'
+	import {fileShowPath,formValidation,fileLinkToStreamDownload} from '@/utils'
+	import {EntrustObj} from '@/utils/bsEntrust'
 
 	export default {
 		name: 'bsEntrustmentDiglog', //新建业务委托 弹出框
 		data() {
 			return {
 				dialogFormVisible: false,
+				tableData: [],//用于 委托单信息 表格渲染
+				defaultTableFromat:{//设置默认参数，委托单信息 表格渲染对象格式
+					value: '',
+					subject:'',
+					number: 1,
+					price:"0.00"
+				},
 				addEntrustForm: {
 					name: '',
 					address: '',
@@ -144,41 +168,53 @@
 				loading: false,
 				wordUrl: '',//iframe显示文档的路径
 				rowData: {},//点击修改业务委托传入的当行数据
-				fileList: []//默认显示上传文件的名字和路径
 			}
 		},
 		watch: {
-			dialogFormVisible: function() { //监听弹窗的变化
-				if (this.dialogFormVisible) {
+			dialogFormVisible: function() { //监听dialog的变化
+				if (this.dialogFormVisible) {//dialog打开时候
 					this.$nextTick(() => {
-						this.$refs['uploadUserInfoCg'].clearFiles(); //清空上传文件的列表
 						this.$refs['addEntrustForm'].clearValidate(); //移除表单验证结果
 						this.wordUrl = '';//iframe 设置空显示
 					});
+					console.log("7",this.rowData)
 					let userData = JSON.parse(JSON.stringify(this.userdata));
 					
 					//整合默认数据
 					this.addEntrustForm = Object.assign(this.addEntrustForm, userData, this.rowData);
 				
-					if(!this.rowData.remark){//如果点解新建委托，则没有数据，说明是新建委托单
+					//备注赋值， 如果点击新建委托，则没有数据，说明是新建委托单
+					if(!this.rowData.remark){
 						this.addEntrustForm.remark='';
 					}
-
-					if (this.isCreatedOrder) { //修改业务委托 表单信息
-						let jsonData = JSON.parse(JSON.stringify(this.rowData));
-						if (jsonData.rawData.orderFilePdf) { //如果证件的路径不为空
+					
+					//如果是 修改业务委托 
+					if (this.isCreatedOrder) { 
+						let jsonData = _.cloneDeep(this.rowData);
+						if (jsonData.orderFilePdf) { //如果证件的路径不为空
 							this.$nextTick(() => { //如果已经上传了委托文件，则赋值路径显示文件内容
-								this.fileList = [];
-								let orderFilePdf = jsonData.rawData.orderFilePdf;//获取 委托单文件路径
+								let orderFilePdf = jsonData.orderFilePdf;//获取 委托单文件路径
 								this.wordUrl = fileShowPath(orderFilePdf, 'pdf'); //转换为可以iframe 显示的pdf文件路径
-								this.wordFile = orderFilePdf;//传给后台的文件路径
-								this.fileList.push({//显示上传文件的名称
-									name: orderFilePdf,
-									url: fileShowPath(orderFilePdf, 'pdf')
-								});
+								this.tableData=JSON.parse(jsonData.itemJson);//器具信息赋值
 							})
 						}
 					}
+					//如果是 新建委托单
+					else{
+						//给表格添加默认的第一行，defaultTableFromat 为默认格式
+						this.tableData.push(_.cloneDeep(this.defaultTableFromat))
+					}
+				}
+				//dialog 关闭时候
+				else{
+					//如果是 修改业务委托 
+					if (this.isCreatedOrder) { }
+					//如果是 新建委托单
+					else{
+						this.tableData=[];//清空表格中的数据
+						this.wordUrl=[];//清空PDF 下载链接
+					}
+					
 				}
 			}
 		},
@@ -202,71 +238,81 @@
 			addEntrust() {
 				this.$refs['addEntrustForm'].validate((valid) => {
 					if (valid) { //校验是否信息为空
-
-						if (this.wordFile != '') { //校验是否上传委托文件
+						let isPass=this.tableData.every((p)=> p.value != "")//检查每一项 器具名称 是否已填写
+						if(isPass) {//如果都填写，提交接口 生成pdf链接并赋值
 							this.loading = true;
-							let postData = new entrustObj(this.addEntrustForm); //委托单需要的信息
-
-							postData.wordFile=this.wordFile;
+							let postData = new EntrustObj(this.addEntrustForm); //委托单需要的信息
+							
+							postData.itemJson=_.cloneDeep(this.tableData);
+							postData.itemJson=postData.itemJson.map((p,index) =>{
+								p.code="E"+(index+1).toString(); //添加code 值，已E为开头
+								p.number=p.number.toString();
+								return p;
+							});
+							
+							if (this.isCreatedOrder) {//如果是修改委托单,重新赋值id
+								postData.customerId=this.rowData.creator.businessManager.id;
+								postData.orderId=this.rowData.id;
+							}
 							
 							//执行提交业务委托的 事件接口
 							this.$emit('subEntrust', {
 								obj: this,
 								postData: postData
 							});
-
-						} else {
-							this.$message.warning('请上传委托文件!');
-						}
+						}else this.$message.warning("请填写器具名称");
+						
 					} else false
 				});
 			},
 			
-			//上传证件文件前，对文件类型做判断
-			beforeLicenseUpload(file) {
-				const isPDF = file.type === 'application/pdf';
-				const isDOCX = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-				const isDOC = file.type === 'application/msword';
-				const isXls = file.type === 'application/vnd.ms-excel';
-				const isXlsx = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+			//点击下载 按钮事件，下载预览后的pdf文件
+			downLoadPdf(){
+				if(this.wordUrl){
+					fileLinkToStreamDownload(this.wordUrl,this.wordUrl);
+				}else this.$message.warning("先预览生成pdf");
+			},
 			
-				let uploadFiles = this.$refs['uploadUserInfoCg'].uploadFiles;
-				if (uploadFiles.length > 1) {
-					uploadFiles.splice(0, 1); //删除照片
-				}
-
-				if(isPDF || isDOCX || isDOC || isXls || isXlsx){
-					return true
-				}else{
-					this.$message.error('只能是文档格式或者PDF格式!');
-					this.wordFile='';
-					this.wordUrl='';
-					return false
+			//点击 清空 按钮事件，清空表格内容
+			cleanTableInfo(){
+				let defaultFromat =_.cloneDeep(this.defaultTableFromat);//深克隆，解除内存地址相同
+				this.tableData=[];//清空数组
+				this.tableData.push(defaultFromat);//添加默认第一行
+			},
+			
+			//点击 预览 按钮事件，预览填完信息后，返回的pdf文件
+			previewPdf(){
+				let isPass=this.tableData.every((p)=> p.value != "")//检查每一项 器具名称 是否已填写
+			
+				if(isPass) {//如果都填写，提交接口 生成pdf链接并赋值
+					let params=new EntrustObj(this.addEntrustForm);
+					params.itemJson=_.cloneDeep(this.tableData);
+					params.itemJson=params.itemJson.map((p,index) =>{
+						p.code="E"+(index+1).toString(); //添加code 值，已E为开头
+						p.number=p.number.toString();
+						return p;
+					});
+					previewApi(params).then( res =>{
+						if(res.code=="Ok") this.wordUrl=baseUrl +res.data;//赋值iframe的路径
+					})
+				}else this.$message.warning("请填写器具名称");
+				
+			},
+			
+			//点击加 + 号按钮，添加 新的表格行
+			addInfoRow(){
+				if(this.tableData.length<14){//最多添加14条
+					this.tableData.push({...this.defaultTableFromat});//像表格插入行数据
 				}
 			},
-			//上传委托文件
-			uploadLicense(res) {
-				this.loading = true; //加载图标开启
-				
-				//转换formdata格式
-				let params = new FormData();
-				params.append('file', res.file);
-
-				//调用接口上传证件
-				uploadEntrustOrderApi(params).then((data) => {
-					if (data.code == "20000") {
-						this.loading = false; //关闭 加载图标
-						this.wordFile = data.data.wordFile;
-						this.wordUrl = fileShowPath(data.data.wordFile, 'pdf');
-					
-					} else {
-						this.loading = false;
-						this.$message.error(data.msg);
-					}
-				})
-			}
-		},
-
+			
+			//点击 行删除按钮事件，删除对应行
+			handleDelete(rowIndex){
+				if (this.tableData.length > 1) this.tableData.splice(rowIndex, 1)
+			},
+			
+			
+		}
 	}
 </script>
 
@@ -302,8 +348,8 @@
 		}
 
 		.entrust-diglog {
-			width: 75%;
-
+			width: 80%;
+			margin-top:1vh !important;
 			.el-upload-list--text {
 				overflow: hidden;
 				height: 30px;
@@ -312,7 +358,7 @@
 
 		.pdfShow {
 			background: #ccc;
-			height: 460px;
+			height: 662px;
 		}
 
 		.upload-entrust {
@@ -335,6 +381,12 @@
 			width: 70%;
 			vertical-align: middle;
 			margin-left: 20px;
+		}
+		.el-dialog__body{
+			padding:20px
+		}
+		.marginTop{
+			margin-top: 15px;
 		}
 	}
 </style>

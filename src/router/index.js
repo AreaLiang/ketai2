@@ -44,11 +44,15 @@ export const constantRoutes=[{
 				name: 'pdfView',
 				path: 'serviceList',
 				component: () => import('@/views/serviceList/PdfView')
+			},
+			{
+				name: 'customerGuidelines',
+				path: 'customerGuidelines',
+				component: () => import('@/views/customerGuidelines/customerGuidelines')
 			}
 		]
 	}
 ]
-
 
 
 // 异步挂载的路由
@@ -72,13 +76,6 @@ export const asyncRouter = [{
 			headName: ['证书管理', '/', ' 详情'],
 		},
 		component: () => import('@/views/certificateManagement/mgCertificate')
-	}, {
-		name: 'entrustTbDownload',
-		path: 'entrustTb',
-		meta: {
-			isAuthority: "正常",
-		},
-		component: () => import('@/views/entrustTbDownload/entrustTbDL')
 	}]
 }]
 

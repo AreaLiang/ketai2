@@ -75,9 +75,9 @@
 					address: '/Home/serviceList',
 					isAuthorize: false
 				}, {
-					name: '业务委托表格下载',
-					icon: 'el-icon-download',
-					address: '/Home/entrustTb',
+					name: '客户注册指引',
+					icon: 'el-icon-s-promotion',
+					address: '/Home/customerGuidelines',
 					isAuthorize: true
 				}],
 				infoWarning: false ,//未认证警告提示

@@ -43,7 +43,7 @@ axios.interceptors.request.use(
 // axios.interceptors.response.use( 
 // 	response=> {
 // 		console.log(response.data)
-// 		if(response.data.code==20002){//判断token是否过期
+// 		if(response.data.code=="Ok"){//判断token是否过期
 // 			Message.warning(response.data.msg);
 // 			sessionStorage.removeItem('token');
 // 			setTimeout(()=>{
@@ -81,7 +81,7 @@ export function get(url, params) {
  */
 export function post(url, params) {
 	return new Promise((resolve, reject) => {
-		axios.post(url, QS.stringify(params))
+		axios.post(url, params)
 			.then(res => {
 				resolve(res.data);
 			})

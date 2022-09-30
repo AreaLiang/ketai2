@@ -10,7 +10,7 @@ const actions = {
 	authorityNav(context, token) {
 		 //发送请求查询用户信息
 		return ckUserInfoApi(token).then((data) => {
-			if (data.code == "20000") {
+			if (data.code == "Ok" ) {
 				context.commit('AuthorityNav', data.data.statusCn);
 				context.commit('UserInfo',data);
 				return true

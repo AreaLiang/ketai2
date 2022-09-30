@@ -19,47 +19,61 @@
 					<el-table-column prop="statusCn" label="状态" width="100">
 						<template slot-scope="scope">
 							<div slot="reference" class="name-wrapper">
-								<el-tooltip class="item" effect="dark" :content="scope.row.rawData.reason" :disabled="statusMeg(scope.row.rawData)" placement="top-start">
-								    <el-tag :type="scope.row | failPaymentColor" :effect="scope.row.statusBtnStyle"
-								      	size="medium">{{ scope.row.statusCn }}</el-tag>
+								<el-tooltip class="item" effect="dark" :content="scope.row.reason" :disabled="statusMeg(scope.row)" placement="top-start">
+									<el-tag :type="scope.row | tagType('color')" :effect="scope.row | tagType('effect')" size="medium">
+										{{ scope.row.statusCn }}
+									</el-tag>
 								</el-tooltip>
 							</div>
 						</template>
 					</el-table-column>
-					<el-table-column prop="receiver" label="受理业务员" width="120">
+					<el-table-column prop="receiver.name" label="受理业务员" width="120">
 					</el-table-column>
 					<el-table-column prop="id" title="id" label="单号" width="200">
 					</el-table-column>
 					<el-table-column label="操作" width="350">
 						<template slot-scope="scope">
-							<el-button type="primary" v-if="scope.row.opBtnList.orderEditBtn" size="small"
-								@click="modifyEntrust(scope.row)">
-								<i class="el-icon-edit-outline"></i>
+							<el-button type="primary" size="small"
+								@click="modifyEntrust(scope.row)"
+								v-if="bsBtnShow(scope.row.status,'DaiFenPei,DaiShouLi,ShouLiShiBai')">
+								<i class="el-icon-edit-outline" ></i>
 								委托单编辑
 							</el-button>
-
-							<el-button type="primary" v-if="scope.row.opBtnList.entrustFileBtn" size="small"
-								@click="openDialog('entrustFileDialog',scope.row)">委托文件
+							
+							<el-button type="primary" size="small"
+								@click="openDialog('entrustFileDialog',scope.row)"
+								v-if="bsBtnShow(scope.row.status,'DaiShenHe,DaiFuKuan,DaiWanGong,DaiHeDui,DaiShiGong,YiWanCheng')">
+								委托文件
 							</el-button>
 
-							<el-button type="primary" v-if="scope.row.opBtnList.acceptanceListBtn" size="small"
-								@click="openDialog('acceptanceDialog',scope.row)">
-								{{scope.row.rawData.checkFile ? "完工验收单" : "上传验收单"}}
+							<el-button type="primary" size="small"
+								@click="openDialog('acceptanceDialog',scope.row)"
+								v-if="bsBtnShow(scope.row.status,'DaiWanGong')"
+								>
+								{{scope.row.checkFile ? "完工验收单" : "上传验收单"}}
 							</el-button>
 							
-							<!-- 支付证明 -->
-							<el-button type="primary" v-if="scope.row.opBtnList.paymentProveBtn"
-								@click="openDialog('paymentProveDialog',scope.row)" size="small">
-								{{scope.row.rawData | isPassPayment}}
+							<!-- 支付证明和上传支付证明 -->
+							<el-button type="primary" size="small"
+								@click="openDialog('paymentProveDialog',scope.row)" 
+								v-if="bsBtnShow(scope.row.status,'DaiHeDui,YiWanCheng,DaiFuKuan')"
+								>
+								{{scope.row | isPassPayment}}
+							</el-button>
+							
+							<el-button type="primary" size="small"
+								@click="DownloadCertificate()"
+								v-if="bsBtnShow(scope.row.status,'YiWanCheng')"
+								>
+								下载证书
 							</el-button>
 
-							<el-button type="primary" v-if="scope.row.opBtnList.downCertBtn" size="small"
-								@click="DownloadCertificate()">下载证书
+							<el-button type="primary"  size="small"
+							@click="submitAgain(scope.row)" 
+							v-if="bsBtnShow(scope.row.status,'ShouLiShiBai')"
+							>
+							重新提交
 							</el-button>
-
-							<el-button type="primary" v-if="scope.row.opBtnList.resubmitBtn" @click="submitAgain(scope.row)" size="small">重新提交
-							</el-button>
-
 						</template>
 					</el-table-column>
 				</el-table>
@@ -99,7 +113,7 @@
 
 	import {bsEntrustmentApi,modifyEntrustOrderApi,addEntrustOrderApi} from "@/request/api"
 	import {timestamp,throttle} from '@/utils'
-	import {cgBsEntrustData,entrustObj} from '@/utils/bsEntrust'
+	import {cgBsEntrustData,statusStyleControl,EntrustObj} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {
@@ -119,7 +133,8 @@
 					if(currentRow.status=="DaiFuKuan" && currentRow.reason || currentRow.status== "ShouLiShiBai") return false
 					else return true
 				}
-			}
+			},
+			
 		},
 		components: {
 			PageHeader,
@@ -139,10 +154,22 @@
 					return '上传支付证明'
 				}
 			},
-			failPaymentColor(val){//支付证明被退回时候，按钮显示的颜色
-				if(val.rawData.reason && val.rawData.status== "DaiFuKuan"){
+			
+			//支付证明被退回时候，按钮显示的颜色
+			failPaymentColor(val){
+				console.log(val)
+				if(val.reason && val.status== "DaiFuKuan"){
 					return 'danger'
 				}else return val.statusBtnColor
+			},
+			
+			//标签样式选择方法，color => 颜色，effect => tags是风格
+			tagType(row,type){
+				const getStatusList =statusStyleControl().get(row.status);
+				if(type == 'color') {
+					if(row.reason && row.status== "DaiFuKuan") return 'danger'
+					else return getStatusList?.color;
+				}else if(type == "effect") return getStatusList?.effect;
 			}
 		},
 		methods: {
@@ -160,16 +187,12 @@
 				dialog.dialogFormVisible = true;
 			},
 			//提交 新建业务委托
-			subAddEntrust(res){
+			subAddEntrust:throttle(function(res){//节流函数
 				let {obj,postData}=res;
-			
-				const addEntrustOrder=()=>{
-					addEntrustOrderApi(postData).then((data) => {
-						this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");//提交后提示信息
-					}).finally(()=>{obj.loading=false});
-				}
-				throttle(addEntrustOrder,3000)//节流函数
-			},
+				addEntrustOrderApi(postData).then((data) => {
+					this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");//提交后提示信息
+				}).finally(()=>{obj.loading=false});
+			},3000),
 			//打开 委托单编辑
 			modifyEntrust(data) {
 				let dialog = this.$refs.editEntrustDiglog;
@@ -177,27 +200,24 @@
 				dialog.rowData = data;
 			},
 			//提交 委托单编辑
-			subModifyEntrust(res){
+			subModifyEntrust:throttle(function(res){//节流函数
 				let {obj,postData}=res;
-				postData.id = obj.rowData.rawData.id;
 				
-				const modifyEntrustOrder=()=>{
-					modifyEntrustOrderApi(postData).then((data) => {
-						this.afterSubmit('editEntrustDiglog',data, "修改成功", "修改失败");//提交后提示信息
-					}).finally(()=>{obj.loading=false});
-				}
-				throttle(modifyEntrustOrder,3000)//节流函数
-				
-			},
+				modifyEntrustOrderApi(postData).then((data) => {
+					this.afterSubmit('editEntrustDiglog',data, "修改成功", "修改失败");//提交后提示信息
+				}).finally(()=>{obj.loading=false});
+			}),
 			//重新提交委托单
 			submitAgain(currentRow){
-				let data=JSON.parse(JSON.stringify(currentRow));
-				
-				let postData=new entrustObj(data);//委托单需要的信息
-				postData.id=data.rawData.id;//添加id的属性
+				let data=_.cloneDeep(currentRow);
+				console.log(data)
+				let postData=new EntrustObj(data);//委托单需要的信息
+				postData.customerId=data.creator.businessManager.id;
+				postData.orderId=data.id;
+				postData.itemJson=JSON.parse(data.itemJson);
 			
 				modifyEntrustOrderApi(postData).then((data) => {
-					if (data.code == "20000") {
+					if (data.code == "Ok" ) {
 						this.$message.success("提交成功");
 						this.$bus.$emit('pageNumber', this.currentPage); //刷新当前页
 					} else {
@@ -211,14 +231,13 @@
 				NProgress.start() //开启进度条
 				bsEntrustmentApi({
 					page: page,
-					pageSize: pageSize
+					szie: pageSize
 				}).then((res) => {
 					let data = res.data;
-					if (res.code == "20000") {
+					if (res.code == "Ok" ) {
 						this.dataTotal = data.totalElements; //所有数据的 数量
 					}
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
-						
 					NProgress.done(); //结束进度条
 					this.loading=false;
 				}).catch(()=> this.loading=false);
@@ -232,7 +251,7 @@
 			 * */
 			afterSubmit( objName, data, success, error) {
 				let obj = this.$refs[objName];
-				if (data.code == "20000") {
+				if (data.code == "Ok" ) {
 					this.$message.success(success);
 					obj.dialogFormVisible = false;
 					this.$bus.$emit('pageNumber', this.currentPage);
@@ -240,6 +259,16 @@
 					this.$message.error(error);
 				}
 			},
+			
+			/**
+			 * 业务委托的操作按钮显示控制
+			 * @param {String} authorization [必填，输入哪些状态条件下可以显示，多个参数用逗号隔开 如：‘author,editer’ ]
+			 * @param {String} status [必填，当前行的状态值，用于与权限数组做对比]
+			 */
+			bsBtnShow(status,authorization){
+				const arr=authorization.split(",");//把字符串用 , 来分割为数组
+				return arr.some( p => p == status);//如果该权限是在允许权限范围内，则返回true
+			}
 		},
 		mounted() {
 			this.PaginationClick(0, this.pageSize); //进来默认渲染第一页，后端数据第一页的页码为 0
