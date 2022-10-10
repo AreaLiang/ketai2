@@ -66,7 +66,7 @@
 										</el-table-column>
 										<el-table-column label="器具名称" >
 											<template slot-scope="scope">
-												<el-input v-model="scope.row.value" placeholder="请输入器具名称"></el-input>
+												<el-input v-model="scope.row.value" placeholder="请输入器具名称" :maxlength="18"></el-input>
 											</template>
 										</el-table-column>
 										<el-table-column label="数量" width="160">
@@ -167,7 +167,7 @@
 				wordFile: '',//传给后台的文件路径
 				loading: false,
 				wordUrl: '',//iframe显示文档的路径
-				rowData: {},//点击修改业务委托传入的当行数据
+				rowData: {} ,//点击修改业务委托传入的当行数据
 			}
 		},
 		watch: {
@@ -177,16 +177,9 @@
 						this.$refs['addEntrustForm'].clearValidate(); //移除表单验证结果
 						this.wordUrl = '';//iframe 设置空显示
 					});
-					console.log("7",this.rowData)
-					let userData = JSON.parse(JSON.stringify(this.userdata));
-					
-					//整合默认数据
-					this.addEntrustForm = Object.assign(this.addEntrustForm, userData, this.rowData);
 				
-					//备注赋值， 如果点击新建委托，则没有数据，说明是新建委托单
-					if(!this.rowData.remark){
-						this.addEntrustForm.remark='';
-					}
+					let userData = _.cloneDeep(this.userdata);
+					this.addEntrustForm = Object.assign(this.addEntrustForm, userData, this.rowData);//整合默认数据
 					
 					//如果是 修改业务委托 
 					if (this.isCreatedOrder) { 
@@ -201,6 +194,8 @@
 					}
 					//如果是 新建委托单
 					else{
+						//清空备注
+						this.addEntrustForm.remark='';
 						//给表格添加默认的第一行，defaultTableFromat 为默认格式
 						this.tableData.push(_.cloneDeep(this.defaultTableFromat))
 					}
@@ -244,11 +239,7 @@
 							let postData = new EntrustObj(this.addEntrustForm); //委托单需要的信息
 							
 							postData.itemJson=_.cloneDeep(this.tableData);
-							postData.itemJson=postData.itemJson.map((p,index) =>{
-								p.code="E"+(index+1).toString(); //添加code 值，已E为开头
-								p.number=p.number.toString();
-								return p;
-							});
+							postData.itemJson=this.addCode(postData.itemJson);
 							
 							if (this.isCreatedOrder) {//如果是修改委托单,重新赋值id
 								postData.customerId=this.rowData.creator.businessManager.id;
@@ -287,13 +278,12 @@
 				if(isPass) {//如果都填写，提交接口 生成pdf链接并赋值
 					let params=new EntrustObj(this.addEntrustForm);
 					params.itemJson=_.cloneDeep(this.tableData);
-					params.itemJson=params.itemJson.map((p,index) =>{
-						p.code="E"+(index+1).toString(); //添加code 值，已E为开头
-						p.number=p.number.toString();
-						return p;
-					});
+					params.itemJson=this.addCode(params.itemJson);
+					if (this.isCreatedOrder) params.customerId=this.addEntrustForm.creator.id;
+					console.log(this.addEntrustForm)
 					previewApi(params).then( res =>{
 						if(res.code=="Ok") this.wordUrl=baseUrl +res.data;//赋值iframe的路径
+						else this.$message.error(res.msg);
 					})
 				}else this.$message.warning("请填写器具名称");
 				
@@ -311,7 +301,17 @@
 				if (this.tableData.length > 1) this.tableData.splice(rowIndex, 1)
 			},
 			
-			
+			//添加 特定的code值
+			addCode(arr){
+				return arr.map((p,index) =>{
+					p.code="E"+(index+1).toString(); //添加code 值，已E为开头
+					p.number=p.number.toString();
+					return p;
+				});
+			}
+		},
+		mounted() {
+			this.$bus.$on('currentRowData',data => this.rowData=data || {});//绑定行数据
 		}
 	}
 </script>

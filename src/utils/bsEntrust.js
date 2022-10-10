@@ -11,24 +11,6 @@ export function cgBsEntrustData(data) {
 		p.created=timestamp(p.created);
 		return p ;
 	})
-	
-	// getData.forEach((item, index) => {
-	// 	console.log(typeof(statusItemShow(item.status)))
-	// 	newData[index] = {
-	// 		created: timestamp(item.created),
-	// 		contact: item.contact,
-	// 		mobile: item.mobile,
-	// 		remark: item.remark,
-	// 		statusCn: statusItemShow(item.status).statusCn,
-	// 		receiver: {...item.receiver}.name,
-	// 		statusBtnColor: statusItemShow(item.status).color,//标签颜色
-	// 		statusBtnStyle:statusItemShow(item.status).effect,//标签样式
-	// 		opBtnList: statusItemShow(item.status).opBtnList,
-	// 		rawData: getData[index],
-	// 		id:item.id
-	// 	}
-	// })
-	
 }
 
 export function statusStyleControl(){
@@ -94,7 +76,6 @@ export function statusStyleControl(){
 
 
 //构造函数，提交委托单需要的信息
-// ?. 链判断运算符 可以参考 https://es6.ruanyifeng.com/#docs/operator#%E9%93%BE%E5%88%A4%E6%96%AD%E8%BF%90%E7%AE%97%E7%AC%A6
 export class EntrustObj{
 	constructor(data){
 		this.contact=data.contact;

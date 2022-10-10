@@ -131,7 +131,8 @@
 	import {uploadCertFileApi,modifyRegistApi} from "@/request/api"
 	import {isImgFormat,fileShowPath,throttle} from "@/utils"
 	import { userInfoObj } from "@/utils/userInfo"
-
+	import qs from "qs"
+	
 	export default {
 		name: 'UserInfo',
 		data() {
@@ -193,9 +194,14 @@
 									this.$store.dispatch('authorityNav', token);
 									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
 									this.agreeServe=false;
+									setTimeout(()=>{
+										this.$router.go(0);
+									},1000)
 								} else {
 									this.$message.error("认证失败");
-									this.$router.go(0);
+									setTimeout(()=>{
+										this.$router.go(0);
+									},1000)
 								}
 							});
 						} else {
@@ -312,13 +318,13 @@
 
 			if(this.bs_certFile){//如果是空的时候，不给与初始值
 				this.bsList = [{//营业执照文件照片初始值
-					url: fileShowPath(this.bs_certFile, '')
+					url: fileShowPath(this.bs_certFile, '',false)
 				}]
 			}
 			
 			if(this.sc_certFile){//如果是空的时候，不给与初始值
 				this.scList = [{//安全员执照文件照片初始值
-					url: fileShowPath(this.sc_certFile, '')
+					url: fileShowPath(this.sc_certFile, '',false)
 				}]
 			}
 			

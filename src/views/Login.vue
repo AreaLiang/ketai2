@@ -73,9 +73,9 @@
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
 							<el-input type="number" placeholder="手机验证码"  v-model.trim="userInfo.phoneCode"
-								class="phoneCode no-number" v-throttle>
+								class="phoneCode no-number">
 								<template slot="append">
-									<el-button @click="phoneCode()" :disabled="isSendCode">{{sendCodeText}}</el-button>
+									<el-button @click="phoneCode()" :disabled="isSendCode" v-throttle>{{sendCodeText}}</el-button>
 								</template>
 							</el-input>
 						</div>
@@ -121,8 +121,8 @@
 		data() {
 			return {
 				userInfo: {
-					account: '',
-					password: '',
+					account: 'test001',
+					password: '123456',
 					passwordAgain: '',
 					connectName: '',
 					connectPhone: '',

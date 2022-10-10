@@ -54,7 +54,7 @@
 				})
 			},
 			isPassPayment(val){//判断是否已经通过付款审核或已经上传过付款证据
-				if(val == "DaiFuKuan") return true
+				if(val == "DaiHeDui") return true
 				else return false
 			},
 			//提交支付证明

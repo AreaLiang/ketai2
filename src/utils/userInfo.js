@@ -60,6 +60,7 @@ export function changeProfessionArray(value) {
 
 //判断是否为JSON的格式字符串
 function isJSON(str) {
+	
     if (typeof str == 'string') {
         try {
             JSON.parse(str);

@@ -34,7 +34,7 @@
 					<el-table-column label="操作" width="350">
 						<template slot-scope="scope">
 							<el-button type="primary" size="small"
-								@click="modifyEntrust(scope.row)"
+								@click="openDialog('editEntrustDiglog',scope.row)"
 								v-if="bsBtnShow(scope.row.status,'DaiFenPei,DaiShouLi,ShouLiShiBai')">
 								<i class="el-icon-edit-outline" ></i>
 								委托单编辑
@@ -80,7 +80,7 @@
 			</template>
 			<div class="pagination-box">
 				<!-- 分页功能 -->
-				<Pagination :dataTotal="dataTotal" :pageSize="pageSize"  :currentPage="currentPage"/>
+				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" :currentPage="currentPage"/>
 			</div>
 		</div>
 
@@ -110,7 +110,6 @@
 	import entrustFileDialog from "./components/entrustFileDialog"
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
-
 	import {bsEntrustmentApi,modifyEntrustOrderApi,addEntrustOrderApi} from "@/request/api"
 	import {timestamp,throttle} from '@/utils'
 	import {cgBsEntrustData,statusStyleControl,EntrustObj} from '@/utils/bsEntrust'
@@ -124,7 +123,7 @@
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
 				loading: true,
-				currentPage:1
+				currentPage:1,
 			}
 		},
 		computed: {
@@ -193,12 +192,7 @@
 					this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");//提交后提示信息
 				}).finally(()=>{obj.loading=false});
 			},3000),
-			//打开 委托单编辑
-			modifyEntrust(data) {
-				let dialog = this.$refs.editEntrustDiglog;
-				dialog.dialogFormVisible = true;
-				dialog.rowData = data;
-			},
+			
 			//提交 委托单编辑
 			subModifyEntrust:throttle(function(res){//节流函数
 				let {obj,postData}=res;
@@ -210,7 +204,6 @@
 			//重新提交委托单
 			submitAgain(currentRow){
 				let data=_.cloneDeep(currentRow);
-				console.log(data)
 				let postData=new EntrustObj(data);//委托单需要的信息
 				postData.customerId=data.creator.businessManager.id;
 				postData.orderId=data.id;
