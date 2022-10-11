@@ -6,14 +6,18 @@
 		</PageHeader>
 		<div class="mg-certificate-box" v-loading="loading">
 			<template>
-				<el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%"
+				<el-table :data="tableData" ref="certificateTable" border style="width: 100%;" 
+					@selection-change="handleSelectionChange" 
 					:header-cell-style="{textAlign:'center'}"
-					:cell-style="{textAlign:'center'}">
+					:cell-style="{textAlign:'center'}"
+					>
 					<el-table-column type="selection" width="55"></el-table-column>
 					<el-table-column prop="approveDate" label="提交时间">
 						<template slot-scope="scope">
 							<span>{{ scope.row.approveDate | changeTimestamp}}</span>
 						</template>
+					</el-table-column>
+					<el-table-column prop="orderNo" label="委托单号">
 					</el-table-column>
 					<el-table-column prop="reportNo" label="记录编号">
 					</el-table-column>
@@ -53,7 +57,7 @@
 			</template>
 			<div class="pagination-box">
 				<!-- 分页功能 -->
-				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" />
+				<!-- <Pagination :dataTotal="dataTotal" :pageSize="pageSize" /> -->
 			</div>
 		</div>
 	</div>
@@ -101,13 +105,23 @@
 				this.loading= true;
 				mgCertificateApi({
 					page: page,
-					size: this.pageSize,
+					szie: this.pageSize,
 				}).then((data) => {
-					console.log(data);
 					if (data.code == "Ok") {
-						let getData = data.data;
+						let getData = data.data.content;
+						console.log(data)
 						this.tableData = JSON.parse(JSON.stringify(getData)); //初始化数据
 						this.dataTotal = data.data.totalElements; //一共多少条数据
+						
+						if(this.$route.query.id){
+							this.$nextTick(()=>{
+								this.tableData.map((p,index)=>{
+									if(p.orderNo==this.$route.query.id) {
+										this.$refs.certificateTable.toggleRowSelection(p);
+									};
+								})
+							})
+						}
 					}
 					this.loading=false;
 				}).catch(()=> this.loading=false);
@@ -163,4 +177,9 @@
 		margin: 20px 0;
 		text-align: right;
 	}
+	.mg-certificate-box{
+		height: 600px;
+		overflow: auto;
+	}
+	
 </style>

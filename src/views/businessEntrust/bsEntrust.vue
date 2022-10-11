@@ -62,7 +62,7 @@
 							</el-button>
 							
 							<el-button type="primary" size="small"
-								@click="DownloadCertificate()"
+								@click="DownloadCertificate(scope.row)"
 								v-if="bsBtnShow(scope.row.status,'YiWanCheng')"
 								>
 								下载证书
@@ -224,7 +224,7 @@
 				NProgress.start() //开启进度条
 				bsEntrustmentApi({
 					page: page,
-					szie: pageSize
+					size: pageSize
 				}).then((res) => {
 					let data = res.data;
 					if (res.code == "Ok" ) {
@@ -236,8 +236,8 @@
 				}).catch(()=> this.loading=false);
 			},
 			//点击下载证书事件
-			DownloadCertificate() {
-				this.$router.push('/Home/mgCertificate');
+			DownloadCertificate(row) {
+				this.$router.push({path:'/Home/mgCertificate',query:{"id":row.id}});
 			},
 			/*  向后台提交数据后，页面更新和提示操作，
 			 *** objName 组件的ref名称 ,data:后台返回的数据，success:成功后提示信息,error：失败后提示信息 
