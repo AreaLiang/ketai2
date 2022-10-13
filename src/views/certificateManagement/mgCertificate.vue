@@ -6,8 +6,8 @@
 		</PageHeader>
 		<div class="mg-certificate-box" v-loading="loading">
 			<template>
-				<el-table :data="tableData" ref="certificateTable" border style="width: 100%;" 
-					@selection-change="handleSelectionChange" 
+
+				<el-table ref="certificateTable" :data="filterData" @selection-change="handleSelectionChange" border style="width: 100%"
 					:header-cell-style="{textAlign:'center'}"
 					:cell-style="{textAlign:'center'}"
 					>
@@ -57,7 +57,7 @@
 			</template>
 			<div class="pagination-box">
 				<!-- 分页功能 -->
-				<!-- <Pagination :dataTotal="dataTotal" :pageSize="pageSize" /> -->
+				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" />
 			</div>
 		</div>
 	</div>
@@ -74,7 +74,8 @@
 		name: 'mgCertificate', //证书管理
 		data() {
 			return {
-				tableData: [],
+				tableData: [],//原数据
+				filterData:[],
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
 				multipleSelection: [],
@@ -104,25 +105,34 @@
 			certificateData(page) {
 				this.loading= true;
 				mgCertificateApi({
-					page: page,
-					szie: this.pageSize,
+					// page: page,
+					// szie: this.pageSize,
 				}).then((data) => {
 					if (data.code == "Ok") {
 						let getData = data.data.content;
-						console.log(data)
+						
 						this.tableData = JSON.parse(JSON.stringify(getData)); //初始化数据
 						this.dataTotal = data.data.totalElements; //一共多少条数据
+						//该接口没有做分页功能，所以前端计算数目做分页功能
+						let [start,end] = [ page*this.pageSize , this.pageSize ];
 						
-						if(this.$route.query.id){
+						if(this.$route.query.id){//业务委托 点解下载证书跳转过去的证书管理
 							this.$nextTick(()=>{
+								let arr=[];
 								this.tableData.map((p,index)=>{
 									if(p.orderNo==this.$route.query.id) {
-										this.$refs.certificateTable.toggleRowSelection(p);
+										arr.push(p);
 									};
 								})
+								this.dataTotal=arr.length;
+								this.filterData=arr.splice(start,end);
 							})
+						}else{//正常证书管理选项点击
+							let orginArr=_.cloneDeep(this.tableData);//克隆原数组，即 所有证书列表
+							this.filterData =orginArr.splice(start,end);
 						}
 					}
+				
 					this.loading=false;
 				}).catch(()=> this.loading=false);
 			},
@@ -164,6 +174,7 @@
 			//绑定分页点击事件
 			this.$bus.$on('pageNumber', (page) => {
 				this.certificateData(page-1);
+				
 			})
 		},
 		beforeDestroy() {
@@ -177,9 +188,9 @@
 		margin: 20px 0;
 		text-align: right;
 	}
-	.mg-certificate-box{
-		height: 600px;
-		overflow: auto;
-	}
+	// .mg-certificate-box{
+	// 	height: 600px;
+	// 	overflow: auto;
+	// }
 	
 </style>

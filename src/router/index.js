@@ -60,11 +60,14 @@ export const constantRoutes=[{
 export const asyncRouter = [{
 	path: '/Home',
 	component: () => import('@/views/HomePage'),
+	meta:{
+		authorityStatus:'all'
+	},
 	children: [{
 		name: 'businessEntrust',
 		path: 'businessEntrust',
 		meta: {
-			isAuthority: "正常",
+			authorityStatus: "ZhengChang",
 			headName: ['委托单管理', '/', ' 详细业务'],
 		},
 		component: () => import('@/views/businessEntrust/bsEntrust')
@@ -72,7 +75,7 @@ export const asyncRouter = [{
 		name: 'mgCertificate',
 		path: 'mgCertificate',
 		meta: {
-			isAuthority: "正常",
+			authorityStatus: "ZhengChang",
 			headName: ['证书管理', '/', ' 详情'],
 		},
 		component: () => import('@/views/certificateManagement/mgCertificate')

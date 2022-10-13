@@ -112,7 +112,7 @@
 
 <script>
 	import {checkRegister,registerfun} from "@/utils/login"
-	import { addAsyncRouter,dynamicRoute} from "@/utils"
+	import { resetRouter} from "@/router"
 	import NProgress from 'nprogress' // 引入头部进度条
 	import {loginApi,captchaApi,phoneCodeApi} from "@/request/api"
 	
@@ -121,8 +121,8 @@
 		data() {
 			return {
 				userInfo: {
-					account: 'test001',
-					password: '123456',
+					account: '',
+					password: '',
 					passwordAgain: '',
 					connectName: '',
 					connectPhone: '',
@@ -178,23 +178,20 @@
 							console.log("登录成功：", {...data});
 							
 							let token = data.data.token;
-							let status=data.data.customer.statusCn;
+							let status=data.data.customer.status;
 							
 							// 存储数据 存入vuex 
 							await this.$store.commit('Login', data);
 							sessionStorage.setItem('token', token);
 							
-							//导航的权限控制
-							await this.$store.commit('AuthorityNav',status);
-						
-							/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
-							var addRoute = dynamicRoute();
-							addRoute.next();//第一步重置路由
+							resetRouter();//重置路由
+							
+							this.$store.commit('GenerateRoutes',status);//导航的权限控制
+							let accessRoutes=this.$store.state.permissionRoutes;
+							accessRoutes.forEach( p => {this.$router.addRoute(p)});
 							
 							//转跳到用户信息页面
-							await this.$router.replace('/Home/userinfo');
-							addRoute.next();//第二步添加路由
-							
+							this.$router.replace('/Home/userinfo');
 						} else {
 							this.$message.error('账号或密码不正确');
 						}

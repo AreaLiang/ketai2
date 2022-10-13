@@ -42,7 +42,7 @@
 							
 							<el-button type="primary" size="small"
 								@click="openDialog('entrustFileDialog',scope.row)"
-								v-if="bsBtnShow(scope.row.status,'DaiShenHe,DaiFuKuan,DaiWanGong,DaiHeDui,DaiShiGong,YiWanCheng')">
+								v-if="bsBtnShow(scope.row.status,'DaiShenHe,DaiFuKuan,DaiWanGong,DaiHeDui,DaiShiGong,YiWanCheng,YuFaZheng')">
 								委托文件
 							</el-button>
 
@@ -56,14 +56,14 @@
 							<!-- 支付证明和上传支付证明 -->
 							<el-button type="primary" size="small"
 								@click="openDialog('paymentProveDialog',scope.row)" 
-								v-if="bsBtnShow(scope.row.status,'DaiHeDui,YiWanCheng,DaiFuKuan')"
+								v-if="bsBtnShow(scope.row.status,'DaiHeDui,YiWanCheng,DaiFuKuan,YuFaZheng')"
 								>
 								{{scope.row | isPassPayment}}
 							</el-button>
 							
 							<el-button type="primary" size="small"
 								@click="DownloadCertificate(scope.row)"
-								v-if="bsBtnShow(scope.row.status,'YiWanCheng')"
+								v-if="bsBtnShow(scope.row.status,'YiWanCheng,YuFaZheng')"
 								>
 								下载证书
 							</el-button>
@@ -156,7 +156,6 @@
 			
 			//支付证明被退回时候，按钮显示的颜色
 			failPaymentColor(val){
-				console.log(val)
 				if(val.reason && val.status== "DaiFuKuan"){
 					return 'danger'
 				}else return val.statusBtnColor
@@ -270,7 +269,7 @@
 				this.currentPage=page;//保存当前页码，用于某些交换后刷新当页
 				this.PaginationClick(page - 1, this.pageSize);
 			})
-		
+			
 		},
 		beforeDestroy() {
 			this.$bus.$off('currentRowData');// 解绑

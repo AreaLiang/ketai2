@@ -1,16 +1,8 @@
 import router from './router'
 import store from './store'
-import axios from 'axios'
 import NProgress from 'nprogress' // 引入头部进度条
 import 'nprogress/nprogress.css' // 进度条样式
-import {
-	removeSessionStorage,
-	sendInfoCk,
-	addAsyncRouter
-} from "@/utils"
-import {
-	errorRouter
-} from './router'
+import {removeSessionStorage,} from "@/utils"
 import { Message } from 'element-ui'
 
 NProgress.configure({
@@ -19,39 +11,35 @@ NProgress.configure({
 
 router.beforeEach(async (to, from, next) => {
 	NProgress.start() //开启进度条
-
-	let data = store.state.userInfo;
-
-	let userInfo = JSON.parse(JSON.stringify(data)); //深拷贝，去除隐形属性
-
-	//用户权限判断
-	if (to.path == "/Login") {
-		removeSessionStorage('token', false); //清除缓存
-		next();
-		NProgress.done();
-	} else {
-		(async () => {
-			let token = sessionStorage.getItem('token'); //获取缓存中的token
-			if (token) {
-				if (JSON.stringify(data) == "[]") {
-					//发送token去后端验证用户信息
-					const isPass=await store.dispatch('authorityNav', token);
-					if(isPass){
-						/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
-						addAsyncRouter();
-						next({...to,replace: true}); //放行
-					}else {
-						Message.warning("token失效，请重新登录")
-						setTimeout(()=>{
-							router.push('/Login');
-						},1000)
-					}
+	const whiteList =new Set(['/Login']);//白名单,不需要权限的页面
+	const token=sessionStorage.getItem('token');//获取用户 token
+	
+	if(token){//如果token存在，则跳过登录界面，直接进去后台主页
+	
+		//判断vuex里面是否有存在用户信息，没有则重新请求发送获取和验证
+		const hasRole= JSON.stringify(store.state.userInfo) === '[]';
+		
+		if(hasRole){
+			(async ()=> {
+				//校验用户token
+				const status=await store.dispatch('checkUserInfo',token);
+				if(status){
+					await store.commit('GenerateRoutes',status);
+					let accessRoutes=store.state.permissionRoutes;
+					accessRoutes.forEach( p => router.addRoute(p));
+					
+					next({ ...to, replace: true })
+				}else {
+					Message.error("用户身份验证失败,正在为你转跳登录页面");
+					setTimeout(()=>{removeSessionStorage('token', true)},1000); //清除缓存并转跳登录页
 				}
-			} else {
-				router.push('/Login');
-			}
-			next();
-			NProgress.done();
-		})();
+			})();
+		}else next()
+		
+	}else{
+		//如果在白名单内则通过
+		if (whiteList.has(to.path)) next();
+		else router.push('/Login');
 	}
+	NProgress.done();
 });

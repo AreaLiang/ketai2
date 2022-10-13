@@ -1,19 +1,16 @@
 import Vuex from "vuex"
 import Vue from 'vue'
 import axios from 'axios'
-import {asyncRouter} from '@/router'
-import {navRouter} from '@/utils/permissionsTb'
+import {asyncRouter,errorRouter} from '@/router'
 import {ckUserInfoApi} from "@/request/api"
 
 const actions = {
 	// 用户权限控制
-	authorityNav(context, token) {
-		 //发送请求查询用户信息
+	checkUserInfo(context,token){
 		return ckUserInfoApi(token).then((data) => {
 			if (data.code == "Ok" ) {
-				context.commit('AuthorityNav', data.data.statusCn);
-				context.commit('UserInfo',data);
-				return true
+				context.commit('UserInfo',data)
+				return data.data.status
 			}else return false
 		})
 	}
@@ -27,14 +24,24 @@ const mutations = {
 	//保存用户的信息
 	UserInfo(state, value) {
 		state.userInfo = value.data;
-		console.log("我是vxu的UserInfo:",value.data);
 	},
-	// 用户权限控制
-	AuthorityNav(state, useStatus) {
-		let asyncRouteList = asyncRouter; //获取所有动态路由
-
+	// 权限路由控制
+	GenerateRoutes(state, status) {
+		let asyncRouteList = _.cloneDeep(asyncRouter); //获取动态路由
+		asyncRouteList=asyncRouteList.filter( p => {
+			if(p.meta.authorityStatus =='all' || p.meta.authorityStatus == status){// all 是全部状态都有权限
+				if(p.children.length>0){//判断是否有子级
+					p.children=p.children.filter( item =>{//过滤没有权限的子路由
+						return item.meta.authorityStatus==status;
+					})
+				}
+				return true;
+			}
+		});
+		asyncRouteList=[...asyncRouteList,...errorRouter];//把 错误路由数组 加载进去
+		
 		//过滤后的动态导航信息	
-		state.permissionRoutes = navRouter(asyncRouter, useStatus);
+		state.permissionRoutes = asyncRouteList;
 	}
 }
 
