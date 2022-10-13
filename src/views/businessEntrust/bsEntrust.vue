@@ -132,8 +132,7 @@
 					if(currentRow.status=="DaiFuKuan" && currentRow.reason || currentRow.status== "ShouLiShiBai") return false
 					else return true
 				}
-			},
-			
+			}
 		},
 		components: {
 			PageHeader,
@@ -149,16 +148,7 @@
 				if(val.payFile){
 					if(val.reason && val.status =='DaiFuKuan') return '上传支付证明' 
 					else return '支付证明'
-				}else{
-					return '上传支付证明'
-				}
-			},
-			
-			//支付证明被退回时候，按钮显示的颜色
-			failPaymentColor(val){
-				if(val.reason && val.status== "DaiFuKuan"){
-					return 'danger'
-				}else return val.statusBtnColor
+				}else return '上传支付证明'
 			},
 			
 			//标签样式选择方法，color => 颜色，effect => tags是风格
@@ -167,7 +157,7 @@
 				if(type == 'color') {
 					if(row.reason && row.status== "DaiFuKuan") return 'danger'
 					else return getStatusList?.color;
-				}else if(type == "effect") return getStatusList?.effect;
+				}else if (type == "effect") return getStatusList?.effect;
 			}
 		},
 		methods: {
@@ -187,9 +177,11 @@
 			//提交 新建业务委托
 			subAddEntrust:throttle(function(res){//节流函数
 				let {obj,postData}=res;
+				
 				addEntrustOrderApi(postData).then((data) => {
 					this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");//提交后提示信息
 				}).finally(()=>{obj.loading=false});
+				
 			},3000),
 			
 			//提交 委托单编辑

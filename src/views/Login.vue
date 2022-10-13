@@ -73,7 +73,7 @@
 						</div>
 						<div class="input-item" :class="{register:isRegister}">
 							<el-input type="number" placeholder="手机验证码"  v-model.trim="userInfo.phoneCode"
-								class="phoneCode no-number">
+								class="phoneCode no-number" >
 								<template slot="append">
 									<el-button @click="phoneCode()" :disabled="isSendCode" v-throttle>{{sendCodeText}}</el-button>
 								</template>
@@ -114,7 +114,7 @@
 	import {checkRegister,registerfun} from "@/utils/login"
 	import { resetRouter} from "@/router"
 	import NProgress from 'nprogress' // 引入头部进度条
-	import {loginApi,captchaApi,phoneCodeApi} from "@/request/api"
+	import {loginApi,captchaApi,phoneCodeApi ,registerApi} from "@/request/api"
 	
 	export default {
 		name: 'Login',
@@ -260,18 +260,38 @@
 			},
 			//用户注册
 			register() {
-				let isPassd = checkRegister(this, this.userInfo);
+				let isPassd = checkRegister(this.userInfo);
 				if (isPassd) {
-					registerfun(this.userInfo).then((data) => {
-						console.log(data);
-						if (data.code == "Ok") {
+					//获取用户输入信息
+					let {
+						account,
+						password,
+						connectName,
+						connectPhone,
+						phoneCode,
+						checkList,
+						captcha
+					} = this.userInfo;
+					
+					checkList=checkList.join(',');//数组转换成字符串
+					
+					registerApi({
+						phoneCode: phoneCode,
+						phone: connectPhone,
+						name:account,
+						contact:connectName,
+						password:password,
+						business:checkList,
+						code:captcha
+					}).then((res) => {
+						if (res.code == "Ok") {
 							this.$message.success('注册成功');
 							this.isRegister=false;
 							this.reset();
 						} else {
 							this.$message.error(data.msg);
 						}
-					});
+					})
 				}
 			},
 			//表单重置

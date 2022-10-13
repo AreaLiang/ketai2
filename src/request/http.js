@@ -4,17 +4,20 @@ import store from '@/store';
 import router from "@/router"
 import {Message} from "element-ui"
 
-axios.defaults.timeout = 15000;
+axios.defaults.timeout = 10000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
-// 环境的切换
-// if (process.env.NODE_ENV == 'development') {    
-//     axios.defaults.baseURL = '/api';
-// } else if (process.env.NODE_ENV == 'debug') {    
-//     axios.defaults.baseURL = '';
-// } else if (process.env.NODE_ENV == 'production') {    
-//     axios.defaults.baseURL = 'http://api.123dailu.com/';
-// }
+//环境的切换
+if (process.env.NODE_ENV == 'development') {  //开发模式  
+    axios.defaults.baseURL = 'http://192.168.0.103:9092/';
+} else if (process.env.NODE_ENV == 'debug') {    
+    axios.defaults.baseURL = 'http://192.168.0.103:9092/';
+} else if (process.env.NODE_ENV == 'production') { //生产环境
+	axios.defaults.baseURL = 'http://192.168.0.103:9092/';
+    // axios.defaults.baseURL = '/api/';
+}
+
+export const baseUrl=axios.defaults.baseURL;
 
 // axios.defaults.baseURL = 'http://192.168.0.103:9092';
 

@@ -2,7 +2,7 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // 引入头部进度条
 import 'nprogress/nprogress.css' // 进度条样式
-import {removeSessionStorage,} from "@/utils"
+import {removeSessionStorage} from "@/utils"
 import { Message } from 'element-ui'
 
 NProgress.configure({

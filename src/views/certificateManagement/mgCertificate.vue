@@ -28,26 +28,6 @@
 							<span>{{ scope.row.checkType | checkTypeList}}</span>
 						</template>
 					</el-table-column>
-				<!-- 	<el-table-column prop="subject.remark" label="备注">
-					</el-table-column> -->
-					<!-- <el-table-column prop="tableData" label="状态" width="80">
-						<template slot-scope="scope">
-							<div slot="reference" class="name-wrapper">
-								<el-tag size="medium">
-									{{ scope.row.status=="Completed"?"完成":"未完成" }}
-								</el-tag>
-							</div>
-						</template>
-					</el-table-column>
-					<el-table-column prop="tableData" label="结果" width="80">
-						<template slot-scope="scope">
-							<div slot="reference" class="name-wrapper">
-								<el-tag type="success" size="medium">
-									{{ scope.row.passed?"合格":"不合格" }}
-								</el-tag>
-							</div>
-						</template>
-					</el-table-column> -->
 					<el-table-column label="操作" width="120">
 						<template slot-scope="scope">
 							<el-button type="primary" @click="downLoadLertificate(scope.row)" size="small">下载</el-button>
@@ -100,14 +80,16 @@
 				return timestampToTime(timestamp)
 			}
 		},
+		watch:{
+			$route(to, from){//用于 业务委托转跳后，再点击证书管理时候会刷新显示全部证书列表
+				this.certificateData(0);
+			}
+		},
 		methods: {
 			//获取证书列表数据
 			certificateData(page) {
 				this.loading= true;
-				mgCertificateApi({
-					// page: page,
-					// szie: this.pageSize,
-				}).then((data) => {
+				mgCertificateApi().then((data) => {
 					if (data.code == "Ok") {
 						let getData = data.data.content;
 						

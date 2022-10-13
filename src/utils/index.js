@@ -1,6 +1,6 @@
 import router,{resetRouter,errorRouter,asyncRouter} from '@/router'
 import {Message} from 'element-ui';
-import {baseUrl} from '@/request/api'
+import {baseUrl} from '@/request/http'
 import store from '@/store'
 import JSZip from "jszip";
 import {saveAs} from 'file-saver';
@@ -102,7 +102,6 @@ export function isImgFormat(file) {
  * * @param {Boolean} handleSuffix [是否处理文件后缀，默认处理]
  */
 export function fileShowPath(file, suffix , handleSuffix=true) {
-	
 	if (file) {
 	
 		if(file.lastIndexOf('.')>0 && handleSuffix){

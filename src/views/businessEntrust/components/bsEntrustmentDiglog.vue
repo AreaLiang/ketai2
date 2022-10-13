@@ -112,10 +112,7 @@
 </template>
 
 <script>
-	import {
-		previewApi,
-		baseUrl
-	} from "@/request/api"
+	import {previewApi} from "@/request/api"
 	import {mapState} from 'vuex'
 	import {fileShowPath,formValidation,fileLinkToStreamDownload} from '@/utils'
 	import {EntrustObj} from '@/utils/bsEntrust'
@@ -236,10 +233,7 @@
 						let isPass=this.tableData.every((p)=> p.value != "")//检查每一项 器具名称 是否已填写
 						if(isPass) {//如果都填写，提交接口 生成pdf链接并赋值
 							this.loading = true;
-							let postData = new EntrustObj(this.addEntrustForm); //委托单需要的信息
-							
-							postData.itemJson=_.cloneDeep(this.tableData);
-							postData.itemJson=this.addCode(postData.itemJson);
+							let postData = this.commonParameters();
 							
 							if (this.isCreatedOrder) {//如果是修改委托单,重新赋值id
 								postData.customerId=this.rowData.creator.businessManager.id;
@@ -276,13 +270,11 @@
 				let isPass=this.tableData.every((p)=> p.value != "")//检查每一项 器具名称 是否已填写
 			
 				if(isPass) {//如果都填写，提交接口 生成pdf链接并赋值
-					let params=new EntrustObj(this.addEntrustForm);
-					params.itemJson=_.cloneDeep(this.tableData);
-					params.itemJson=this.addCode(params.itemJson);
+					let params=this.commonParameters();
 					if (this.isCreatedOrder) params.customerId=this.addEntrustForm.creator.id;
-					console.log(this.addEntrustForm)
+					
 					previewApi(params).then( res =>{
-						if(res.code=="Ok") this.wordUrl=baseUrl +res.data;//赋值iframe的路径
+						if(res.code=="Ok") this.wordUrl=this.baseUrl +res.data;//赋值iframe的路径
 						else this.$message.error(res.msg);
 					})
 				}else this.$message.warning("请填写器具名称");
@@ -301,13 +293,16 @@
 				if (this.tableData.length > 1) this.tableData.splice(rowIndex, 1)
 			},
 			
-			//添加 特定的code值
-			addCode(arr){
-				return arr.map((p,index) =>{
+			//共同参数
+			commonParameters(){
+				let params=new EntrustObj(this.addEntrustForm); //获取委托单位基本信息
+				params.itemJson=_.cloneDeep(this.tableData);
+				params.itemJson=params.itemJson.map((p,index) =>{//添加 特定的code值
 					p.code="E"+(index+1).toString(); //添加code 值，已E为开头
 					p.number=p.number.toString();
 					return p;
 				});
+				return params;
 			}
 		},
 		mounted() {

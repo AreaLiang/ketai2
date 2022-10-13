@@ -13,6 +13,7 @@ export function cgBsEntrustData(data) {
 	})
 }
 
+//业务委托 状态tag标签的样式设置，color => 颜色, effect => 风格
 export function statusStyleControl(){
 	const map =new Map([
 		['DaiFenPei',
