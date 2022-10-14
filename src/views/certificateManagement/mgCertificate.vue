@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-<template>
-	<div class="">
-		
-	</div>
-</template>
-
-<script>
-	export default {
-		name: 'mgCertificate',//证书管理
-		data() {
-			return {
-
-			}
-		},
-		components: {
-
-		}
-	}
-</script>
-
-<style scoped lang="less">
-	
-=======
 <template>
 	<div class="mg-certificate">
 		<!-- 主题内容顶部 -->
@@ -199,5 +175,4 @@
 	// 	overflow: auto;
 	// }
 	
->>>>>>> main
 </style>

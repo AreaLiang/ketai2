@@ -1,32 +1,3 @@
-<<<<<<< HEAD
-<template>
-	<div class="">
-		<!-- 主题内容顶部 -->
-		<PageHeader :breadcrumbItem="$route.meta.headName" />
-	</div>
-</template>
-
-<script>
-	export default {
-		name: 'bsEntrust', //业务委托
-		data() {
-			return {
-				
-			}
-		},
-		components: {
-
-		},
-		mounted() {
-		
-		}
-	}
-</script>
-
-<style scoped lang="less">
-
-</style>
-=======
 <template>
 	<div class="businessEntrust" v-loading="loading">
 		<!-- 主题内容顶部 -->
@@ -309,4 +280,3 @@
 		margin-top: 20px;
 	}
 </style>
->>>>>>> main

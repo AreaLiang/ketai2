@@ -13,8 +13,8 @@ if (process.env.NODE_ENV == 'development') {  //开发模式
 } else if (process.env.NODE_ENV == 'debug') {    
     axios.defaults.baseURL = 'http://192.168.0.103:9092/';
 } else if (process.env.NODE_ENV == 'production') { //生产环境
-	axios.defaults.baseURL = 'http://192.168.0.103:9092/';
-    // axios.defaults.baseURL = '/api/';
+	// axios.defaults.baseURL = 'http://192.168.0.103:9092/';
+    axios.defaults.baseURL = 'http://ywdt.test.gdshuzhi.com/api/';
 }
 
 export const baseUrl=axios.defaults.baseURL;
