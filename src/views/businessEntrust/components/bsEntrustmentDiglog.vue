@@ -274,7 +274,7 @@
 					if (this.isCreatedOrder) params.customerId=this.addEntrustForm.creator.id;
 					
 					previewApi(params).then( res =>{
-						if(res.code=="Ok") this.wordUrl=this.baseUrl +res.data;//赋值iframe的路径
+						if(res.code=="Ok") this.wordUrl=fileShowPath(res.data,"",false);//赋值iframe的路径
 						else this.$message.error(res.msg);
 					})
 				}else this.$message.warning("请填写器具名称");

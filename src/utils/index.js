@@ -117,26 +117,6 @@ export function fileShowPath(file, suffix , handleSuffix=true) {
 		return '';
 	}
 }
-//Generator函数，重置路由后添加路由，防止重复添加造成路由污染
-export function* dynamicRoute(){
-	yield resetRouter();
-	yield addAsyncRouter();
-}
-
-/* 登录后和当前页面刷新权限验证时候 动态路由添加*/
-export function addAsyncRouter() {
-	
-	//从vuex中获取过滤后的路由表
-	let setRoutes = store.state.permissionRoutes;
-	
-	//添加导航路由
-	router.addRoute(setRoutes);
-	
-	//加载 错误提示页面 的路由
-	errorRouter.forEach((p) => {
-		let removeRoute = router.addRoute(p);
-	})
-}
 
 /**Start
  * 下载单个pdf文件
@@ -147,7 +127,7 @@ export function fileLinkToStreamDownload(url, name) {
 	let fileName = name;
 	let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
 	if (!reg.test(url)) {
-		throw new Error('传入参数不合法,不是标准的文件链接')
+		throw new Error('传入参数不合法,不是标准的文件链接',url)
 	} else {
 		let xhr = new XMLHttpRequest()
 		xhr.open('get', url, true)
