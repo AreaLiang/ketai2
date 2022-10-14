@@ -19,7 +19,14 @@ Vue.prototype.axios=axios
 import store from './store'
 
 //用户登录权限管理文件
-import './permission.js' 
+import './permission.js'
+
+//引入 自定义指令
+import './utils/customDirective'
+
+//引入api接口域名
+import {baseUrl} from "./request/http"
+Vue.prototype.baseUrl=baseUrl;
 
 Vue.config.productionTip = false
 

@@ -115,14 +115,31 @@ export function ckServeRange(value) {
 	}
 }
 
+<<<<<<< HEAD
 //判断 手机验证码是否为空
 export function ckPhoneCode(value) {
 	if (value.length>0) {
+=======
+/**
+ * 检查信息是否为空
+ * @param {String} value [用户输入的信息]
+ * @param {String} mes [不符合规则提示的信息]
+ */
+ export function ckNull(value,mes){
+	if (value) {
+>>>>>>> main
 		return success
 	} else {
 		return {
 			"status": false,
+<<<<<<< HEAD
 			"mes": '请获取手机验证码'
 		};
 	}
 }
+=======
+			"mes": mes
+		};
+	}
+ }
+>>>>>>> main

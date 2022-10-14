@@ -4,8 +4,15 @@
 			<span class="breadcrumb__item" v-for="(p,index) in breadcrumbItem" :key="index">
 				{{p}}
 			</span>
+
+			<div style="text-align: right;">
+				<!-- 新建委托按钮 的插槽 -->
+				<slot></slot>
+			</div>
+
 		</div>
 		<div class="line"></div>
+
 	</div>
 </template>
 

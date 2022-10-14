@@ -56,6 +56,10 @@
 		width: 90%;
 		height: 95%;
 		background-color: white;
-		.pu_center
+		.pu_center;
+		overflow: auto;
 	}
+	// .el-main{
+	// 	padding:0;
+	// }
 </style>
