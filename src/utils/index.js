@@ -183,6 +183,7 @@ export function BatchPdfDownload(arr) {
 		const promise = getFile(item).then(data => {
 			const arr_name = item.split('/') // 下载文件, 并存成ArrayBuffer对象
 			const file_name = arr_name[arr_name.length - 1] // 获取文件名
+			console.log(arr_name,file_name)
 			// .folder("name")这个是把文件放在一个文件夹，不需要可以删去
 			zip.folder("证书文件夹").file(file_name, data, {
 				binary: true

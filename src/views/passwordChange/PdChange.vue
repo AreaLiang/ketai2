@@ -87,10 +87,7 @@
 		methods: {
 			changeFun:throttle(function(formName) {
 				this.$refs[formName].validate((valid) => {
-					let {
-						ogPass,
-						newPass
-					} = this.passlist;
+					let {ogPass,newPass} = this.passlist;
 
 					if (valid) {
 						//调用修改密码接口
@@ -98,9 +95,10 @@
 							oldpwd: ogPass,
 							pwd: newPass
 						}).then((data) => {
+							NProgress.start() //开启进度条
 							if (data.code == "Ok" ) {
 								this.$message.success("修改成功,3秒后将重新登录");
-								NProgress.start() //开启进度条
+								
 								//进度条 的进度设置
 								let time = 0;
 								let np = setInterval(() => {
@@ -111,14 +109,13 @@
 								//修改成功后3秒自动专题登陆页面
 								setTimeout(() => {
 									removeSessionStorage('token'); //删除缓存
-									NProgress.done();
+									
 									clearInterval(np);
 									this.$router.push("/Login");
 									resetRouter(); //路由重置
 								}, 3000)
-							} else {
-								this.$message.error(data.msg);
-							}
+							} else this.$message.error(data.msg);
+							NProgress.done();
 						}).catch((e) => "未知异常错误，请联系客服");
 					}
 				});

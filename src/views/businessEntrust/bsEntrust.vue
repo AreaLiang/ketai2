@@ -111,7 +111,7 @@
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
 	import {bsEntrustmentApi,modifyEntrustOrderApi,addEntrustOrderApi} from "@/request/api"
-	import {timestamp,throttle} from '@/utils'
+	import {throttle} from '@/utils'
 	import {cgBsEntrustData,statusStyleControl,EntrustObj} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
@@ -261,7 +261,6 @@
 				this.currentPage=page;//保存当前页码，用于某些交换后刷新当页
 				this.PaginationClick(page - 1, this.pageSize);
 			})
-			
 		},
 		beforeDestroy() {
 			this.$bus.$off('currentRowData');// 解绑
