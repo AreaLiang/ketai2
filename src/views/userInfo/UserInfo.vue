@@ -39,9 +39,8 @@
 							</el-col>
 							<el-col :span="certStatus ? 24:12">
 								<el-button type="primary" v-if="!certStatus" @click="submitForm()">
-									{{userdata.statusCn=="认证失败"?"重新提交":"提交认证"}}</el-button>
-								<!-- 	<el-button type="primary" v-if="certStatus" @click="changeUserInfoBtn()">信息更改
-								</el-button> -->
+									{{userdata.statusCn=="认证失败"?"重新提交":"提交认证"}}
+								</el-button>
 							</el-col>
 						</div>
 
@@ -104,9 +103,6 @@
 			</el-col>
 		</el-row>
 
-		<!-- 用户信息修改弹窗 -->
-		<diglogUserInfoCg ref="diglogUserInfoCg" />
-
 		<div class="guidelines" v-if="!certStatus">
 			<el-col :span="24">
 				<el-button type="warning" @click="guidelinesVisible = true">
@@ -126,12 +122,10 @@
 <script>
 	import PageHeader from '@/components/PageHeader'
 	import formUserInfo from "./components/formUserInfo"
-	import diglogUserInfoCg from "./components/diglogUserInfoCg"
 	import {mapGetters,mapState} from "vuex"
 	import {uploadCertFileApi,modifyRegistApi} from "@/request/api"
 	import {isImgFormat,fileShowPath,throttle} from "@/utils"
 	import { userInfoObj } from "@/utils/userInfo"
-	import qs from "qs"
 	
 	export default {
 		name: 'UserInfo',
@@ -210,10 +204,7 @@
 					}
 				});
 			},3000),
-			//信息更改 按钮事件
-			// changeUserInfoBtn() {
-			// 	this.$refs["diglogUserInfoCg"].dialogFormVisible = true;
-			// },
+			
 			//文件上传删除功能
 			handleRemove(file, name) {
 				let uploadFiles, index;
@@ -273,7 +264,6 @@
 			},
 			//状态管理，不同状态控制要显示什么内容
 			statusManagement(status){
-				console.log(this.isCertification + ",状态下 ：", JSON.parse(JSON.stringify(this.userdata)));
 				const fun={
 					publicFun:()=>{//公共方法
 						this.certStatus = true; //返回 true，禁用所有修改信息功能
@@ -333,8 +323,7 @@
 		},
 		components: {
 			PageHeader,
-			formUserInfo,
-			diglogUserInfoCg
+			formUserInfo
 		},
 	}
 </script>

@@ -1,6 +1,4 @@
-import {
-	timestamp
-} from "./index"
+import {timestamp} from "./index"
 
 //转换业务委托的数据格式
 export function cgBsEntrustData(data) {

@@ -126,7 +126,7 @@
 			//批量下载事件
 			BatchDownload(arr) {
 				let selectionUrl = _.cloneDeep(this.multipleSelection);
-
+				
 				let urlList = [];//多个pdf文件链接的数组
 				selectionUrl.forEach((p) => {
 					urlList.push(p.reportUrl);
@@ -140,7 +140,8 @@
 			},
 			//下载事件
 			downLoadLertificate(val) {
-				let link=val.reportUrl;//需要下载的文件链接
+				let link=this.baseUrl+val.reportUrl;//需要下载的文件链接
+				
 				//单个PDF文件下载事件
 				fileLinkToStreamDownload(link, val.reportNo);
 			},
