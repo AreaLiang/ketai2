@@ -69,8 +69,8 @@
 					TypeList.checkTypeList.some((p)=>{//匹配该数组 相同的id，符合则停止匹配，并赋值 中文含义返回
 						if(p.id==val){
 							typeCh=p.name;
-							return true
-						}else false
+							return true;
+						}else false;
 					});
 				}
 				return typeCh;
@@ -105,11 +105,11 @@
 									if(p.orderNo==this.$route.query.id) {
 										arr.push(p);
 									};
-								})
-								this.dataTotal=arr.length;
+								});
+								this.dataTotal=arr.length;//符合条件匹配出来的所有数目
 								this.filterData=arr.splice(start,end);
 							})
-						}else{//正常证书管理选项点击
+						}else{//证书管理 导航选项点击
 							let orginArr=_.cloneDeep(this.tableData);//克隆原数组，即 所有证书列表
 							this.filterData =orginArr.splice(start,end);
 						}
@@ -121,7 +121,6 @@
 			//已经选中行的事件
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
-				
 			},
 			//批量下载事件
 			BatchDownload(arr) {
@@ -157,7 +156,6 @@
 			//绑定分页点击事件
 			this.$bus.$on('pageNumber', (page) => {
 				this.certificateData(page-1);
-				
 			})
 		},
 		beforeDestroy() {
@@ -171,9 +169,4 @@
 		margin: 20px 0;
 		text-align: right;
 	}
-	// .mg-certificate-box{
-	// 	height: 600px;
-	// 	overflow: auto;
-	// }
-	
 </style>

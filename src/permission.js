@@ -23,6 +23,7 @@ router.beforeEach(async (to, from, next) => {
 			(async ()=> {
 				//校验用户token
 				const status=await store.dispatch('checkUserInfo',token);
+				
 				if(status){
 					await store.commit('GenerateRoutes',status);
 					let accessRoutes=store.state.permissionRoutes;

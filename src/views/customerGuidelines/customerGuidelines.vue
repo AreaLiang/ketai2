@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-button class="downbtn" type="primary" plain @click="downloadTb()">点击下载用户指南</el-button>
-		<iframe class="pdf-show" src="/file/khzczy.pdf" width="100%" height="600"></iframe>
+		<iframe class="pdf-show" src="/file/khzczy.pdf" width="100%" height="700"></iframe>
 	</div>
 </template>
 
@@ -10,9 +10,9 @@
 	export default {
 		name: 'customerGuidelines', //客户注册指引 表格下载
 		methods: {
-			downloadTb:throttle(function(){//节流函数
+			downloadTb(){
 				downFile('/file/khzczy.pdf');
-			})
+			}
 		}
 	}
 </script>

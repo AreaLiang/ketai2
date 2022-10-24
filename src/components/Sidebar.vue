@@ -106,14 +106,14 @@
 			this.currentUrl=this.$router.history.current.fullPath;
 			
 			//导航权限控制，如果客户状态不是正常 ，不显示全部导航 
-			if (this.isCertification != "正常") {
+			if (this.isCertification != "ZhengChang") {
 				this.navList = this.navList.filter((p) => {
 					return !p.isAuthorize
 				});
 			}
 			
 			//如果客户状态是未认证
-			if(this.isCertification=="未认证"){
+			if(this.isCertification=="WeiRenZheng"){
 				this.infoWarning = true; //未认证警告提示
 			}
 		}
