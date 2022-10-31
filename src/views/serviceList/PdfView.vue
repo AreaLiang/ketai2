@@ -1,33 +1,17 @@
 <template>
 	<div class="pdf-box">
-		<!-- <a href="https://www.gjtool.cn/pdfh5/git.pdf">打开</a> -->
-		<!-- <pdf  ref="pdf" v-for="i in numPages" :key="i" :src="url" :page="i">
-		</pdf> -->
-		<iframe class="pdf-show" src="/file/ywb.pdf" width="500" height="500"></iframe>
+		<iframe class="pdf-show" :src="getUrl" width="500" height="500"></iframe>
 	</div>
 </template>
 
 <script>
-	// import pdf from 'vue-pdf'
 	export default {
 		name: 'PdfView',//服务项列表
-		data() {
-			return {
-				url: 'https://www.gjtool.cn/pdfh5/git.pdf',
-				numPages: null, // pdf 总页数
+		computed:{
+			getUrl(){
+				return this.baseUrl+"/file/pdfDocument/ywb.pdf";
 			}
-		},
-		methods: {
-			// getNumPages() {
-			// 	let loadingTask = pdf.createLoadingTask(this.url)
-			// 	loadingTask.promise.then(pdf => {
-			// 		this.numPages = pdf.numPages
-			// 	}).catch(err => {
-			// 		console.error('pdf 加载失败', err);
-			// 	})
-			// },
-		},
-		
+		}
 	}
 </script>
 

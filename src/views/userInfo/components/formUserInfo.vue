@@ -141,18 +141,14 @@
 						trigger: 'blur'
 					}],	
 					safetyOfficer: [{
-						required: true,
 						message: '请输入安全管理员名称',
 						trigger: 'blur'
 					}],
-					safetyMobile: [{
-						required: true,
-						message: '请输入安全员手机号',
-						trigger: 'blur'
-					},
-					{
+					safetyMobile: [
+					{	
 						validator: formValidation.mobile,
-						trigger: 'blur'
+						trigger: 'blur',
+						message: '请输入正确的11位手机号',
 					}]
 				},
 				

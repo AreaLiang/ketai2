@@ -11,8 +11,8 @@
 							<el-col :span="8">
 								<p class='mes white' :class="{
 										normal:statusList.formDisable,
-										danger:userdata.statusCn=='已禁用'?true:false,
-										waring:userdata.statusCn=='认证中'?true:false,
+										danger:userdata.status=='YiJinYong'?true:false,
+										waring:userdata.status=='RenZhengZhong'?true:false,
 									}">
 									{{userdata.statusCn}}
 								</p>
@@ -28,7 +28,7 @@
 						<formUserInfo :status="statusList.formDisable" :userdata="userdata" ref="modifyUerInfo"></formUserInfo>
 
 						<el-alert :title="userdata.reason" type="warning" effect="dark"
-							v-if="userdata.statusCn=='认证失败'?true :false" :closable="false">
+							v-if="userdata.status=='RenZhengShiBai'?true :false" :closable="false">
 						</el-alert>
 						<div class="bottom-op">
 							<el-col :span="12" v-if="!statusList.formDisable">
@@ -39,7 +39,7 @@
 							</el-col>
 							<el-col :span="statusList.formDisable ? 24:12">
 								<el-button type="primary" v-if="!statusList.formDisable" @click="submitForm()">
-									{{userdata.statusCn=="认证失败"?"重新提交":"提交认证"}}
+									{{userdata.status=="RenZhengShiBai"?"重新提交":"提交认证"}}
 								</el-button>
 							</el-col>
 						</div>
@@ -51,16 +51,16 @@
 			<!-- 执照文件 -->
 			<el-col :span="10">
 				<div class="grid-content bg-purple-light">
-					<div class="bs-license">
-						<p>请上传营业执照文件</p>
+					<div class="bs-license"  v-if="isShowUploadDiv(statusList.formDisable,userdata.certificate)">
+						<p>{{licenseUploadTest.bs}}</p>
 						<licenseUpload ref="bsLicense" 
 							:firstFile="changeUrl(userdata.certificate)" 
 							:upLoadDisabled="statusList.formDisable"
 						/>
 					</div>
 
-					<div class="sc-license">
-						<p>请上传安全员执照文件</p>
+					<div class="sc-license" v-if="isShowUploadDiv(statusList.formDisable,userdata.safetyCertificate)">
+						<p>{{licenseUploadTest.sc}}</p>
 						<licenseUpload ref="scLicense" 
 							:firstFile="changeUrl(userdata.safetyCertificate)" 
 							:upLoadDisabled="statusList.formDisable"
@@ -113,7 +113,19 @@
 						...state.userInfo
 					}
 				}
-			})
+			}),
+			licenseUploadTest(){//执照显示文字
+				let textObj={
+					bs:'请上传营业执照文件',
+					sc:'请上传安全员执照文件'
+				}
+				if(this.isCertification=="RenZhengZhong" || this.isCertification=="ZhengChang" ){
+					for (let p in textObj){
+						textObj[p]=textObj[p].substr(3,textObj[p].length);
+					}
+				}
+				return textObj;
+			}
 		},
 		methods: {
 			//表单提交
@@ -180,7 +192,11 @@
 						return ;
 						//未认证
 						case "WeiRenZheng":
-						this.statusList=StatusConfiguration(true,false);
+						if(this.userdata.remark){//如果有提示，显示信息框
+							this.statusList=StatusConfiguration(true,false);
+						}else{
+							this.statusList=StatusConfiguration(false,false);
+						}
 						return ;
 						//认证失败
 						case "RenZhengShiBai":
@@ -200,6 +216,9 @@
 					}
 				}else throw new Error("isCertification状态出问题，请检查vux返回")
 				
+			},
+			isShowUploadDiv(status,url){
+				if(status && url) return true
 			},
 			//返回完整的文件链接
 			changeUrl: url => fileShowPath(url, '',false)

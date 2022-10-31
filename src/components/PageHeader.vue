@@ -9,27 +9,14 @@
 				<!-- 新建委托按钮 的插槽 -->
 				<slot></slot>
 			</div>
-
 		</div>
 		<div class="line"></div>
-
 	</div>
 </template>
 
 <script>
 	export default {
 		name: 'PageHeader',
-		data() {
-			return {
-
-			}
-		},
-		mounted() {
-
-		},
-		components: {
-
-		},
 		props: ['breadcrumbItem']
 	}
 </script>

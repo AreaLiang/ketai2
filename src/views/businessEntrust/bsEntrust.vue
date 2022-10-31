@@ -7,7 +7,7 @@
 		<div class="entrust-manage">
 			<template>
 				<el-table :data="tableData" border style="width: 100%" :header-cell-style="{textAlign:'center'}"
-					:cell-style="{textAlign:'center'}">
+					:cell-style="{textAlign:'center'}"  row-key="id">
 					<el-table-column prop="created" label="提交时间" width="180">
 					</el-table-column>
 					<el-table-column prop="contact" label="联系人" width="120">
@@ -32,7 +32,7 @@
 					<el-table-column prop="id" title="id" label="单号" width="200">
 					</el-table-column>
 					<el-table-column label="操作" width="350">
-						<template slot-scope="scope">
+						<template slot-scope="scope" >
 							<el-button type="primary" size="small"
 								@click="openDialog('editEntrustDiglog',scope.row)"
 								v-if="bsBtnShow(scope.row.status,'DaiFenPei,DaiShouLi,ShouLiShiBai')">
@@ -42,7 +42,8 @@
 							
 							<el-button type="primary" size="small"
 								@click="openDialog('entrustFileDialog',scope.row)"
-								v-if="bsBtnShow(scope.row.status,'DaiShenHe,DaiFuKuan,DaiWanGong,DaiHeDui,DaiShiGong,YiWanCheng,YuFaZheng')">
+								v-if="bsBtnShow(scope.row.status,'DaiShenHe,DaiFuKuan,DaiWanGong,DaiHeDui,DaiShiGong,YiWanCheng,YuFaZheng')"
+								>
 								委托文件
 							</el-button>
 
@@ -123,7 +124,7 @@
 				dataTotal: 0, //数据一共有多少条
 				pageSize: 8, //每页显示多少条数据
 				loading: true,
-				currentPage:1,
+				currentPage:1
 			}
 		},
 		computed: {
@@ -133,15 +134,6 @@
 					else return true
 				}
 			}
-		},
-		components: {
-			PageHeader,
-			Pagination,
-			addEntrustDiglog,
-			entrustFileDialog,
-			acceptanceDialog,
-			paymentProveDialog,
-			editEntrustDiglog
 		},
 		filters:{
 			isPassPayment(val){//如果没有上传过或者 退回的支付证明需要重新上传
@@ -213,6 +205,7 @@
 			PaginationClick(page, pageSize) {
 				this.loading=true;
 				NProgress.start() //开启进度条
+				
 				bsEntrustmentApi({
 					page: page,
 					size: pageSize
@@ -221,6 +214,7 @@
 					if (res.code == "Ok" ) {
 						this.dataTotal = data.totalElements; //所有数据的 数量
 					}
+					
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
 					NProgress.done(); //结束进度条
 					this.loading=false;
@@ -265,6 +259,15 @@
 		beforeDestroy() {
 			this.$bus.$off('currentRowData');// 解绑
 			this.$bus.$off('pageNumber');// 解绑分页
+		},
+		components: {
+			PageHeader,
+			Pagination,
+			addEntrustDiglog,
+			entrustFileDialog,
+			acceptanceDialog,
+			paymentProveDialog,
+			editEntrustDiglog
 		}
 	}
 </script>

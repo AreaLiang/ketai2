@@ -38,4 +38,3 @@ Vue.directive('focus', {
     el.children[1].focus()
   }
 })
-

@@ -284,12 +284,13 @@
 						business:checkList,
 						code:captcha
 					}).then((res) => {
+						console.log(res)
 						if (res.code == "Ok") {
 							this.$message.success('注册成功');
 							this.isRegister=false;
 							this.reset();
 						} else {
-							this.$message.error(data.msg);
+							this.$message.error(res.msg);
 						}
 					})
 				}

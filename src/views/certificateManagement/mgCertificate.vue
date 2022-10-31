@@ -19,11 +19,11 @@
 					</el-table-column>
 					<el-table-column prop="orderNo" label="委托单号">
 					</el-table-column>
-					<el-table-column prop="reportNo" label="记录编号">
+					<el-table-column prop="reportNo" label="证书编号">
 					</el-table-column>
 					<el-table-column prop="applianceName" label="项目名称" >
 					</el-table-column>
-					<el-table-column prop="checkTypeValueName" label="鉴定类型" >
+					<el-table-column prop="checkTypeValueName" label="类型" >
 						<template slot-scope="scope">
 							<span>{{ scope.row.checkType | checkTypeList}}</span>
 						</template>
