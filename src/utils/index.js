@@ -278,7 +278,6 @@ export const formValidation = {
 		}else{
 			return callback();
 		}
-		
 	},
 	//座机号正则，需要加区号
 	phone: (rule, value, callback) => {

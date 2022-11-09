@@ -91,7 +91,8 @@ export function ckPhone(value) {
 				"mes": '只手机号能是数字'
 			};
 		} else {
-			if(value.length==11){
+			let reg=/^1[3456789]\d{9}$/
+			if(value != "" && reg.test(value)){
 				return success
 			}{
 				return {
