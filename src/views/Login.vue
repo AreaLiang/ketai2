@@ -64,6 +64,19 @@
 								</el-checkbox-group>
 							</div>
 						</div>
+						<!-- <div class="input-item" :class="{register:isRegister}">
+							<div class="bs-range bs-item">
+								<span>业务范围</span>
+							</div>
+							<div class="bs-checkbox bs-item">
+								<el-radio-group v-model="radio">
+								    <el-radio :label="3">备选项</el-radio>
+								    <el-radio :label="6">备选项</el-radio>
+								    <el-radio :label="9">备选项</el-radio>
+								</el-radio-group>
+							</div>
+						</div> -->
+						
 						<div class="input-item" :class="{register:isRegister}">
 							<el-input placeholder="请输入验证码" maxlength="5" v-model.trim="userInfo.captcha">
 								<template slot="prepend">

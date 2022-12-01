@@ -28,7 +28,7 @@
 <script>
 	import PageHeader from '@/components/PageHeader'
 	import NProgress from 'nprogress' // 引入头部进度条
-	import {removeSessionStorage,throttle} from "@/utils"
+	import {throttle} from "@/utils"
 	import {resetRouter} from '@/router'
 	export default {
 		name: 'PdChange',
@@ -108,8 +108,6 @@
 
 								//修改成功后3秒自动专题登陆页面
 								setTimeout(() => {
-									removeSessionStorage('token'); //删除缓存
-									
 									clearInterval(np);
 									this.$router.push("/Login");
 									resetRouter(); //路由重置

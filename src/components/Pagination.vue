@@ -6,7 +6,7 @@
 		 -->
 		<el-pagination background layout="prev, pager, next" 
 			:total="dataTotal" 
-			:page-size="pageSize ? pageSize:10"
+			:page-size="pageSize"
 			@current-change="pageChange" :current-page="currentPage">
 		</el-pagination>
 	</div>
@@ -28,7 +28,10 @@
 		},
 		props: {
 			dataTotal: Number,
-			pageSize: Number,
+			pageSize: {
+				type: Number,
+				default: 10
+			},
 			currentPage: {
 				type: Number,
 				default: 1
