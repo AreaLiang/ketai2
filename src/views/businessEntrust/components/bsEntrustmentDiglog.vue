@@ -112,7 +112,6 @@
 </template>
 
 <script>
-	import {previewApi} from "@/request/api"
 	import {mapState} from 'vuex'
 	import {fileShowPath,formValidation,fileLinkToStreamDownload} from '@/utils'
 	import {EntrustObj} from '@/utils/bsEntrust'
@@ -273,7 +272,7 @@
 					let params=this.commonParameters();
 					if (this.isCreatedOrder) params.customerId=this.addEntrustForm.creator.id;
 					
-					previewApi(params).then( res =>{
+					this.api.previewApi(params).then( res =>{
 						if(res.code=="Ok") this.wordUrl=fileShowPath(res.data,"",false);//赋值iframe的路径
 						else this.$message.error(res.msg);
 					})

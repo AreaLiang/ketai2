@@ -1,9 +1,19 @@
-import router,{resetRouter,errorRouter,asyncRouter} from '@/router'
-import {Message} from 'element-ui';
-import {baseUrl} from '@/request/http'
+import router, {
+	resetRouter,
+	errorRouter,
+	asyncRouter
+} from '@/router'
+import {
+	Message
+} from 'element-ui';
+import {
+	baseUrl
+} from '@/request/http'
 import store from '@/store'
 import JSZip from "jszip";
-import {saveAs} from 'file-saver';
+import {
+	saveAs
+} from 'file-saver';
 import axios from 'axios'
 
 /**
@@ -27,8 +37,14 @@ export function removeSessionStorage(name, isGoLoigin) {
  * @param {Object} options [leading表示首次是否触发,trailing 是否只需要有一个定时器]
  */
 
-export function throttle (fn , interval = 1000,options = {leading: true,trailing: false}) {
-	const {leading,trailing} = options
+export function throttle(fn, interval = 1000, options = {
+	leading: true,
+	trailing: false
+}) {
+	const {
+		leading,
+		trailing
+	} = options
 	let lastTime = 0;
 	let timer = null;
 	// 时间触发时，真正执行的函数
@@ -45,7 +61,7 @@ export function throttle (fn , interval = 1000,options = {leading: true,trailing
 				timer = null;
 			}
 			// 真正触发函数
-			fn.apply(this,arguments);
+			fn.apply(this, arguments);
 			// 保留上次触发的时间
 			lastTime = nowTime;
 			// 没有加定时器的时候直接return掉
@@ -57,7 +73,7 @@ export function throttle (fn , interval = 1000,options = {leading: true,trailing
 				timer = null;
 				// 仅仅执行一次
 				lastTime = !leading ? 0 : new Date().getTime();
-				fn.apply(this,arguments);
+				fn.apply(this, arguments);
 			}, remainTime);
 		}
 	}
@@ -101,17 +117,17 @@ export function isImgFormat(file) {
  * @param {String} suffix [文件后缀]
  * * @param {Boolean} handleSuffix [是否处理文件后缀，默认处理]
  */
-export function fileShowPath(file, suffix , handleSuffix=true) {
+export function fileShowPath(file, suffix, handleSuffix = true) {
 	if (file) {
-	
-		if(file.lastIndexOf('.')>0 && handleSuffix){
-			file=file.substring(0,file.lastIndexOf('.'))+".";
+
+		if (file.lastIndexOf('.') > 0 && handleSuffix) {
+			file = file.substring(0, file.lastIndexOf('.')) + ".";
 		}
-		
+
 		let fileUrl = file + suffix; //文件路径
 		// let reg = new RegExp("hall"); //匹配服务端的 hall字符串，准备替换
 		// let newUrl = baseUrl.replace(reg, fileUrl);
-		let newUrl=baseUrl+fileUrl;
+		let newUrl = baseUrl + fileUrl;
 		return newUrl;
 	} else {
 		return '';
@@ -127,7 +143,7 @@ export function fileLinkToStreamDownload(url, name) {
 	let fileName = name;
 	let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
 	if (!reg.test(url)) {
-		throw new Error('传入参数不合法,不是标准的文件链接',url)
+		throw new Error('传入参数不合法,不是标准的文件链接', url)
 	} else {
 		let xhr = new XMLHttpRequest()
 		xhr.open('get', url, true)
@@ -139,8 +155,11 @@ export function fileLinkToStreamDownload(url, name) {
 				//接受二进制文件流
 				var blob = this.response
 				downloadExportFile(blob, fileName)
+			}else if(this.status == 404){
+				Message.error('没有找到该资源');
 			}
 		}
+
 		xhr.send()
 	}
 }
@@ -183,7 +202,7 @@ export function BatchPdfDownload(arr) {
 		const promise = getFile(item).then(data => {
 			const arr_name = item.split('/') // 下载文件, 并存成ArrayBuffer对象
 			const file_name = arr_name[arr_name.length - 1] // 获取文件名
-			console.log(arr_name,file_name)
+			console.log(arr_name, file_name)
 			// .folder("name")这个是把文件放在一个文件夹，不需要可以删去
 			zip.folder("证书文件夹").file(file_name, data, {
 				binary: true
@@ -192,10 +211,12 @@ export function BatchPdfDownload(arr) {
 		})
 		promises.push(promise)
 	})
+	
 	Promise.all(promises).then(() => {
 		zip.generateAsync({
 			type: 'blob'
 		}).then(content => {
+			
 			// 生成二进制流
 			saveAs(content, '证书文件.zip') // 利用file-saver保存文件  自定义文件名
 		})
@@ -211,11 +232,11 @@ function getFile(url) {
 			responseType: 'arraybuffer'
 		}
 		axios(obj).then(data => {
-			resolve(data.data)
-		})
-		.catch(error => {
-			reject(error.toString())
-		})
+				resolve(data.data)
+			})
+			.catch(error => {
+				reject(error.toString())
+			})
 	})
 }
 /*End*/
@@ -224,8 +245,8 @@ function getFile(url) {
  * 点击下载文件事件
  * @param {string} src [本地文件路径，放在public目录的静态文件]
  */
-export function downFile(src){
-	let prefixUrl = `${process.env.BASE_URL}`+src;
+export function downFile(src) {
+	let prefixUrl = `${process.env.BASE_URL}` + src;
 	let link = document.createElement("a");
 	//创建一个a标签
 	link.style.display = "none";
@@ -244,8 +265,8 @@ export function downFile(src){
  * @param {string} timestamp [10位或者13位的 时间戳]
  */
 export function timestampToTime(timestamp) {
-	if(timestamp.length<13){
-		timestamp=timestamp * 1000;
+	if (timestamp.length < 13) {
+		timestamp = timestamp * 1000;
 	}
 	var date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
 	var Y = date.getFullYear() + '-';
@@ -269,29 +290,27 @@ export const formValidation = {
 	//判断只能输入1开头第二位数字是3456789中一个，后面九位数随便填，总共十一位电话号码。
 	mobile: (rule, value, callback) => {
 		var patrn = /^1[3456789]\d{9}$/;
-		if(value){// 判断当输入的有值时，才校验
+		if (value) { // 判断当输入的有值时，才校验
 			if (patrn.test(value) == false) {
 				return callback(new Error('请输入正确的11位手机号码！'));
 			} else {
 				return callback();
 			}
-		}else{
+		} else {
 			return callback();
 		}
 	},
 	//座机号正则，需要加区号
 	phone: (rule, value, callback) => {
 		var patrn = /^\d{3}-\d{7,8}|\d{4}-\d{7,8}$/;
-		if(value){// 判断当输入的有值时，才校验
+		if (value) { // 判断当输入的有值时，才校验
 			if (patrn.test(value) == false) {
 				return callback(new Error('格式不正确！如：0111-8137664'));
 			} else {
 				return callback();
 			}
-		}else{
+		} else {
 			return callback();
 		}
 	},
 }
-
-

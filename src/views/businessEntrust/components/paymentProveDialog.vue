@@ -23,7 +23,6 @@
 
 <script>
 	import { isImgFormat,fileShowPath ,throttle} from "@/utils"
-	import {modifyPayFileApi,uploadTempFileApi} from '@/request/api'
 	
 	export default{
 		name:'paymentProveDialog',//支付证明
@@ -44,7 +43,7 @@
 				let params = new FormData();
 				params.append('file', res.file);
 				//调用上传支付证明接口
-				uploadTempFileApi(params).then((data) => {
+				this.api.uploadTempFileApi(params).then((data) => {
 					if(data.code=="Ok" ){
 						this.payFile=data.data.tempFile;
 						this.imgUrl=fileShowPath(data.data.tempFile,'',false);
@@ -63,7 +62,7 @@
 				if(this.payFile){//如果已经上传文件
 					this.loading=true;
 				
-					modifyPayFileApi({
+					this.api.modifyPayFileApi({
 						id:rowData.id,
 						payFile:this.payFile
 					}).then((data)=>{

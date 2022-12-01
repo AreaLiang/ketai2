@@ -92,7 +92,6 @@
 	import licenseUpload from "./components/licenseUpload"
 	
 	import {mapGetters,mapState} from "vuex"
-	import {modifyRegistApi} from "@/request/api"
 	import {throttle,fileShowPath} from "@/utils"
 	import { userInfoObj } from "@/utils/userInfo"
 	
@@ -150,7 +149,7 @@
 							formData=Object.assign(formData,postData);
 							
 							//提交认证接口
-							modifyRegistApi(formData).then((data) => {
+							this.api.modifyRegistApi(formData).then((data) => {
 								if (data.code == "Ok" ) {
 									let token = sessionStorage.getItem('token');
 									this.$store.dispatch('authorityNav', token);

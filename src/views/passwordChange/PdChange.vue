@@ -29,7 +29,6 @@
 	import PageHeader from '@/components/PageHeader'
 	import NProgress from 'nprogress' // 引入头部进度条
 	import {removeSessionStorage,throttle} from "@/utils"
-	import {pdChangeApi} from "@/request/api"
 	import {resetRouter} from '@/router'
 	export default {
 		name: 'PdChange',
@@ -91,12 +90,13 @@
 
 					if (valid) {
 						//调用修改密码接口
-						pdChangeApi({
+						this.api.pdChangeApi({
 							oldpwd: ogPass,
 							pwd: newPass
 						}).then((data) => {
 							NProgress.start() //开启进度条
 							if (data.code == "Ok" ) {
+								sessionStorage.removeItem('token'); 
 								this.$message.success("修改成功,3秒后将重新登录");
 								
 								//进度条 的进度设置

@@ -46,7 +46,6 @@
 <script>
 	import PageHeader from "@/components/PageHeader"
 	import Pagination from "@/components/Pagination"
-	import {mgCertificateApi} from "@/request/api"
 	import {fileLinkToStreamDownload,BatchPdfDownload,timestampToTime} from "@/utils"
 	import TypeList from '@/utils/typeList'
 
@@ -89,7 +88,7 @@
 			//获取证书列表数据
 			certificateData(page) {
 				this.loading= true;
-				mgCertificateApi().then((data) => {
+				this.api.mgCertificateApi().then((data) => {
 					if (data.code == "Ok") {
 						let getData = data.data.content;
 						

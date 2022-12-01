@@ -114,7 +114,6 @@
 	import {checkRegister,registerfun} from "@/utils/login"
 	import { resetRouter} from "@/router"
 	import NProgress from 'nprogress' // 引入头部进度条
-	import {loginApi,captchaApi,phoneCodeApi ,registerApi} from "@/request/api"
 	
 	export default {
 		name: 'Login',
@@ -167,7 +166,7 @@
 				NProgress.start() //开启进度条
 				if (account != '' && passWord != '') {
 					//调用login接口，成功后返回数据
-					loginApi({
+					this.api.loginApi({
 						loginname: account,
 						password: passWord
 					}).then(async (data) => {
@@ -227,7 +226,7 @@
 
 				if (captcha != '' && connectPhone != '') { //如果都不为空的时候，发送请求验证
 					if (this.isSendCode == false) {
-							phoneCodeApi({
+							this.api.phoneCodeApi({
 								phone: connectPhone,
 								code: captcha,
 							}).then((data) => {
@@ -254,7 +253,7 @@
 			//点击 去注册按钮 事件
 			goRegister() {
 				this.isRegister = !this.isRegister;
-				this.captchaUrl = captchaApi(); //登录和注册界面切换后，验证码更换
+				this.captchaUrl = this.api.captchaApi(); //登录和注册界面切换后，验证码更换
 
 				this.reset(); //重置
 			},
@@ -275,7 +274,7 @@
 					
 					checkList=checkList.join(',');//数组转换成字符串
 					
-					registerApi({
+					this.api.registerApi({
 						phoneCode: phoneCode,
 						phone: connectPhone,
 						name:account,
@@ -309,7 +308,7 @@
 			},
 			//更改注册验证码图片
 			changeCaptcha() {
-				this.captchaUrl = captchaApi({});
+				this.captchaUrl = this.api.captchaApi({});
 			}
 		}
 	}

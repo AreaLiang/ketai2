@@ -24,7 +24,6 @@
 
 <script>
 	import {isImgFormat,fileShowPath,throttle} from "@/utils"
-	import { uploadTempFileApi ,modifyCheckFileApi} from "@/request/api"
 	export default{
 		name:'acceptanceDialog',//完工验收单
 		data(){
@@ -56,7 +55,7 @@
 				params.append('file', res.file);
 				this.loading=true;
 				//调用完工单上传接口
-				uploadTempFileApi(params).then((data) => {
+				this.api.uploadTempFileApi(params).then((data) => {
 					if(data.code=="Ok" ){
 						this.tempFile=data.data.tempFile;// 赋值验工单的文件路径
 						this.imgUrl=fileShowPath(data.data.tempFile,'',false);//上传后 右侧显示验工单的文件
@@ -70,7 +69,7 @@
 			subAcceptanceOrder:throttle(function(){//节流函数
 				let rowData={...this.data};
 				if(this.tempFile){//如果已经上传文件
-					modifyCheckFileApi({
+					this.api.modifyCheckFileApi({
 						id:rowData.id,
 						checkFile:this.tempFile
 					}).then((data)=>{

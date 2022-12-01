@@ -111,7 +111,6 @@
 	import entrustFileDialog from "./components/entrustFileDialog"
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
-	import {bsEntrustmentApi,modifyEntrustOrderApi,addEntrustOrderApi} from "@/request/api"
 	import {throttle} from '@/utils'
 	import {cgBsEntrustData,statusStyleControl,EntrustObj} from '@/utils/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
@@ -170,7 +169,7 @@
 			subAddEntrust:throttle(function(res){//节流函数
 				let {obj,postData}=res;
 				
-				addEntrustOrderApi(postData).then((data) => {
+				this.api.addEntrustOrderApi(postData).then((data) => {
 					this.afterSubmit('addEntrustDiglog',data, "新建成功", "新建失败");//提交后提示信息
 				}).finally(()=>{obj.loading=false});
 				
@@ -180,7 +179,7 @@
 			subModifyEntrust:throttle(function(res){//节流函数
 				let {obj,postData}=res;
 				
-				modifyEntrustOrderApi(postData).then((data) => {
+				this.api.modifyEntrustOrderApi(postData).then((data) => {
 					this.afterSubmit('editEntrustDiglog',data, "修改成功", "修改失败");//提交后提示信息
 				}).finally(()=>{obj.loading=false});
 			}),
@@ -192,7 +191,7 @@
 				postData.orderId=data.id;
 				postData.itemJson=JSON.parse(data.itemJson);
 			
-				modifyEntrustOrderApi(postData).then((data) => {
+				this.api.modifyEntrustOrderApi(postData).then((data) => {
 					if (data.code == "Ok" ) {
 						this.$message.success("提交成功");
 						this.$bus.$emit('pageNumber', this.currentPage); //刷新当前页
@@ -206,7 +205,7 @@
 				this.loading=true;
 				NProgress.start() //开启进度条
 				
-				bsEntrustmentApi({
+				this.api.bsEntrustmentApi({
 					page: page,
 					size: pageSize
 				}).then((res) => {

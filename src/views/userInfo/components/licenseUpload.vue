@@ -26,7 +26,6 @@
 
 <script>
 	import {isImgFormat} from "@/utils"
-	import {uploadCertFileApi} from "@/request/api"
 	export default{
 		name:'licenseUpload', //执照上传组件
 		data(){
@@ -64,7 +63,7 @@
 				let params = new FormData();
 				params.append('file', res.file);
 			
-				uploadCertFileApi(params).then((data) => {
+				this.api.uploadCertFileApi(params).then((data) => {
 					if (data.code == "Ok" ) {
 						this.fileUrl = data.data.certFile; //保存后台返回的 营业执照地址
 					} else {
