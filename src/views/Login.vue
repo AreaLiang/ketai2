@@ -64,18 +64,18 @@
 								</el-checkbox-group>
 							</div>
 						</div>
-						<!-- <div class="input-item" :class="{register:isRegister}">
-							<div class="bs-range bs-item">
-								<span>业务范围</span>
+						<div class="input-item" :class="{register:isRegister}">
+							<div class="area-box">
+								<div class="bs-range bs-item">
+									<span>所辖区域</span>
+								</div>
+								<div class="bs-area-radio bs-item">
+									<el-radio-group v-model="userInfo.area">
+									    <el-radio :label="p.id" v-for="(p,index) in areaList" :key="index" style="color: white">{{p.name}}</el-radio>
+									</el-radio-group>
+								</div>
 							</div>
-							<div class="bs-checkbox bs-item">
-								<el-radio-group v-model="radio">
-								    <el-radio :label="3">备选项</el-radio>
-								    <el-radio :label="6">备选项</el-radio>
-								    <el-radio :label="9">备选项</el-radio>
-								</el-radio-group>
-							</div>
-						</div> -->
+						</div>
 						
 						<div class="input-item" :class="{register:isRegister}">
 							<el-input placeholder="请输入验证码" maxlength="5" v-model.trim="userInfo.captcha">
@@ -142,12 +142,14 @@
 					phoneCode: '',
 					agreesCheck: false,
 					checkList: [],
+					area:''
 				},
 				captchaUrl: '', //验证码图片地址
 				isRegister: false, //是否显示注册界面
 				sendCodeText: '获取手机验证码', //获取手机验证码文字显示
 				isSendCode: false ,//是否已经发送验证码
-				companyName:global_companyName //公司名称 ，在vue.config.js设置
+				companyName:global_companyName ,//公司名称 ，在vue.config.js设置
+				areaList:[]//所辖区域集合
 			}
 		},
 		watch: {
@@ -263,11 +265,17 @@
 				}
 
 			},
+			//获取 所辖区域请求
+			getAreaData(){
+				this.api.getAreaDataApi({}).then( res =>{
+					this.areaList=res.data;
+				});
+			},
 			//点击 去注册按钮 事件
 			goRegister() {
 				this.isRegister = !this.isRegister;
 				this.captchaUrl = this.api.captchaApi(); //登录和注册界面切换后，验证码更换
-
+				this.getAreaData();
 				this.reset(); //重置
 			},
 			//用户注册
@@ -282,7 +290,8 @@
 						connectPhone,
 						phoneCode,
 						checkList,
-						captcha
+						captcha,
+						area
 					} = this.userInfo;
 					
 					checkList=checkList.join(',');//数组转换成字符串
@@ -294,7 +303,8 @@
 						contact:connectName,
 						password:password,
 						business:checkList,
-						code:captcha
+						code:captcha,
+						area:area
 					}).then((res) => {
 						console.log(res)
 						if (res.code == "Ok") {
@@ -418,9 +428,9 @@
 
 		.register {
 			.toggleStatus(1, 3, #28b779);
-			.toggleStatus(4, 6, #ffb848);
-			.toggleStatus(7, 7, white);
-			.toggleStatus(8, 8, #407fdf);
+			.toggleStatus(4, 7, #ffb848);
+			.toggleStatus(8, 8, white);
+			.toggleStatus(9, 9, #407fdf);
 			overflow: hidden;
 		}
 
@@ -436,6 +446,21 @@
 			vertical-align: middle;
 			position: relative;
 			margin: 0 auto;
+		}
+		.area-box{
+			display: flex;
+			.bs-range{
+				margin-left: 0;
+			}
+			.bs-range {
+				flex: none;
+			}
+		}
+		.bs-area-radio{
+			width: 100%;
+			display: flex;
+			align-items: center;
+			padding: 0 15px;
 		}
 
 		.bs-item {
@@ -464,5 +489,7 @@
 			width: 70px;
 			cursor: pointer;
 		}
+		
+		
 	}
 </style>

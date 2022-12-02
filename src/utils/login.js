@@ -17,6 +17,7 @@ export function checkRegister(objInfo) {
 		checkList,
 		phoneCode,
 		captcha,
+		area,
 	} = objInfo;
 
 	let checkInfoList=[];//验证结果返回的集合，把需要验证的结果添加进去即可
@@ -27,9 +28,11 @@ export function checkRegister(objInfo) {
 	checkInfoList.push(ckFun.ckUserName(connectName));
 	checkInfoList.push(ckFun.ckPhone(connectPhone));
 	checkInfoList.push(ckFun.ckServeRange(checkList));
+	checkInfoList.push(ckFun.ckNull(area,'请勾选所辖区域'));
 	checkInfoList.push(ckFun.ckNull(captcha,'请输入验证码'));
 	checkInfoList.push(ckFun.ckNull(phoneCode,'请获取手机验证码'));
 	checkInfoList.push(ckFun.ckNull(agreesCheck,'请勾选同意协议'));
+	
 
 	for(let i=0;i<checkInfoList.length;i++){
 		if(checkInfoList[i].status){//如果验证全部都通过则进行下一步

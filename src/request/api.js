@@ -1,10 +1,12 @@
 import { get, post ,formDatapost,baseUrl} from './http'
 
 //登录和注册页面
-export const loginApi = p => post('regulator/login', p);//登录Api
+export const loginApi = p => post('hall/login', p);//登录Api
 export const registerApi = p => post('hall/register', p);//注册Api
 export const captchaApi = p => baseUrl+'hall/captcha?'+ Math.random();//图形验证码Api
 export const phoneCodeApi = p => post('hall/sendSms', p);//注册时候手机验证码Api
+export const getAreaDataApi = p => post('hall/areas', p);//获取辖区选择
+
 
 //主界面头部 
 export const signoutApi = p => post('hall/logout', p);//退出登录
