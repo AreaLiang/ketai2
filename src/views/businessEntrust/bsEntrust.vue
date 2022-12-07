@@ -112,7 +112,7 @@
 	import acceptanceDialog from "./components/acceptanceDialog"
 	import paymentProveDialog from "./components/paymentProveDialog"
 	import {throttle} from '@/utils'
-	import {cgBsEntrustData,statusStyleControl,EntrustObj} from '@/utils/bsEntrust'
+	import {cgBsEntrustData,statusStyleControl,EntrustObj} from './js/bsEntrust'
 	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {

@@ -13,7 +13,6 @@ export function checkRegister(objInfo) {
 		passwordAgain,
 		connectName,
 		connectPhone,
-		agreesCheck,
 		checkList,
 		phoneCode,
 		captcha,
@@ -31,8 +30,6 @@ export function checkRegister(objInfo) {
 	checkInfoList.push(ckFun.ckNull(area,'请勾选所辖区域'));
 	checkInfoList.push(ckFun.ckNull(captcha,'请输入验证码'));
 	checkInfoList.push(ckFun.ckNull(phoneCode,'请获取手机验证码'));
-	checkInfoList.push(ckFun.ckNull(agreesCheck,'请勾选同意协议'));
-	
 
 	for(let i=0;i<checkInfoList.length;i++){
 		if(checkInfoList[i].status){//如果验证全部都通过则进行下一步

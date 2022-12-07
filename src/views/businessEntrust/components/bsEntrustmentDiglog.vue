@@ -114,7 +114,7 @@
 <script>
 	import {mapState} from 'vuex'
 	import {fileShowPath,formValidation,fileLinkToStreamDownload} from '@/utils'
-	import {EntrustObj} from '@/utils/bsEntrust'
+	import {EntrustObj} from '../js/bsEntrust'
 
 	export default {
 		name: 'bsEntrustmentDiglog', //新建业务委托 弹出框

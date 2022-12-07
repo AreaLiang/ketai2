@@ -18,7 +18,7 @@ export const constantRoutes=[{
 		meta: {
 			title: `${global_companyName}登录界面` //修改单个页面的标题
 		},
-		component: () => import('@/views/Login')
+		component: () => import('@/views/login/Login')
 	},
 	{
 		name: 'Home',

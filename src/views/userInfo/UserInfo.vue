@@ -51,7 +51,7 @@
 			<!-- 执照文件 -->
 			<el-col :span="10">
 				<div class="grid-content bg-purple-light">
-					<div class="bs-license"  v-if="isShowUploadDiv(statusList.formDisable,userdata.certificate)">
+					<div class="bs-license"  >
 						<p>{{licenseUploadTest.bs}}</p>
 						<licenseUpload ref="bsLicense" 
 							:firstFile="changeUrl(userdata.certificate)" 
@@ -59,7 +59,7 @@
 						/>
 					</div>
 
-					<div class="sc-license" v-if="isShowUploadDiv(statusList.formDisable,userdata.safetyCertificate)">
+					<div class="sc-license" >
 						<p>{{licenseUploadTest.sc}}</p>
 						<licenseUpload ref="scLicense" 
 							:firstFile="changeUrl(userdata.safetyCertificate)" 
@@ -93,7 +93,7 @@
 	
 	import {mapGetters,mapState} from "vuex"
 	import {throttle,fileShowPath} from "@/utils"
-	import { userInfoObj } from "@/utils/userInfo"
+	import { userInfoObj } from "./js/userInfo"
 	
 	export default {
 		name: 'UserInfo',
@@ -138,11 +138,12 @@
 							let postData=new userInfoObj(uerInfoComponent.ruleForm); 
 							postData.business=JSON.stringify(postData.business);
 							
+							console.log(this.userdata)
 							//整理认证接口的数据
 							let formData = {
 								id: this.userdata.id,
-								certificate: this.$refs['bsLicense'].fileUrl, //营业执照文件
-								safetyCertificate: this.$refs['scLicense'].fileUrl, //安全员执照文件
+								certificate: this.$refs['bsLicense'].fileUrl || this.userdata.certificate, //营业执照文件
+								safetyCertificate: this.$refs['scLicense'].fileUrl || this.userdata.certificate, //安全员执照文件
 							}
 							
 							//合并对象，如果键名相同，第二个参数覆盖第一个
@@ -151,8 +152,6 @@
 							//提交认证接口
 							this.api.modifyRegistApi(formData).then((data) => {
 								if (data.code == "Ok" ) {
-									let token = sessionStorage.getItem('token');
-									this.$store.dispatch('authorityNav', token);
 									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
 									this.agreeServe=false;
 									setTimeout(()=>{
@@ -175,14 +174,13 @@
 			//状态管理，不同状态控制要显示什么内容
 			statusManagement(){
 				//配置 状态开关名称，用于HTML的 v-if 填写
-				const StatusConfiguration=(remarkBox,formDisable)=>
+				const StatusConfiguration=(remarkBox,formDisable,uploadShow)=>
 				{
 					return {
 						remarkBox:remarkBox || false, //提示信息div显示
-						formDisable:formDisable || false //表单是否禁用
+						formDisable:formDisable || false//表单是否禁用
 					}
 				}
-				
 				if(this.isCertification){
 					switch (this.isCertification){
 						//正常
@@ -217,10 +215,13 @@
 				
 			},
 			isShowUploadDiv(status,url){
+				//console.log(this.userdata,status,url)
 				if(status && url) return true
 			},
 			//返回完整的文件链接
-			changeUrl: url => fileShowPath(url, '',false)
+			changeUrl(url) {
+				return fileShowPath(url, '',false)
+			}
 		},
 		mounted() {
 			this.statusManagement();

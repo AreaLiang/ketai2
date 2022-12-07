@@ -65,7 +65,7 @@
 </template>
 
 <script>
-	import { userformInfo } from "@/utils/userInfo"
+	import { userformInfo } from "../js/userInfo"
 	import { getBase64,formValidation } from "@/utils"
 	export default {
 		name: 'formUserInfo', //用户信息表单
