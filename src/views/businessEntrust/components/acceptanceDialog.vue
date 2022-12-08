@@ -23,7 +23,7 @@
 </template>
 
 <script>
-	import {isImgFormat,fileShowPath,throttle} from "@/utils"
+	import {isImgFormat,throttle} from "@/utils"
 	export default{
 		name:'acceptanceDialog',//完工验收单
 		data(){
@@ -58,7 +58,7 @@
 				this.api.uploadTempFileApi(params).then((data) => {
 					if(data.code=="Ok" ){
 						this.tempFile=data.data.tempFile;// 赋值验工单的文件路径
-						this.imgUrl=fileShowPath(data.data.tempFile,'',false);//上传后 右侧显示验工单的文件
+						this.imgUrl=this.baseUrl(data.data.tempFile);//上传后 右侧显示验工单的文件
 					}else{
 						this.$message.error("上传失败");
 					}
@@ -93,7 +93,7 @@
 				this.data=res;
 				
 				this.tempFile=res.checkFile; //赋值 验工单的文件路径
-				this.imgUrl=fileShowPath(res.checkFile,'',false);//右边验工单文件的 显示路径
+				this.imgUrl=this.baseUrl(res.checkFile);//右边验工单文件的 显示路径
 				if(this.imgUrl){//如果已经上传过，则显示已经上传的文件名
 					this.fileList.push({name:this.imgUrl,url:this.imgUrl});
 				}

@@ -9,7 +9,7 @@
 		name: 'PdfView',//服务项列表
 		computed:{
 			getUrl(){
-				return this.baseUrl+"/file/pdfDocument/ywb.pdf";
+				return this.baseUrl("/file/pdfDocument/ywb.pdf");
 			}
 		}
 	}

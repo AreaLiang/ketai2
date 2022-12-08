@@ -92,7 +92,7 @@
 	import licenseUpload from "./components/licenseUpload"
 	
 	import {mapGetters,mapState} from "vuex"
-	import {throttle,fileShowPath} from "@/utils"
+	import {throttle} from "@/utils"
 	import { userInfoObj } from "./js/userInfo"
 	
 	export default {
@@ -220,7 +220,7 @@
 			},
 			//返回完整的文件链接
 			changeUrl(url) {
-				return fileShowPath(url, '',false)
+				return this.baseUrl(url);
 			}
 		},
 		mounted() {

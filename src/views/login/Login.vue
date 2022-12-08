@@ -10,7 +10,7 @@
 				<el-main>
 					<div class="logon-item" v-if="!isRegister">
 						<div class="input-item">
-							<el-input placeholder="请输入公司全称" maxlength="32" show-word-limit v-model.trim="userInfo.account" v-focus>
+							<el-input placeholder="请输入公司全称" maxlength="32" show-word-limit v-model.trim="userInfo.account" @keyup.enter.native="keyupLogin" v-focus>
 								<template slot="prepend">
 									<i class="el-icon-user-solid" v-show="!isRegister"></i>
 									<span>客户名称</span>
@@ -127,7 +127,7 @@
 				NProgress.done();
 			},
 			keyupLogin(){//enter 回车按键登录
-				if(!this.isRegister) this.login();
+				this.login();
 			},
 			//点击 去注册按钮 事件
 			goRegister() {

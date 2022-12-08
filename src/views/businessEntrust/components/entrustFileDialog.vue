@@ -7,7 +7,6 @@
 </template>
 
 <script>
-	import {fileShowPath} from '@/utils'
 	export default {
 		name: 'entrustFileDialog',//委托文件	
 		data() {
@@ -22,7 +21,7 @@
 				let jsonData=JSON.parse(JSON.stringify(data));//转换成JSON格式
 				
 				if(jsonData.orderFilePdf){
-					this.wordUrl=fileShowPath(jsonData.orderFilePdf,'pdf');
+					this.wordUrl=this.baseUrl(jsonData.orderFilePdf);
 				}
 			})
 		}

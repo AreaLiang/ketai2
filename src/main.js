@@ -26,7 +26,11 @@ import './utils/customDirective';
 
 //引入api接口域名
 import {baseUrl} from "./request/http";
-Vue.prototype.baseUrl=baseUrl;
+Vue.prototype.baseUrl=(url)=>{
+	if(url && _.startsWith(url,'/')) url=url.slice(1);//判断前头是否带有 / 有的话删掉
+	if(!url) return "";
+	else return baseUrl+url;
+};
 
 //引入api接口
 import * as api from "./request/api";

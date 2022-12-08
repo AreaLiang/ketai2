@@ -113,7 +113,7 @@
 
 <script>
 	import {mapState} from 'vuex'
-	import {fileShowPath,formValidation,fileLinkToStreamDownload} from '@/utils'
+	import {formValidation,fileLinkToStreamDownload} from '@/utils'
 	import {EntrustObj} from '../js/bsEntrust'
 
 	export default {
@@ -183,7 +183,7 @@
 						if (jsonData.orderFilePdf) { //如果证件的路径不为空
 							this.$nextTick(() => { //如果已经上传了委托文件，则赋值路径显示文件内容
 								let orderFilePdf = jsonData.orderFilePdf;//获取 委托单文件路径
-								this.wordUrl = fileShowPath(orderFilePdf, 'pdf'); //转换为可以iframe 显示的pdf文件路径
+								this.wordUrl = this.baseUrl(orderFilePdf); //转换为可以iframe 显示的pdf文件路径
 								this.tableData=JSON.parse(jsonData.itemJson);//器具信息赋值
 							})
 						}
@@ -273,7 +273,7 @@
 					if (this.isCreatedOrder) params.customerId=this.addEntrustForm.creator.id;
 					
 					this.api.previewApi(params).then( res =>{
-						if(res.code=="Ok") this.wordUrl=fileShowPath(res.data,"",false);//赋值iframe的路径
+						if(res.code=="Ok") this.wordUrl=this.baseUrl(res.data);//赋值iframe的路径
 						else this.$message.error(res.msg);
 					})
 				}else this.$message.warning("请填写器具名称");

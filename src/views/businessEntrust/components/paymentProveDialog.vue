@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import { isImgFormat,fileShowPath ,throttle} from "@/utils"
+	import {isImgFormat,throttle} from "@/utils"
 	
 	export default{
 		name:'paymentProveDialog',//支付证明
@@ -46,7 +46,7 @@
 				this.api.uploadTempFileApi(params).then((data) => {
 					if(data.code=="Ok" ){
 						this.payFile=data.data.tempFile;
-						this.imgUrl=fileShowPath(data.data.tempFile,'',false);
+						this.imgUrl=this.baseUrl(data.data.tempFile);
 					}else{
 						this.$message.error("上传失败");
 					}
@@ -105,7 +105,8 @@
 				if(res.payFile){
 					this.isUploadPay=true;
 					this.payFile=res.payFile;
-					this.imgUrl=fileShowPath(res.payFile,'',false);
+					
+					this.imgUrl=this.baseUrl(res.payFile);
 				}else{
 					this.isUploadPay=false;
 				}
