@@ -76,7 +76,7 @@
 						if(data.code=="Ok" ){
 							this.$message.success("上传成功");
 							this.dialogFormVisible = false;//关闭dialog
-							this.$bus.$emit('pageNumber',this.currentPage);//刷新页面
+							this.$emit('initData',this.currentPage-1);
 						}else{
 							this.$message.error("上传失败");
 						}

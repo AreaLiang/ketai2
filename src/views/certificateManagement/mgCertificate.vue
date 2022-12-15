@@ -37,7 +37,7 @@
 			</template>
 			<div class="pagination-box">
 				<!-- 分页功能 -->
-				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" />
+				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" @pageChange="pageChange"/>
 			</div>
 		</div>
 	</div>
@@ -143,7 +143,10 @@
 				//单个PDF文件下载事件
 				fileLinkToStreamDownload(link, val.reportNo);
 			},
-
+			//分页点击事件
+			pageChange(page){
+				this.certificateData(page-1);
+			}
 		},
 		components: {
 			PageHeader,
@@ -152,13 +155,6 @@
 		mounted() {
 			//初始化数据
 			this.certificateData(0);
-			//绑定分页点击事件
-			this.$bus.$on('pageNumber', (page) => {
-				this.certificateData(page-1);
-			})
-		},
-		beforeDestroy() {
-			this.$bus.$off('pageNumber'); // 解绑分页
 		}
 	}
 </script>

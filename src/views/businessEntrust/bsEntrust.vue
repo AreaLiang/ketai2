@@ -81,7 +81,7 @@
 			</template>
 			<div class="pagination-box">
 				<!-- 分页功能 -->
-				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" :currentPage="currentPage"/>
+				<Pagination :dataTotal="dataTotal" :pageSize="pageSize" :currentPage="currentPage" @pageChange="pageChange"/>
 			</div>
 		</div>
 
@@ -95,10 +95,10 @@
 		<entrustFileDialog ref="entrustFileDialog"/>
 
 		<!-- 上传验收单/完工验收单 弹出框 -->
-		<acceptanceDialog ref="acceptanceDialog" :currentPage="currentPage" />
+		<acceptanceDialog ref="acceptanceDialog" :currentPage="currentPage" @initData="initData"/>
 
 		<!-- 支付证明/上传支付证明 弹出框 -->
-		<paymentProveDialog ref="paymentProveDialog" :currentPage="currentPage" />
+		<paymentProveDialog ref="paymentProveDialog" :currentPage="currentPage" @initData="initData"/>
 
 	</div>
 </template>
@@ -113,7 +113,6 @@
 	import paymentProveDialog from "./components/paymentProveDialog"
 	import {throttle} from '@/utils'
 	import {cgBsEntrustData,statusStyleControl,EntrustObj} from './js/bsEntrust'
-	import NProgress from 'nprogress' // 引入头部进度条
 
 	export default {
 		name: 'bsEntrust', //业务委托
@@ -194,30 +193,24 @@
 				this.api.modifyEntrustOrderApi(postData).then((data) => {
 					if (data.code == "Ok" ) {
 						this.$message.success("提交成功");
-						this.$bus.$emit('pageNumber', this.currentPage); //刷新当前页
+						this.initData(this.currentPage);//刷新当前页
 					} else {
 						this.$message.error("提交失败");
 					}
 				});
 			},
-			//页码点击事件,page 是页码， pageSize 是每页显示多少条数据
-			PaginationClick(page, pageSize) {
+			//页码点击事件,page 是页码
+			initData(page) {
 				this.loading=true;
-				NProgress.start() //开启进度条
 				
 				this.api.bsEntrustmentApi({
 					page: page,
-					size: pageSize
+					size: this.pageSize
 				}).then((res) => {
 					let data = res.data;
-					if (res.code == "Ok" ) {
-						this.dataTotal = data.totalElements; //所有数据的 数量
-					}
-					
+					if (res.code == "Ok" ) this.dataTotal = data.totalElements; //所有数据的 数量
 					this.tableData = cgBsEntrustData(data); //赋值数据渲染
-					NProgress.done(); //结束进度条
-					this.loading=false;
-				}).catch(()=> this.loading=false);
+				}).finally(()=> this.loading=false);
 			},
 			//点击下载证书事件
 			DownloadCertificate(row) {
@@ -231,7 +224,7 @@
 				if (data.code == "Ok" ) {
 					this.$message.success(success);
 					obj.dialogFormVisible = false;
-					this.$bus.$emit('pageNumber', this.currentPage);
+					this.initData(this.currentPage);
 				} else {
 					this.$message.error(error);
 				}
@@ -245,19 +238,20 @@
 			bsBtnShow(status,authorization){
 				const arr=authorization.split(",");//把字符串用 , 来分割为数组
 				return arr.some( p => p == status);//如果该权限是在允许权限范围内，则返回true
+			},
+			
+			//分页 页码回调函数
+			pageChange(page){
+				//绑定事件，页码发生改变时候重新发送请求显示数据
+				this.currentPage=page;//保存当前页码，用于某些交换后刷新当页
+				this.initData(page - 1);
 			}
 		},
 		mounted() {
-			this.PaginationClick(0, this.pageSize); //进来默认渲染第一页，后端数据第一页的页码为 0
-			//绑定事件，页码发生改变时候重新发送请求显示数据
-			this.$bus.$on('pageNumber', (page = 1) => {
-				this.currentPage=page;//保存当前页码，用于某些交换后刷新当页
-				this.PaginationClick(page - 1, this.pageSize);
-			})
+			this.initData(0); //进来默认渲染第一页，后端数据第一页的页码为 0
 		},
 		beforeDestroy() {
 			this.$bus.$off('currentRowData');// 解绑
-			this.$bus.$off('pageNumber');// 解绑分页
 		},
 		components: {
 			PageHeader,

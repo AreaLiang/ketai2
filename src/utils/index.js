@@ -142,8 +142,10 @@ export function fileShowPath(file, suffix, handleSuffix = true) {
 export function fileLinkToStreamDownload(url, name) {
 	let fileName = name;
 	let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
-	if (!reg.test(url)) {
-		throw new Error('传入参数不合法,不是标准的文件链接', url)
+	let reg2 =/^\//;
+	
+	if (!reg.test(url) && !reg2.test(url)) {
+		throw new Error(`传入参数不合法,不是标准的文件链接:${url}`)
 	} else {
 		let xhr = new XMLHttpRequest()
 		xhr.open('get', url, true)
@@ -202,7 +204,6 @@ export function BatchPdfDownload(arr) {
 		const promise = getFile(item).then(data => {
 			const arr_name = item.split('/') // 下载文件, 并存成ArrayBuffer对象
 			const file_name = arr_name[arr_name.length - 1] // 获取文件名
-			console.log(arr_name, file_name)
 			// .folder("name")这个是把文件放在一个文件夹，不需要可以删去
 			zip.folder("证书文件夹").file(file_name, data, {
 				binary: true
@@ -276,41 +277,4 @@ export function timestampToTime(timestamp) {
 	var m = date.getMinutes() + ':';
 	var s = date.getSeconds();
 	return Y + M + D + h + m + s;
-}
-
-/**
- * 用于ElementUI 表单验证规则的集合，自己写特定的规则，常用规则可在type直接调用
- * @param  rule	[源描述符中的验证规则，对应于正在验证的字段名称。它总是被分配一个field带有被验证字段名称的属性。]
- * @param  value [正在验证的源对象属性的值。]
- * @param  callback [验证完成后调用的回调函数。它期望传递一个Error实例数组来指示验证失败。如果检查是同步的，可以直接返回一个falseorError或Error Array]
- * *** 验证里面的type 可选email、string、number、boolean、url、date、any等等
- * 详细参考 https://github.com/yiminghe/async-validator（需要翻墙）
- */
-export const formValidation = {
-	//判断只能输入1开头第二位数字是3456789中一个，后面九位数随便填，总共十一位电话号码。
-	mobile: (rule, value, callback) => {
-		var patrn = /^1[3456789]\d{9}$/;
-		if (value) { // 判断当输入的有值时，才校验
-			if (patrn.test(value) == false) {
-				return callback(new Error('请输入正确的11位手机号码！'));
-			} else {
-				return callback();
-			}
-		} else {
-			return callback();
-		}
-	},
-	//座机号正则，需要加区号
-	phone: (rule, value, callback) => {
-		var patrn = /^\d{3}-\d{7,8}|\d{4}-\d{7,8}$/;
-		if (value) { // 判断当输入的有值时，才校验
-			if (patrn.test(value) == false) {
-				return callback(new Error('格式不正确！如：0111-8137664'));
-			} else {
-				return callback();
-			}
-		} else {
-			return callback();
-		}
-	},
 }

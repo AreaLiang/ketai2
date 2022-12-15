@@ -113,8 +113,9 @@
 
 <script>
 	import {mapState} from 'vuex'
-	import {formValidation,fileLinkToStreamDownload} from '@/utils'
+	import {fileLinkToStreamDownload} from '@/utils'
 	import {EntrustObj} from '../js/bsEntrust'
+	import {vxRule} from '@/utils/rule'
 
 	export default {
 		name: 'bsEntrustmentDiglog', //新建业务委托 弹出框
@@ -138,21 +139,8 @@
 					remark: ''
 				},
 				rules: {
-					contact: [{
-						required: true,
-						message: '请输入联系人',
-						trigger: 'blur'
-					}],
-					mobile: [{
-							required: true,
-							message: '请输入联系手机号',
-							trigger: 'blur',
-						},
-						{
-							validator: formValidation.mobile,
-							trigger: 'blur'
-						}
-					],
+					contact: vxRule(),
+					mobile: vxRule(true,"Mobile","blur"),
 					remark: [{
 						max: 120,
 						message: '长度不能超过120个字符',

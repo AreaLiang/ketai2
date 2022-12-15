@@ -7,7 +7,7 @@
 		<el-pagination background layout="prev, pager, next" 
 			:total="dataTotal" 
 			:page-size="pageSize"
-			@current-change="pageChange" :current-page="currentPage">
+			@current-change="handleCurrentChange" :current-page="currentPage">
 		</el-pagination>
 	</div>
 </template>
@@ -22,9 +22,10 @@
 		},
 		methods: {
 			//点击页码触发事件
-			pageChange(page) {
-				this.$bus.$emit('pageNumber', page)
+			handleCurrentChange(page) {
+				this.$emit('pageChange',page)
 			}
+			
 		},
 		props: {
 			dataTotal: Number,

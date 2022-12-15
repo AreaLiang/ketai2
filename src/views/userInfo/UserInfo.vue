@@ -137,8 +137,6 @@
 							//获取用户输入的数据
 							let postData=new userInfoObj(uerInfoComponent.ruleForm); 
 							postData.business=JSON.stringify(postData.business);
-							
-							console.log(this.userdata)
 							//整理认证接口的数据
 							let formData = {
 								id: this.userdata.id,
@@ -150,20 +148,20 @@
 							formData=Object.assign(formData,postData);
 							
 							//提交认证接口
-							this.api.modifyRegistApi(formData).then((data) => {
-								if (data.code == "Ok" ) {
-									this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
-									this.agreeServe=false;
-									setTimeout(()=>{
-										this.$router.go(0);
-									},1000)
-								} else {
-									this.$message.error("认证失败");
-									setTimeout(()=>{
-										this.$router.go(0);
-									},1000)
-								}
-							});
+							// this.api.modifyRegistApi(formData).then((data) => {
+							// 	if (data.code == "Ok" ) {
+							// 		this.$message.success("我公司将在3个工作日内完成认证工作，请您耐心等待。");
+							// 		this.agreeServe=false;
+							// 		setTimeout(()=>{
+							// 			this.$router.go(0);
+							// 		},1000)
+							// 	} else {
+							// 		this.$message.error("认证失败");
+							// 		setTimeout(()=>{
+							// 			this.$router.go(0);
+							// 		},1000)
+							// 	}
+							// });
 						} else {
 							this.$message.warning("请勾选同意认证协议");
 						}

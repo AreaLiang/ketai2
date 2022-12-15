@@ -50,7 +50,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="安全管理员" prop="safetyOfficer">
+					<el-form-item label="安全管理员" >
 						<el-input v-model.trim="ruleForm.safetyOfficer"  maxlength="6"></el-input>
 					</el-form-item>
 				</el-col>
@@ -66,7 +66,8 @@
 
 <script>
 	import { userformInfo } from "../js/userInfo"
-	import { getBase64,formValidation } from "@/utils"
+	import { getBase64} from "@/utils"
+	import {vxRule} from "@/utils/rule"
 	export default {
 		name: 'formUserInfo', //用户信息表单
 		data() {
@@ -84,74 +85,15 @@
 					safetyMobile: ''
 				},
 				rules: {
-					name: [{
-							required: true,
-							message: '请输入名称',
-							trigger: 'blur'
-						}
-					],
-					contact: [{
-						required: true,
-						message: '请输入联系人',
-						trigger: 'blur'
-					}],
-					mobile: [{
-							required: true,
-							message: '请输入手机号',
-							trigger: 'blur'
-						},
-						{
-							validator: formValidation.mobile,
-							trigger: 'blur'
-						}
-					],
-					business: [{
-						type: 'array',
-						required: true,
-						message: '请至少选择业务',
-						trigger: 'change'
-					}],
-					type: [{
-						type: 'array',
-						required: true,
-						message: '请至少选择一个活动性质',
-						trigger: 'blur'
-					}],
-					email: [{
-						required: true,
-						message: '请输入电子邮箱',
-						trigger: 'blur'
-					}, {
-						type: 'email',
-						message: '邮箱格式不对',
-						trigger: 'blur'
-					}],
-					address: [{
-						required: true,
-						message: '请填写公司地址',
-						trigger: 'blur'
-					}],
-					phone:[{
-						required: true,
-						message: '请填写公司电话',
-						trigger: 'blur'
-					},
-					{
-						validator: formValidation.phone,
-						trigger: 'blur'
-					}],	
-					safetyOfficer: [{
-						message: '请输入安全管理员名称',
-						trigger: 'blur'
-					}],
-					safetyMobile: [
-					{	
-						validator: formValidation.mobile,
-						trigger: 'blur',
-						message: '请输入正确的11位手机号',
-					}]
+					name:vxRule(),
+					contact: vxRule(),
+					mobile: vxRule(true,"Mobile","blur"),
+					business: vxRule(true,null,"change"),
+					email: vxRule(true,"Email","blur"),
+					address: vxRule(),
+					phone: vxRule(true,'Phone',"blur","请填写公司电话"),	
+					safetyMobile: vxRule(false,"Mobile","blur")
 				},
-				
 			}
 		},
 		methods: {
